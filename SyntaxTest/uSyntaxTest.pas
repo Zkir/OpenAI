@@ -171,7 +171,7 @@ begin
 
     token:='#'+IntToStr(i+1);
     if Pos(token,tmp)<>0 then
-      tmp:=StringReplace (tmp,token, Elements[i].MatchedWordForm,[rfReplaceAll]) ;
+      tmp:=StringReplace (tmp,token, AnsiUpperCase( Elements[i].MatchedWordForm),[rfReplaceAll]) ;
   end;
   Result:= tmp;
 end;
@@ -358,7 +358,7 @@ begin
   Pattern3.AddElement( 'пожалуйста','','' );
   Pattern3.AddElement( '','С','вн' );
 
-  Pattern3.TrasformationFormula:='#2 [.] #3l [кого] #1 [.]';
+  Pattern3.TrasformationFormula:='#3l [кого] #1 #2 [.]';
   PatternList.Add(Pattern3);
 
 
