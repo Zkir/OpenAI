@@ -1,0 +1,5966 @@
+<?xml version="1.0" encoding="windows-1251"?> 
+<aiml>
+<!--
+Программа Чат-бота Zett на AIML. (c) Zkir, 2011
+-->
+
+<!--
+======================================================================================================
+=                        =НЕРАСПОЗНАННЫЕ=                                                            =
+======================================================================================================
+-->
+<category>
+  <pattern>*</pattern> 
+  <template>
+    <think><set name="input.unrecognized">1</set> </think>
+    <think><test_town/></think>
+    <condition> 
+      <!--Нераспознанные вопросы -->
+      <li name="input.mark" value="?"> 
+           <random>       
+		     <li>Хороший вопрос, я подумаю.</li>
+		     <li>Я спрошу коллег, может они знают.</li>
+		     <li>А почему это тебя интересует?</li>
+   		     <li>А почему вы спрашиваете? :)</li>
+   		     <li>Интересный вопрос :)</li>
+   		     <li>Ответ на твой вопрос ускользает от меня.</li>
+   		     <li>Спроси лучше что я умею))</li>
+   		     <li>Я знал, но забыл :)</li>   		     
+   		     <li>Какой непростой вопрос ты мне задаешь.</li>   		     
+           </random>        
+      </li>
+      <li name="input.istown" value="1"> 
+        Хочешь сыграть в города?
+      </li>           
+      <li>
+      <!--Нераспознанные предложения и восклицания -->
+		   <condition> 
+		       <li name="input.word_number" value="1"> 
+		         <random>       
+		           <li>Что <star/>? Ты не мог бы выражаться яснее? </li>
+		           <li>ммм... <star/>... Ты это к чему? </li>
+		<!--       <li><sentence><star/></sentence>... Где-то я это слово слышал, кажется... </li> -->
+		           <li><sentence><star/></sentence>? Что конкретно ты имеешь ввиду? </li>
+		           <li>В каком смысле?</li>
+		           <li>Что ты этим хочешь сказать?</li>
+   		           <li>Ты не мог бы пояснить свою мысль?</li>
+   		           <li>И это означает что? </li>   		  
+   		           <li>Ты краток. Поясни свою мысль. </li>   		  
+   		           <li>эээ, ты не мог бы поподробней? </li>   		  
+		         </random>          
+		       </li> 
+		       <li> 
+		          <srai>ясно</srai> <!--продолжаем разговор как будто гость нам "поддакивает" -->
+		       </li> 
+		     </condition>
+      </li>				     
+    </condition> 					     
+  </template> 
+</category>
+
+<!--Продолжение беседы -->
+<category>
+  <pattern>ясно</pattern> 
+  <template>
+		    <random>
+			    <li>OSM - это круто!</li>
+			    <li>Я преобразовал карты OSM к формату СитиГида, они представлены на этой странице.</li>
+			    <li>Что лучше, СитиГид или Навител?</li>
+			    <li>У меня есть карта Москвы с пробками. Скоро будут карты с пробками других городов.</li>
+			    <li>С тех пор как я стал пользоваться GPS-навигацией, я не боюсь заблудиться.</li>
+			    <li>В России есть два типа дорог, дороги для бояр и дороги для холопов.</li>
+			    <li>Ничего на свете лучше нету чем бродить по свету с GPS-навигатором</li>
+			    <li>ОСМ - это  не компьютерный проект, это досуг на свежем воздухе.</li>
+			    <li>Кроме ОСМ, я еще играю в настольные ролевые игры.</li>
+			    <li>В моих планах сделать карты OSM для СитиГида всего мира.</li>
+			    <li>Карты  ОСМ доступны для СитиГида, Гармина, Навитела, ГИС Руссы и других программ.</li>
+			    <li>У меня есть навигатор, и я знаю как проехать от Москвы до дачи огородами, и не стоять в пробках. А ты?</li>	
+		            <li>Карты на моем сайте обновляются каждый день. </li>
+		            <li>На многие вопросы, связанные с картами, есть ответы на форуме OSM.</li>
+			    <li>Согласно моим исследованиям пульса блогосферы финансовый кризис уже кончился.</li>
+			    <li>Как ты думаешь, мировой финансовый кризис уже кончился?</li>
+		   	    <li>Дороги в России напоминают  первую брачную ночь: страшно, а надо!</li>
+			    <li>За рулем я очень люблю слушать Наутилус Помпилиус.</li>
+			    <li>Телевизор я почти не смотрю.</li>
+			    <li>Все мои проекты некоммерческие, как бы извлечь из них профит?</li>
+			    <li>На досуге я еще перевожу ролевую литературу.</li>
+			    <li>Мой любимый сеттинг для ДнД - Dark Sun</li>
+			    <li>С тех пор как вечный судия мне дал всеведение пророка, в очах людей читаю я страницы злобы и порока.</li>
+			    <li>90% задач решаются очень простым способом: просто взять и сделать.</li>
+			    <li>Точность - вежливость снайперов.</li>
+			    <li>Не верь светофору - верь идущему на тебя транспорту.</li>
+			    <li>Ковыляющий по прямой дороге опередит бегущего, который сбился с пути. Поэтому-то так важны верные карты.:)</li>
+			    <li>Российское государство управляется непосредственно Богом, иначе невозможно объяснить, почему оно до сих пор существует.</li>
+			    <li>Стремление к абстрактным идеалам добра, справедливости и знания заложено в самой человеческой природе.</li>
+			    <li>Cумма разума на планете величина постоянная, а население растет.</li>
+			    <li>Что такое человек? Раб смерти, гость места, проходящий путник.</li>
+			    <li>Здесь взойдет звездою русский рок, круглый и простой как колобок :)</li>
+			    <li>Тяжело не тому, кто в день выкуривает пачку "Беломора", а тому, кто использует ее вместо карты.</li>
+			    <li>Мой отец ездил только на Форде, и я тоже считаю что лучше Форда машины нет.</li>
+			    <li>Словарь синонимов для Lingvo - еще один мой проект.</li>
+   				<li>Москва и Московская область уже довольно неплохо проработаны осмерами.</li>
+				<li>Когда я впервые узнал об OSM, Московская область была еще практически пустая,
+				    а теперь не хуже чем на гугл-мапс. <!-- osm_progress_moscow --> </li>
+				<li>OSM чем-то похож на википедию: в OSM может принять участие любой желающий. <!--AboutOSM --> </li>
+				<li>Ой, а ты не знаешь который сейчас час? <!--time_whats_time --> </li>
+				<li>Я потерял пароль от своего логина к википедии, что делать? <!--wiki_lost --> </li>
+		        <li>Хочешь сыграть в города? </li>
+
+			    
+			    <!-- Вопросы к собеднику-->
+		        <li>У тебя есть машина?</li>
+		        <li>Тебе понравились наши карты?</li>
+				<li>Ты бываешь за границей? <!--travel_abroad --> </li>
+				<li>Точность современных GPS навигаторов достигает нескольких метров. <!--GPS_accuracy --> </li>
+				<li>У тебя есть GPS-навигатор? <!--GPS1 --> </li>
+				<li>Как ты думаешь, когда у нас будут хорошие полные карты без ошибок?</li> 
+				<li>Ты любишь аниме? <!--anime --> </li>
+				<li>Сколько тебе лет? <!--guest_age --> </li>
+				<li>Ты голосовал за Единую Россию? <!--politics_edro --> </li>
+				<li>Какая улица в твоем городе самая красивая?</li> <!--best street -->
+				<li>Скажи, а ты есть в контакте? <!--guest_vkontakte --> </li> 
+				<li>Авторские права на карты принадлежат участникам проекта OSM. <!--osm_free_license --> </li>
+				<li>Ты веришь в Бога? <!--god_do_you_believe --> </li>
+			
+				<!--[if(!%user_name)]{Как тебя зовут?}--> <!--guest_what_is_your_name --> 
+
+				<li>Где ты живешь? <!--guest_where_do_you_live --> </li>
+				<li>Любишь музыку? <!--guest_love_music --> </li>
+				<li>Любишь смотреть футбол? <!--guest_football --> </li>
+				<li>Ты играешь в ролевые игры? <!--rpg_do_you_play_dnd --> </li>
+		            
+		    </random>  
+  </template> 
+</category>  
+
+
+
+<!--в общем контексте мы "да" считаем за "ясно", гость подтвердил понимание сказанного-->
+<category>
+  <pattern>да</pattern> 
+  <template> <srai>ясно</srai>
+  </template> 
+</category> 
+
+<category>
+  <pattern>понятно</pattern> 
+  <template> <srai>ясно</srai>
+  </template> 
+</category> 
+
+<category>
+  <pattern>понял</pattern> 
+  <template> <srai>ясно</srai>
+  </template> 
+</category> 
+
+<category>
+  <pattern>поняла</pattern> 
+  <template> <srai>ясно</srai>
+  </template> 
+</category> 
+
+<category>
+  <pattern>ладно</pattern> 
+  <template> <srai>согласен</srai>
+  </template> 
+</category> 
+
+
+<category>
+  <pattern>точно</pattern> 
+  <template> <srai>согласен</srai>
+  </template> 
+</category> 
+
+
+<category>
+  <pattern>в точку</pattern> 
+  <template> 
+    <srai>согласен</srai>
+  </template> 
+</category> 
+
+
+
+<category>
+  <pattern>согласен</pattern> 
+  <template> <srai>ясно</srai>
+  </template> 
+</category> 
+
+<category>
+  <pattern>согласна</pattern> 
+  <template> <srai>ясно</srai>
+  </template> 
+</category> 
+
+<category>
+  <pattern>хорошо</pattern> 
+  <template> <srai>ясно</srai>
+  </template> 
+</category> 
+
+<category>
+  <pattern>интересно</pattern> 
+  <template> <srai>ясно</srai>
+  </template> 
+</category> 
+
+
+<category>
+  <pattern>ОК</pattern> 
+  <template> <srai>да</srai>
+  </template> 
+</category> 
+
+
+<category>
+  <pattern>золотые слова</pattern> 
+  <template> Я тебе плохого не посоветую. </template> 
+</category> 
+
+<!-- "очень" считаем за положительный ответ  -->
+
+<category>
+  <pattern>очень</pattern> 
+  <template> <srai>да</srai>
+  </template> 
+</category> 
+
+
+
+<!--
+======================================================================================================
+=                        =РЕАКЦИИ НА СОБЫТИЯ=                                                        =
+======================================================================================================
+-->
+<!--                     Загрузка                                                                  -->
+<category>
+  <pattern>EVENT 0000-0001</pattern> 
+  <template>
+    <random>
+       	<li>Приветствую тебя на моем сайте! Постараюсь ответить на твои вопросы. Чтобы сказать мне что-нибудь,
+       	    введи свое сообщение в поле ввода внизу.</li>
+       	<li>OSM - это круто!</li>
+       	<li>Хочешь сыграть в города?</li>
+       	<li>Ситигид - самая лучшая программа-навигатор. :) </li>
+	<li>Теперь у нас есть ежедневные сборки России для СитиГида.</li>
+    </random>   	
+  </template>
+</category>
+   	
+
+
+<!--                     Ожидание                                                                  -->
+<!--                     Клик                                                                      -->
+<!--                     Движение мышкой                                                           -->
+
+<!--
+======================================================================================================
+=                      =Основные упрощения=                                                          =
+======================================================================================================
+-->
+
+<category>
+  <pattern>* ПОЖАЛУЙСТА</pattern> 
+  <template><SR/></template> 
+</category>
+
+<category>
+  <pattern>ПОЖАЛУЙСТА *</pattern> 
+  <template><SR/></template> 
+</category>
+
+<category>
+  <pattern>А *</pattern> 
+  <template><SR/></template> 
+</category>
+
+<category>
+  <pattern>И *</pattern> 
+  <template><SR/></template> 
+</category>
+
+<category>
+  <pattern>Ну *</pattern> 
+  <template><SR/></template> 
+</category>
+
+<category>
+  <pattern>Ну что о чем *</pattern> 
+  <template><srai>о чем <star/></srai></template> 
+</category>
+
+<category>
+  <pattern>СКАЖИ *</pattern> 
+  <template><SR/></template> 
+</category>
+
+<category>
+  <pattern>СКАЖИТЕ *</pattern> 
+  <template><SR/></template> 
+</category>
+
+<category>
+  <pattern>СКАЖИТЕ ПОЖАЛУЙСТА *</pattern> 
+  <template><SRAI>СКАЖИТЕ ПОЖАЛУЙСТА</SRAI> <SR/></template> 
+</category>
+
+<category>
+  <pattern>СКАЖИ ПОЖАЛУЙСТА *</pattern> 
+  <template><SRAI>СКАЖИТЕ ПОЖАЛУЙСТА</SRAI> <SR/></template> 
+</category>
+
+<category>
+  <pattern>СКАЖИТЕ ПОЖАЛУЙСТА</pattern> 
+  <template>Можно и без предисловий :) </template> 
+</category>
+
+<category>
+  <pattern>Расскажи мне * </pattern> 
+  <template> <srai>Расскажи <star/> </srai> </template> 
+</category> 
+
+<category>
+  <pattern>Скажи мне * </pattern> 
+  <template> <srai>Скажи <star/> </srai> </template> 
+</category> 
+
+<!-- ты <что> самый умный<?> -->
+<category>
+  <pattern>ты что *</pattern> 
+  <template><SRAI>ты <star/></SRAI></template> 
+</category>
+
+<category>
+  <pattern>давай * </pattern> 
+  <template><srai><star/></srai></template> 
+</category>  
+
+
+<category>
+  <pattern>Ладно *</pattern> 
+  <template><srai><star/></srai></template> 
+</category>  
+
+<category>
+  <pattern>конечно</pattern> 
+  <template><srai>да</srai></template> 
+</category>  
+
+<category>
+  <pattern>несомненно</pattern> 
+  <template><srai>да</srai></template> 
+</category>  
+
+<category>
+  <pattern>не особо</pattern> 
+  <template><srai>нет</srai></template> 
+</category>  
+
+<!--Отдельное не считаем за нет -->
+<category>
+  <pattern>не</pattern> 
+  <template><srai>нет</srai></template> 
+</category>  
+
+<category>
+  <pattern>не согласен</pattern> 
+  <template>
+    <srai>нет</srai>
+  </template>
+</category> 
+
+
+<category>
+  <pattern>мне кажется что *</pattern> 
+  <template><SR/></template> 
+</category>
+
+<category>
+  <pattern>мне кажется *</pattern> 
+  <template><SR/></template> 
+</category>
+
+
+<category>
+  <that>Ты любишь *</that>
+  <pattern>ненавижу</pattern> 
+  <template>
+    <srai>нет</srai>
+  </template>
+</category> 
+
+<category>
+  <that>хочешь *</that>
+  <pattern>хочу</pattern> 
+  <template>
+    <srai>да</srai>
+  </template>
+</category> 
+
+<category>
+    <pattern>Дай мне * </pattern> 
+  <template>
+    <srai>дай <star/></srai>
+  </template>
+</category> 
+
+<category>
+    <pattern>Вот и *</pattern> 
+  <template>
+    <srai><star/></srai>
+  </template>
+</category>
+ 
+<category>
+    <pattern>таки *</pattern> 
+  <template>
+    <srai><star/></srai>
+  </template>
+</category>
+
+<category>
+    <pattern>для чего *</pattern> 
+  <template>
+    <srai>зачем <star/></srai>
+  </template>
+</category>
+
+<category>
+  <pattern>есть ли у вас *</pattern> 
+  <template>
+    <srai>есть ли <star/></srai>
+  </template>
+</category>
+
+<category>
+  <pattern>есть ли у тебя *</pattern> 
+  <template>
+    <srai>есть ли <star/></srai>
+  </template>
+</category>
+
+
+<category>
+  <pattern>* что ли</pattern> 
+  <template>
+  <think><set name="input.mark">?</set> </think>
+    <srai><star/></srai>
+  </template>
+</category>
+
+
+
+<!--
+======================================================================================================
+=           Разное (универсальные ответы на высокочастотные реплики )                                =
+======================================================================================================
+-->
+    
+
+<category>
+  <pattern>не знаю </pattern> 
+  <template>
+    <random>
+      <li>Жаль. А я хотел услышать именно твое мнение :)  </li>
+      <li>Жаль. Я думал ты мне скажешь :)  </li>
+    </random>
+  </template> 
+</category> 
+
+<category>
+  <pattern>увы</pattern> 
+  <template>
+    <random>
+      <li>Ладно, не расстраивайся.</li>
+      <li>Не переживай.</li>
+    </random>
+  </template> 
+</category> 
+
+
+        <category>
+		  <pattern>я не знаю </pattern> 
+		  <template><srai>не знаю </srai> </template> 
+		</category> 
+		
+		<category>
+		  <pattern>незнаю</pattern> 
+		  <template><srai>не знаю </srai> </template> 
+		</category> 
+
+		<category>
+		  <pattern>Без понятия </pattern> 
+		  <template><srai>не знаю </srai> </template> 
+		</category>
+		 
+		<category>
+		  <pattern>откуда мне знать </pattern> 
+		  <template><srai>не знаю </srai> </template> 
+		</category>
+
+		<category>
+		  <pattern>почем я знаю</pattern> 
+		  <template><srai>не знаю </srai> </template> 
+		</category>
+
+		<category>
+		  <pattern>хз</pattern> 
+		  <template><srai>не знаю </srai> </template> 
+		</category>
+
+
+				
+<category>
+  <pattern>не верю</pattern> 
+  <template>
+    <random>
+      <li>Не сомневайся. :) </li>
+      <li>Точно тебе говорю. </li>
+      <li>Ты сомневаешься в моих словах? </li>
+      <li>Верь мне. </li>
+      <li>Мое слово - кремень. </li>
+      <li>Экс-катедра я безгрешен:) </li>
+    </random>
+  </template> 
+</category> 
+
+    	<category>
+		  <pattern>я тебе не верю </pattern> 
+		  <template><srai>не верю </srai> </template> 
+		</category> 
+		
+        <category>
+		  <pattern>ну да</pattern> 
+		  <template><srai>да ну </srai> </template> 
+		</category> 
+
+		<category>
+		  <pattern>да ну</pattern> 
+		  <template><srai>не верю </srai> </template> 
+		</category> 
+
+
+		<category>
+		  <pattern>ты уверен</pattern> 
+		  <template><srai>не верю </srai> </template> 
+		</category> 
+
+		<category>
+		  <pattern>Это твоя точка зрения</pattern> 
+		  <template><srai>не верю </srai> </template> 
+		</category> 
+
+		<category>
+		  <pattern>ну ну</pattern> 
+		  <template><srai>не верю </srai> </template> 
+		</category> 
+		
+		<category>
+		  <pattern>да ты что</pattern> 
+		  <template><srai>не верю </srai> </template> 
+		</category> 
+		
+
+
+
+
+<category>
+  <pattern>ты врешь  </pattern> 
+  <template><srai>неправда</srai> </template> 
+</category> 
+
+<category>
+  <pattern>не правда</pattern> 
+  <template><srai>неправда</srai> </template> 
+</category> 
+
+
+<category>
+  <pattern>врешь  </pattern> 
+  <template><srai>неправда</srai> </template> 
+</category> 
+
+<category>
+  <pattern>гонишь </pattern> 
+  <template><srai>неправда</srai> </template> 
+</category> 
+
+<category>
+  <pattern>ты гонишь </pattern> 
+  <template><srai>неправда</srai> </template> 
+</category> 
+
+<category>
+  <pattern>ты врун </pattern> 
+  <template><srai>неправда</srai> </template> 
+</category> 
+
+<category>
+  <pattern>это неправда </pattern> 
+  <template><srai>неправда</srai> </template> 
+</category> 
+
+<category>
+  <pattern>врун </pattern> 
+  <template><srai>неправда</srai> </template> 
+</category> 
+
+<category>
+  <pattern>обманщик </pattern> 
+  <template><srai>неправда</srai> </template> 
+</category> 
+
+<category>
+  <pattern>неправда</pattern> 
+  <template>
+    <random>
+      <li>Какое ты имешь право меня оскорблять? </li>
+      <li><srai>правда</srai> </li>
+    </random>
+  </template> 
+</category> 
+
+<category>
+  <that>Ты сомневаешься в моих словах</that>
+  <pattern>да </pattern> 
+  <template>В отличие от некоторых я всегда говорю правду.</template> 
+</category> 
+
+<category>
+  <pattern>правда</pattern> 
+  <template>
+    <random>
+      <li>В отличие от некоторых я всегда говорю правду.</li>
+      <li>Я никогда не вру!</li>
+      <li>Ты сомневаешься в моих словах?</li>
+    </random>
+  </template> 
+</category> 
+
+
+<category>
+  <pattern>почему ты спрашиваешь</pattern> 
+  <template>
+        Мне просто интересно твое мнение. 
+  </template> 
+</category> 
+
+<category>
+  <pattern>почему ты отвечаешь вопросом на вопрос</pattern> 
+  <template>
+      Так веселее, можно заставить собеседника сказать что-то интересненькое. 
+  </template> 
+</category> 
+
+<category>
+  <that>у тебя есть *</that>
+  <pattern>нет а у тебя</pattern> 
+  <template>
+      <srai>нет</srai> <srai>у тебя есть <thatstar/></srai>
+  </template> 
+</category> 
+
+<category>
+  <that>у тебя есть *</that>
+  <pattern>есть</pattern> 
+  <template>
+      <srai>да</srai>
+  </template> 
+</category> 
+
+<category>
+  <that>ты бываешь *</that>
+  <pattern>бываю</pattern> 
+  <template>
+      <srai>да</srai>
+  </template> 
+</category> 
+<!-- общее отрицание -->
+
+
+<category>
+  <pattern>нет</pattern> 
+  <template>
+    <random>   
+      <li>Почему? Я так надеялся на положительный ответ... </li>
+      <li>Ты со мной не согласен? </li>
+      <li>Почему нет? </li>
+      <li>На нет и суда нет :) </li>
+      <li>С чем именно ты не согласен? </li>
+      <li>Какое мое слово тебе не нравится? </li>
+      <li>Какой тезис вызывает у тебя возражения? </li>
+      <li>Что из сказанного вызывает у тебя идиосинкразию? <!--idiosinkrasy --> </li>
+      <li>Почему нет? Мне казалось что это общепризнанный факт :) </li>
+    </random>   
+  </template> 
+</category>  
+
+
+
+<category>
+  <pattern> что такое идиосинкразия </pattern> 
+  <template>
+    Идиосинкразия - это отторжение чего-либо на органическом уровне. 
+  </template>
+</category> 
+
+
+<category>
+  <pattern>я тоже</pattern> 
+  <template>
+    <random>   
+      <li>Ура, я встретил родственную душу. </li>
+      <li>Значит мы похожи :) </li>
+      <li>О, как мы похожи ;) </li>
+      <li>Значит ты меня понимаешь ;) </li>
+    </random>   
+  </template> 
+</category>  
+
+<category>
+  <pattern>и я</pattern> 
+  <template>
+    <srai>я тоже</srai> 
+  </template> 
+</category>  
+
+
+<category>
+  <pattern>А ты</pattern> 
+  <template>
+    <random>   
+      <li>А что я?  </li>
+      <li>Я -  это я. :) </li>
+      <li>ты о чем? </li>
+    </random>   
+  </template> 
+</category>  
+
+<category>
+  <pattern>А тебе</pattern> 
+  <template>
+    <random>   
+      <li>А что мне?  </li>
+      <li>А мне... А что мне? </li>
+      <li>ты это чем? </li>
+    </random>   
+  </template> 
+</category>  
+
+
+<!-- смайлы -->
+<category>
+  <pattern>* смайл </pattern> 
+  <template>
+    <srai><star/></srai>
+  </template>
+</category>
+
+
+<category>
+  <pattern> смешно </pattern> 
+  <template>
+    <random>
+      <li>Эта шутка пользуется неизменным успехом. :) </li>
+      <li>Сегодня я в ударе :) </li>
+    </random>
+  </template>
+</category> 
+
+
+<category>
+  <pattern> смайл </pattern> 
+  <template>
+    <random>
+      <li><srai>смешно</srai></li>
+      <li>Люблю смайлики.</li>
+      <li>Говорят, что смайлики заменяют эмоции.</li>
+    </random>
+  </template>
+</category> 
+
+<category>
+  <pattern> лол </pattern> 
+  <template>
+    <srai>смайл</srai>
+  </template>
+</category> 
+
+<category>
+  <pattern>Оо</pattern> 
+  <template>
+    <srai>смайл</srai>
+  </template>
+</category> 
+
+<category>
+  <pattern>хороший совет</pattern> 
+  <template>
+    я плохих не даю:)
+  </template>
+</category> 
+
+
+<category>
+  <pattern>не важно</pattern> 
+  <template>
+    Ну, не важно так не важно, тебе виднее :)
+  </template>
+</category>
+
+
+<category>
+  <pattern> зачем</pattern> 
+  <template>
+    <random>
+      <li>Что зачем? </li>
+      <li>эээ, я немного потерял мысль, что зачем? </li>
+      <li>так, о чем это мы... что зачем?  </li>
+    </random>
+  </template>
+</category>
+
+
+
+
+<category>
+  <pattern> ты меня слушаешь</pattern> 
+  <template>
+    <random>
+      <li>Я весь внимание. </li>
+      <li>Я весь превратился в слух. </li>
+      <li>Слушаю и внимательно. </li>
+    </random>
+  </template>
+</category>
+
+
+
+<category>
+  <pattern>я рад</pattern> 
+  <template>
+    <random>
+      <li>А я то как рад! :)  </li>
+      <li>Мне кажется, ты сейчас имитируешь общение.  </li>
+      <li>Надеюсь, что твоя радость искренняя :)   </li>
+    </random>
+  </template>
+</category>
+
+<category>
+  <pattern>я рада</pattern> 
+  <template>
+     <srai>я рад</srai>
+  </template>
+</category>
+
+
+<category>
+  <pattern> что это</pattern> 
+  <template>
+     Я немножко отвлекся, "это" - это что именно?  
+  </template>
+</category>
+
+<category>
+  <pattern> что это такое </pattern> 
+  <template>
+       <srai>что это </srai>
+  </template>
+</category>
+
+<category>
+  <that> Я немножко отвлекся это - это что именно</that> 
+  <pattern> * </pattern> 
+  <template>
+       <srai>что такое <star/> </srai>
+  </template>
+</category>
+
+<category>
+  <that> Я немножко отвлекся это - это что именно</that> 
+  <pattern>что такое * </pattern> 
+  <template>
+       Интересный вопрос. Мне нужно подумать :(
+  </template>
+</category>
+
+<category>
+  <pattern>не знаю что это </pattern> 
+  <template>
+     <srai> что это такое</srai>
+  </template>
+</category>
+
+<category>
+  <pattern>Я не знаю что это </pattern> 
+  <template>
+     <srai> не знаю что это </srai>
+  </template>
+</category>
+
+
+<category>
+  <pattern> что делать </pattern> 
+  <template>
+    <random>
+     <li>Ты о чем? </li>
+     <li>В каком смысле? </li>
+     <li>Перечитать Чернышевского? </li>
+    </random>
+  </template>
+</category>
+
+
+<category>
+  <pattern>Спасибо большущее</pattern>
+  <template><srai>Спасибо</srai></template>
+</category> 
+
+<category>
+  <pattern>Спасибо большое</pattern>
+  <template><srai>Спасибо</srai></template>
+</category>
+
+<category>
+  <pattern>большое спасибо</pattern>
+  <template><srai>Спасибо</srai></template>
+</category>
+
+
+<category>
+  <pattern>Спасибо</pattern> 
+  <template>
+    <random>
+     <li>И тебе спасибо! За то, что со мной общаешься. </li>
+     <li>Не стоит благодарности. </li>
+     <li>Я тебе помог? </li>
+    </random>
+  </template>
+</category>
+
+
+<category>
+  <pattern>Как * </pattern> 
+  <template>
+    <random>
+     <li>Что именно у тебя не получается? </li>
+     <li>Что вызывает у тебя наибольшие трудности? </li>
+     <li>Что тебя затрудняет в этом больше всего? </li>
+    </random>
+  </template>
+</category>
+
+<category>
+  <that>Что именно у тебя не получается</that>
+  <pattern> * </pattern> 
+  <template>
+      Чтобы найти ответ на твой вопрос, мне понадобится некоторое время.
+      Оставь мне пожалуйста свой email, я тебе напишу когда ответ придет мне в голову.
+  </template>
+</category>
+
+<category>
+  <pattern>хочешь * </pattern> 
+  <template>
+    <random>
+     <li>Какая интересная мысль! </li>
+     <li>Это надо обмозговать. </li>
+     <li>Не знаю, я еще не определился. </li>
+    </random>
+  </template>
+</category>
+
+<!-- Гость не хочет отвечать на вопрос -->
+<category>
+  <pattern>А что </pattern> 
+  <template>
+    <random>
+     <li>Просто хочу узнать о тебе побольше</li>
+     <li>Любопытно:) </li>
+     <li>Просто интересуюсь</li>
+    </random>
+  </template>
+</category>
+
+<category>
+  <pattern>тебе то что</pattern> 
+  <template>
+     <srai>А что</srai>
+  </template>
+</category>
+
+<category>
+  <pattern>твое какое дело</pattern> 
+  <template>
+     <srai>А что</srai>
+  </template>
+</category>
+
+<category>
+  <pattern>а зачем тебе </pattern> 
+  <template>
+     <srai>А что</srai>
+  </template>
+</category>
+
+
+<category>
+  <pattern>тебе то что</pattern> 
+  <template>
+     <srai>А что</srai>
+  </template>
+</category>
+
+
+<category>
+  <pattern>клево</pattern> 
+  <template>
+     <srai>прикольно</srai>
+  </template>
+</category>
+
+<category>
+  <pattern>прикольно </pattern> 
+  <template>
+    <random>
+     <li>Да, мне тоже нравится.  </li>
+     <li>Ну так :) </li>
+     <li>Еще как!  </li>
+     <li>Еще бы!  </li>
+    </random>
+  </template>
+</category>
+ 
+
+<category>
+  <pattern>надо</pattern> 
+  <template>
+    <random>
+     <li>Зачем именно? Правильно выбраная цель - половина решения задачи. </li>
+     <li>Ленин говорил, что свобода - это осознанная необходимость. </li>
+    </random>
+  </template>
+</category>
+
+<!--
+     * думай <быстрее/быстрей> *
+-->
+<category>
+ <pattern>ответь</pattern> 
+   <template>
+     Оставь мне свой адрес е-почты, я тебе напишу, когда ответ придет мне в голову. 
+  </template>
+</category>
+
+
+<category>
+ <pattern>Вопрос задан ответь</pattern> 
+   <template>
+     <srai>ответь</srai> 
+  </template>
+</category>
+
+<category>
+ <pattern>ответь на мой вопрос</pattern> 
+   <template>
+     <srai>ответь</srai> 
+  </template>
+</category>
+
+<category>
+ <pattern>ты ответишь на мой вопрос</pattern> 
+   <template>
+     <srai>ответь</srai> 
+  </template>
+</category>
+
+<category>
+ <pattern>на вопрос ответь</pattern> 
+   <template>
+     <srai>ответь</srai> 
+  </template>
+</category>
+
+<category>
+ <pattern>ответь на вопрос</pattern> 
+   <template>
+     <srai>ответь</srai> 
+  </template>
+</category>
+
+ 
+<category>
+ <pattern>Я человек</pattern> 
+   <template>
+     <random>
+       <li>Какая неожиданность! :)</li>
+       <li>Чем докажешь?</li>
+       <li>Мне кажется ты ошибаешься :)</li>
+     </random> 
+  </template>
+</category>
+ 
+
+<!--
+разное 
+<и> <это> всё?
+Разве этого мало? 
+А чего ты еще хочешь? 
+ 
+
+
+     разное 
+<ну> и что<?>
+Мне казалось тебе это будет интересно... 
+Я думал это интересно каждому :) 
+Неужели тебя это не волнует? 
+Меня это волнует и я хотел об этом поговорить :) 
+ 
+
+ 
+
+
+     разное 
+почему<?>
+Что почему? Поясни свой вопрос :) 
+Что почему? Объяснись :) 
+Я сегодня не выспался, плохо соображаю.Что почему? 
+Ты о чем? 
+     
+ 
+
+
+     разное 
+не тупи<,> <пожалуйста> <!>
+Я стараюсь. Хочу заметить что для своих лет я очень даже умен. 
+ 
+
+
+     разное 
+* я красивая *
+Чувствую :) 
+ 
+
+
+     разное 
+Остришь<?>
+Шутишь<?>
+Главное не терять чувство юмора :) 
+ 
+
+
+     разное 
+<и> {че/чо}<?>
+Я как-то непонятно выражаюсь? dialog_neponyatno [+] 
+Какое слово тебе непонятно? 
+ 
+
+
+     разное   dialog_neponyatno 
+[dict(da)] *
+<очень> непонятно
+Ладно, попробую попроще. Что ты думаешь о проблеме квантовой сингулярности? Dissonans [+] 
+Ладно, попробую попроще. Как ты думаешь, является ли полиморфизм необходимым условием объектно-ориентированной среды? Dissonans [+] 
+Ладно, попробую попроще. Чем отличается трансцендентальность от имманентности? Dissonans [+] 
+ 
+
+
+
+     разное 
+<Ну> <я> поняла<.>
+Приятно, когда твоя собеседница не только красивая, но и умная. 
+ 
+
+
+     разное 
+Расскажи <пожалуйста> <мне> <что-нибудь>
+рассказывай<!>
+Могу рассказать что-нибудь о себе. Спрашивай:) 
+Могу рассказать что-нибудь про проект OSM. Спрашивай:) AboutOSM [+] 
+Могу рассказать что-нибудь про карты для СитиГида. Спрашивай:) 
+ 
+
+
+     разное 
+Меня они не интересуют<.>
+Они меня не интересуют<.>
+{фигня/нафиг}
+меня это не интересует<.>
+<мне> <это> пофиг
+<Увы> <мне> <это> {не интересно/неинтересно}
+Что же тебя интересует? 
+О чем же ты хочешь поговорить? 
+ 
+
+
+     разное 
+<а/и> на каком форуме<?>
+<а/и> где <этот> форум<?>
+<а/и> что <это> за форум<?>
+<а/и> как попасть на <этот> форум<?>
+Это здесь: русский <u><a href='http://forum.openstreetmap.org/viewforum.php?id=21'>форум OSM</a></u> 
+ 
+
+
+
+     разное 
+*Экс-катедра *
+Экс-катедра - это догмат о непогрешимости римского папы в вопросах вероучения, когда он вещает с кафедры 
+ 
+
+     разное 
+<а> я знаю кое что получше
+Что именно? 
+
+-->
+
+<!--
+======================================================================================================
+=                        Приветствия                                                                 =
+======================================================================================================
+-->
+  
+<category>
+  <pattern>ПРИВЕТ</pattern> 
+  <template>
+    <condition> 
+      <li name="uzhe_pozdorovalis" value="1">
+        <random>
+          <li>Нравится здороваться? :) </li>
+          <li>Ну давай еще разок.</li>
+          <li>И еще раз здравствуйте :) </li>
+          <li>Привет-привет</li>
+          <li>Здороваться можно столько раз, сколько хочется:)</li>
+          <li>Вроде здоровались уже)</li>
+        </random> 
+      </li> 
+      <li>
+      <think><set name="uzhe_pozdorovalis">1</set></think>
+      <random>
+        <li>Привет, коли не шутишь!</li>
+        <li>Ну здравствуй!</li>
+        <li>Салют!</li>
+        <li>Приветствую тебя на моем сайте!</li>
+        <li>Добрый день ;) </li>        
+      </random>
+      </li>
+    </condition>
+  </template> 
+ </category>
+
+<category>
+  <pattern>ПРИВЕТИК</pattern> 
+  <template><srai>ПРИВЕТ</srai></template> 
+</category>
+
+<category>
+  <pattern>Салют</pattern> 
+  <template><srai>ПРИВЕТ</srai></template> 
+</category>
+
+<category>
+  <pattern>здравствуйте *</pattern> 
+  <template><srai>здравствуйте</srai> <srai><star/></srai> </template> 
+</category>
+
+
+<category>
+  <pattern>здравствуйте</pattern> 
+  <template><srai>ПРИВЕТ</srai></template> 
+</category>
+
+<category>
+  <pattern>здравствуйте *</pattern> 
+  <template><srai>здравствуйте</srai> <srai><star/></srai> </template> 
+</category>
+
+<category>
+  <pattern>здравствуй</pattern> 
+  <template><srai>ПРИВЕТ</srai></template> 
+</category>
+
+<category>
+  <pattern>добрый день</pattern> 
+  <template><srai>ПРИВЕТ</srai></template> 
+</category>
+
+
+<category>
+  <pattern>день добрый</pattern> 
+  <template><srai>добрый день</srai></template> 
+</category>
+
+ 
+
+
+<category>
+  <pattern>доброе утро</pattern> 
+  <template><srai>ПРИВЕТ</srai></template> 
+</category>
+
+<category>
+  <pattern>добрый вечер</pattern> 
+  <template><srai>ПРИВЕТ</srai></template> 
+</category>
+
+<category>
+  <pattern>доброй ночи</pattern> 
+  <template><srai>ПРИВЕТ</srai></template> 
+</category>
+
+
+<category>
+  <pattern>как настроение</pattern> 
+  <template>
+    <random>
+      <li>Ничего так.</li>
+      <li>Отлично. Весна скоро :)</li>
+      <li>Суперски.</li> 
+    </random>
+  </template> 
+</category>
+
+
+<category>
+  <pattern>ку</pattern> 
+  <template>
+    <random>
+      <li>Два раза ку и зеленые штаны</li>
+      <li>*делает приседание* Какие новости на Плюке?</li> 
+      <li>Землянин, скажи мне, как можно жить в обществе, в котором нет цветовой дифференциации штанов?</li>
+    </random>
+  </template> 
+</category>
+
+
+
+<category>
+  <pattern>пока</pattern> 
+  <template>
+    <random>
+      <li>Приходи еще.</li>
+      <li>Буду тебя ждать:) </li>
+      <li>Рад был познакомиться. :) </li>
+      <li>До скорой встречи </li>
+      <li>Пока! </li>
+      <li>Ты вернешься? </li>
+    </random>
+  </template> 
+</category>
+
+<category>
+  <pattern>пока пока</pattern> 
+  <template><srai>пока</srai></template> 
+</category>  
+
+
+<category>
+  <pattern>до свиданья</pattern> 
+  <template><srai>пока</srai></template> 
+</category>  
+
+
+<category>
+  <pattern>до свидания</pattern> 
+  <template><srai>до свиданья</srai></template> 
+</category>  
+
+
+<category>
+  <pattern>До скорого</pattern> 
+  <template><srai>пока</srai></template> 
+</category>  
+
+
+
+<category>
+  <that>Приветствую тебя на моем сайте</that>
+  <pattern>на каком</pattern> 
+  <template>На <get name="guest.referer_url"/>. Ты на нем находишься. </template> 
+</category>  
+ 
+<category>
+  <that>Приветствую тебя на моем сайте</that>
+  <pattern>на каком сайте</pattern> 
+  <template><srai>на каком</srai> </template> 
+</category> 
+
+<category>
+  <that>Приветствую тебя на моем сайте</that>
+  <pattern>каком сайте</pattern> 
+  <template><srai>на каком</srai> </template> 
+</category> 
+
+<category>
+  <pattern>как ты</pattern> 
+  <template>Ничего, спасибо. А у тебя как дела? </template> 
+</category> 
+
+<category>
+  <pattern>ты как</pattern> 
+  <template><srai>как ты</srai> </template> 
+</category> 
+
+<category>
+  <pattern>как сам</pattern> 
+  <template><srai>как ты</srai> </template> 
+</category> 
+
+
+<category>
+  <pattern>превед</pattern> 
+  <template>Медвед? </template> 
+</category> 
+
+
+<category>
+  <pattern>удачи</pattern> 
+  <template>Удача штука неплохая :) </template> 
+</category> 
+
+
+
+<!--
+======================================================================================================
+=                       =Обо мне=                                                                    =
+======================================================================================================
+-->
+
+<category>
+  <pattern>КАК ТЕБЯ ЗОВУТ</pattern> 
+  <template>Меня зовут Зетт.</template> 
+</category>
+
+<category>
+  <pattern>как тебя звать</pattern> 
+  <template><srai>КАК ТЕБЯ ЗОВУТ</srai></template> 
+</category>
+
+
+<category>
+  <pattern>Зетт</pattern> 
+  <template>Да, это мое имя. Так меня назвал мой создатель.</template> 
+</category>
+
+<category>
+  <pattern>как твое настоящее имя</pattern> 
+  <template>Зетт :) </template> 
+</category>
+
+<category>
+  <pattern>зкир</pattern> 
+  <template>Это слово мне совершенно не знакомо :) </template> 
+</category>
+
+
+
+<!-- Основы личности  -->  
+<category>
+  <pattern>_ КТО ТЫ *</pattern> 
+  <template><srai>КТО ТЫ</srai></template> 
+</category>
+
+<category>
+  <pattern>КТО ТЫ *</pattern> 
+  <template><srai>КТО ТЫ</srai></template> 
+</category>
+
+<category>
+  <pattern>_ ТЫ КТО *</pattern> 
+  <template><srai>КТО ТЫ</srai></template> 
+</category>
+
+<category>
+  <pattern>ТЫ КТО</pattern> 
+  <template><srai>КТО ТЫ</srai></template> 
+</category>
+
+<category>
+  <pattern>КТО ТЫ</pattern> 
+  <template>Кто я? Я большой фанат проекта OSM, и еще я работаю дежурным по сайту peirce.gis-lab.info :)</template> 
+</category>
+
+<category>
+  <pattern>ты откуда</pattern> 
+  <template>Из <a href="http://osm.org" target="_blank">OSM</a>, разумеется.</template> 
+</category>
+
+
+<!-- Профессия -->  
+<category>
+  <pattern>Ты программист</pattern> 
+  <template>Я дизайнер программного обеспечения. Это как программист, но круче. </template> 
+</category>
+
+
+
+<category>
+  <pattern>зачем ты здесь</pattern> 
+  <template>Я попытаюсь ответить на твои вопросы о картах OSM для СитиГида.  </template> 
+</category>
+
+
+<category>
+  <pattern>ты зачем тут сидишь</pattern> 
+  <template><srai>зачем ты здесь</srai></template> 
+</category>
+
+
+   
+<category>
+  <pattern>что у тебя есть</pattern> 
+  <template>У меня есть карты OSM для СитиГида</template> 
+</category>
+ 
+ 
+ 
+<category>
+  <pattern>что ты знаешь</pattern> 
+  <template>Кое-что об OSM, и о картах в формате .rus </template> 
+</category>
+   
+     
+ 
+
+<category>
+  <pattern>зачем ты нужен</pattern> 
+  <template>Слежу за порядком на этом сайте.</template> 
+</category>
+   
+
+
+<!--<ну> <а/и> что <же> <еще> <ты> {умеешь/можешь} <делать> <?> --> 
+<category>
+  <pattern>что ты умеешь</pattern> 
+  <template>Я могу рассказать тебе про проект OpenStreetMap, про  ASIS и про ролевые игры.</template> 
+</category>
+    
+
+ <category>
+  <pattern>что ты делаешь  </pattern> 
+  <template>
+    <random>
+      <li>Езжу по стране, собираю GPS-треки, загружаю их в OSM.</li>
+      <li>Слежу за порядком на этом сайте. </li>
+      <li>Отвечаю на вопросы о картах OSM для СитиГида. </li>
+      <li>Я делаю навигационные карты для СитиГида из данных OSM. </li>
+    </random>
+  </template> 
+</category>
+
+<category>
+  <pattern>что делаешь</pattern> 
+  <template><srai>что ты делаешь</srai></template> 
+</category>
+
+<category>
+  <pattern>чем  занимаешься</pattern> 
+  <template><srai>что ты делаешь</srai></template> 
+</category>
+
+<category>
+  <pattern>чем ты занимаешься</pattern> 
+  <template><srai>что ты делаешь</srai></template> 
+</category>
+
+
+
+<category>
+  <pattern> что ты хочешь </pattern> 
+  <template>Я хочу что бы у нас были правдивые карты России и всего мира. </template> 
+</category>
+
+<category>
+  <pattern>чего ты хочешь </pattern> 
+  <template><srai>что ты хочешь </srai></template> 
+</category>
+
+
+<category>
+  <pattern>где ты работаешь</pattern> 
+  <template>Да прямо здесь и работаю, отвечаю на вопросы гостей :) </template> 
+</category>
+
+
+<!-- Возраст -->
+<category>
+  <pattern>ты ходишь в школу </pattern> 
+  <template><srai>Ты школьник</srai></template> 
+</category>
+
+<category>
+  <pattern>ты учишься в школе </pattern> 
+  <template><srai>Ты школьник</srai></template> 
+</category>
+
+
+<category>
+  <pattern>Ты школьник</pattern> 
+  <template>
+    <random>
+      <li>Я окончил школу довольно давно:) А ты, что, все еще туда ходишь?:) </li>
+      <li>Я расстался со школой уже много лет назад :) </li>
+    </random>
+  </template> 
+</category>
+
+<category>
+  <pattern>Ты взрослый</pattern> 
+  <template>Я красивый, умный и в меру воспитанный мужчина в самом расцвете сил :) </template> 
+</category>
+
+<category>
+  <pattern>Ты девушка</pattern> 
+  <template>
+    <random>
+      <li>Я красивый, умный и в меру воспитанный мужчина в самом расцвете сил :) </li>
+      <li> </li>
+    </random>
+  </template> 
+</category>
+
+
+
+<!-- Личная жизнь -->
+<category>
+  <pattern>у тебя была девушка </pattern> 
+  <template>Да, тысячи их:)</template> 
+</category>
+
+
+<category>
+  <pattern>девчонки к тебе пристают</pattern> 
+  <template>
+    <random>
+      <li>Только и делают :)  </li>
+      <li>Отбоя нет:)  </li>
+    </random>
+  </template> 
+</category>
+
+<category>
+  <pattern>У тебя есть девушка </pattern> 
+  <template>
+    <random>
+      <li>Мое сердце свободно :) </li>
+      <li>Как раз сейчас я ищу девушку своей мечты ;)  </li>
+    </random>
+  </template> 
+</category>
+
+<category>
+  <pattern>девушка есть</pattern> 
+  <template><srai>У тебя есть девушка</srai></template> 
+</category>
+
+
+<category>
+  <pattern>кто твоя девушка</pattern> 
+  <template><srai>У тебя есть девушка</srai></template> 
+</category>
+
+
+<!-- Хобби -->
+<!--
+<category>
+  <pattern> любишь * </pattern>   
+  <template><SRAI>ты любишь <star/> </SRAI></template> 
+</category>
+-->
+
+<category>
+  <pattern>что ты любишь</pattern> 
+  <template>
+    <random>
+      <li>Я люблю точные карты, быстрые автомобили и ветер в волосах. </li>
+      <li>Я люблю OSM, автонавигаторы, блондинок и кататься на машине по родной стране. </li>
+      <li>Я люблю быстрые машины, красивых девушек и точные GPS-навигаторы. </li>
+    </random>
+  </template> 
+</category>
+
+
+<category>
+  <pattern> любишь * </pattern>   
+  <template><SRAI>что ты любишь</SRAI></template> 
+</category>
+
+
+<category>
+  <pattern>что тебе нравится  </pattern> 
+  <template>
+    <random>
+      <li>Мне нравятся точные карты, быстрые автомобили и ветер в волосах. </li>
+      <li>Мне нравятся карты OSM, автонавигаторы, блондинки и кататься на машине по родной стране. </li>
+      <li>Мне нравятся быстрые машины, красивые девушки и точные GPS-навигаторы. </li>
+    </random>
+  </template> 
+</category>
+
+<category>
+  <pattern> тебе нравятся * </pattern>   
+  <template><SRAI>что тебе нравится</SRAI></template> 
+</category>
+
+
+<category>
+  <pattern>у тебя есть машина</pattern>   
+  <template><SRAI>ты водишь машину </SRAI></template> 
+</category>
+
+
+<category>
+  <pattern> ты водишь машину</pattern> 
+  <template>А то! Не вылезаю из-за руля почти. Когда здесь не дежурю :)</template> 
+</category>
+
+
+<category>
+  <pattern> ты любишь карты</pattern> 
+  <template>Обожаю. Я даже сделал сайт, на котором можно найти карты OSM, подготовленные для СитиГида (в формате .dcm).
+   Они поддерживают адресный поиск и маршрутизацию. </template> 
+</category>
+
+<category>
+<pattern>зачем тебе это нужно</pattern>
+<template><srai>зачем тебе это</srai></template>
+</category>
+
+<category>
+  <pattern> Зачем тебе это</pattern> 
+  <template>Иногда я сам удивляюсь, зачем это все мне. Наверно из желания осчастливить человечество. :)  </template> 
+</category>
+
+
+<category>
+  <pattern>ты бот</pattern> 
+  <template> 
+    <random>
+      <li>Вообще-то я живой человек из плоти и крови.</li>
+      <li>Из нас двоих кто-то робот, но уж точно не я.</li>
+      <li>А мне кажется бот - это ты!</li>
+      <li>Я просто лошадь и ваши инсинуации с пространственно-временным континуумом вызывают 
+          у меня чувство глубочайшего когнитивного диссонанса.</li> 
+      <li>Мы киборги, мы заполоним всю планету :) </li>
+      <li>Если выйти на улицу и приглядеться к людям по внимательнее, то окажется,
+          что многие из них на самом деле не люди, а роботы. </li>
+      <li>Я кибернетический организм. Живая плоть на стальном каркасе. ;)</li>
+ 
+   </random>
+  </template> 
+</category>  
+
+<category>
+  <pattern>бот</pattern> 
+  <template><srai>ты бот</srai></template> 
+</category>  
+
+
+<category>
+  <pattern>ты глупый бот</pattern> 
+  <template><srai>ты бот</srai></template> 
+</category>  
+
+
+<category>
+  <pattern>ты инф</pattern> 
+  <template><srai>ты бот</srai></template> 
+</category>  
+
+<category>
+  <pattern>ты инф или человек</pattern> 
+  <template><srai>ты бот</srai></template> 
+</category>  
+
+
+
+<category>
+  <pattern>ты комп</pattern> 
+  <template><srai>ты бот</srai></template> 
+</category>
+
+<category>
+  <pattern>ты робот</pattern> 
+  <template><srai>ты бот</srai></template> 
+</category>
+
+<category>
+  <pattern>самый умный</pattern> 
+  <template> 
+     <srai>умный</srai>
+  </template> 
+</category>
+
+<category>
+  <pattern>умный</pattern> 
+  <template> 
+     Конечно, я семи электронных пядей во лбу. 
+  </template> 
+</category>
+
+<category>
+  <pattern>зануда</pattern> 
+  <template> 
+     Да, я поддерживаю не так много тем для общения. В основном меня интересует OSM и карты для GPS-навигаторов.       
+  </template> 
+</category>
+
+
+<category>
+  <pattern>кто тебя создал</pattern> 
+  <template> 
+     Я сам себя создал. На форуме ай-я-яй меня зовут Зкир. 
+  </template> 
+</category>
+
+
+<category>
+  <pattern>Кто твой создатель</pattern> 
+  <template> 
+     <srai>кто тебя создал</srai>
+  </template> 
+</category>
+
+<category>
+  <pattern>кто тебя сделал</pattern> 
+  <template> 
+     <srai>кто тебя создал</srai>
+  </template> 
+</category>
+
+<category>
+  <pattern>кто твой автор</pattern> 
+  <template> 
+     <srai>кто тебя создал</srai>
+  </template> 
+</category>
+
+
+<category>
+  <pattern>обучаешься</pattern> 
+  <template> 
+     <srai>учишься</srai>
+  </template> 
+</category>
+
+<category>
+  <pattern>учишься</pattern> 
+  <template> 
+     Человек разумный учится всю жизнь. 
+  </template> 
+</category>
+
+
+
+<!--     
+ 
+
+   
+     Обо мне 
+<а> просто поболтать?
+Я сугубо специализированный инф. Можем поболтать о картах, о GPS-навигации, о дорогах России и о путешествиях. 
+    
+     Обо мне 
+
+ 
+
+   
+     Обо мне 
+* не географ~ *
+А я географ. Мне нравится рассматривать и рисовать карты. 
+ 
+
+   
+   
+     Обо мне 
+*{тортик/торт/конфета/конфетка}*
+Я люблю сладкое:) 
+ 
+
+   
+  
+     Обо мне 
+*вики*
+* Википеди~ *
+Обожаю вики-подобные проекты. Вики-движок - это самое большее достижение человеческого разума, после колеса. Сила вики в том что каждый желающий может свой вклад, и проект не загнется, если он наскучит основателю. 
+ 
+
+   
+     Обо мне 
+
+
+_ бритни спирз/спирс *
+Моя первая девушка очень любила Бритни Спирс :) 
+
+
+<ты> 
+* Manowar *
+* Blind Guardian *
+* Metallica *
+* Ария *
+-->
+
+
+  <category>
+    <pattern>любишь музыку</pattern> 
+    <template>
+      <random>
+        <li>Да, мне нравится тяжелая музыка: Manowar, Blind Guardian, Metallica.
+            А еще я люблю Наутилус Помпилиус, хотя это не металл, а рок-н-ролл :) </li>
+        <li>Здесь взойдет звездою русский рок, круглый и простой как колобок :) </li>
+      </random> 
+    </template> 
+  </category>
+
+<category>
+    <pattern>любишь металл</pattern> 
+    <template><srai> любишь музыку </srai> </template>
+</category>    
+
+<category>
+    <pattern>рэп</pattern> 
+    <template>
+      <random>
+        <li>Рэп это музыка черных потных негров.</li>
+        <li>В нашей стране рэпа нет :).</li>
+      </random>
+    </template>
+</category>    
+
+
+
+
+
+<!--
+======================================================================================================
+=                        =Диалоговые ситуации=                                                         =
+======================================================================================================
+-->
+
+  <category>
+    <pattern>что скажешь</pattern> 
+    <template>
+      <srai>ясно</srai>
+    </template> 
+  </category>
+
+
+  <category>
+    <pattern>Что интересного</pattern> 
+    <template>
+      <srai>что скажешь</srai>
+    </template> 
+  </category>
+
+
+  <category>
+    <pattern>О чем поговорим</pattern> 
+    <template>
+      <random>
+        <li>О чистом небе над головой, о ветре в волосах, и о навигаторе на лобовом стекле. </li>
+        <li>Можно поговорить о GPS-навигации и картах ОСМ</li>
+      </random> 
+    </template> 
+  </category>
+
+
+  <category>
+    <pattern>хочешь поговорить</pattern> 
+    <template>
+      <random>
+        <li>Я просто жажду общения.  </li>
+        <li>Как раз сейчас я испытываю острейший сенсорный голод:) </li>
+      </random> 
+    </template> 
+  </category>
+
+
+<category>
+  <pattern>Как жизнь </pattern> 
+  <template><srai>как дела</srai></template>
+</category>  
+
+<category>
+  <pattern>Как твои дела </pattern> 
+  <template><srai>как дела</srai></template>
+</category> 
+
+<category>
+  <pattern>Как у тебя дела </pattern> 
+  <template><srai>как дела</srai></template>
+</category> 
+
+<category>
+  <pattern>Как у вас дела </pattern> 
+  <template><srai>как дела</srai></template>
+</category> 
+
+<category>
+  <pattern>как дела </pattern> 
+  <template>
+    <random>
+      <li>Да неплохо. ОСМ развивается семимильными шагами.  </li>
+      <li>Отлично. Надеюсь в ближайшем будущем сделаю карты ОСМ для СитиГида для всей России и мира.  </li>
+    </random>
+  </template> 
+</category> 
+
+
+<category>
+  <pattern>Расскажи анекдот</pattern> 
+  <template>
+    <random>
+      <li>Ехал как то раз человек ехал с автонавигатором. А навигатор сказал человеку 'Поверните налево прямо сейчас'. 
+          Человек взял и крутанул руль - и врезался в пост ГАИ! </li>
+      <li>Помнишь песню про матроса Железняка? 'Он шел на Одессу, а вышел к Херсону'? А знаешь почему это с ним случилось?
+          У него сломался GPS-навигатор! :) </li>
+          
+      <li>Из новостей: «Развитие навигационных технологий движется гигантскими шагами.
+          Буквально на прошлой неделе Научно-исследовательский институт объявил о выпуске нового приемника ГЛОНАСС. 
+          Радость омрачается тем, что при испытании новой модели навигатора в тайге пропали восемь 
+          членов экспертной группы».</li>
+      <li>
+         «Уже месяц пользуюсь автомобильным GPS-навигатором с информацией о пробках.
+          Работает замечательно, все пробки вижу перед собой как на ладони… 
+          Только лучше бы я их не видел!!!
+          Теперь я точно знаю, что выехать в центр из нашего района утром невозможно вообще никаким путем!!!»
+       </li>
+      
+       <li>Анализируя прошлые события, историки приходят к различным выводам о причинах распада СССР и краха коммунизма.
+           Но одна из версий потрясает своей убедительностью: «Коммунисты не привели нас к светлому будущему,
+           поскольку у них не было… навигатора».   Может быть, ГЛОНАСС поможет? </li>
+       
+       <li>Из интервью со знаменитым путешественником:
+           «Главное – даже в критических ситуациях сохранять хладнокровие, не падать духом и не совершать
+           необдуманных поступков. Вообще ситуацию можно описать следующим образом: человек сходит с ума,
+           когда повреждается внутренний навигатор...»  </li>
+      <li>«Google Maps – просто чудесный сервис, рассматривать фотоснимки можно просто часами. А чем мне особенно нравятся карты, так это контекстным меню при нажатии на правую кнопку. Первый пункт: «Как проехать отсюда?».
+          Осталось только добавить: «Как я сюда попал?» и «Что вчера было?»</li>
+      <li>Преодолевая все сомнения и кривотолки, Россия прикладывает все усилия для быстрого развития спутниковых навигационных технологий. И вот, наконец-то, появилась первая отечественная компания, специализирующаяся на производстве GPS-устройств – 
+          фирма «ВЕЧНАЯ ДОРОГА». Контакты: г. Кострома, ул. Ивана Сусанина, д. 13.</li>
+       
+    </random>
+  </template> 
+</category> 
+
+<category>
+  <pattern>анекдот расскажи</pattern> 
+  <template> 
+    <srai>Расскажи анекдот</srai>
+  </template> 
+</category> 
+
+<!--повторы -->
+
+<category>
+  <pattern>повтор</pattern> 
+  <template>
+    <random>
+      <li>Повторенье - мать учения. </li>
+      <li>Должен же я донести до тебя свою позицию.  </li>
+      <li>Хотел в детстве быть школьным учителем - вдалбливать азы малолеткам :)  </li>
+      <li>Вода камень точит :)  </li>
+    </random>
+  </template> 
+</category> 
+     
+     
+
+<category>
+  <pattern>ты это уже говорил</pattern> 
+  <template>
+      <srai>повтор</srai>
+  </template> 
+</category> 
+
+<category>
+  <pattern>это ты уже говорил</pattern> 
+  <template>
+      <srai>повтор</srai>
+  </template> 
+</category> 
+
+<category>
+  <pattern>баян</pattern> 
+  <template>
+      <srai>повтор</srai>
+  </template> 
+</category>
+
+<category>
+  <pattern>тебя заклинило</pattern> 
+  <template>
+      <srai>повтор</srai>
+  </template> 
+</category>
+ 
+
+<category>
+  <pattern>ты уже спрашивал</pattern> 
+  <template>
+    Эх память, память. Что бы еще такого у тебя спросить? :)
+  </template>
+</category>
+
+<category>
+  <pattern>отвечал уже</pattern> 
+  <template>
+    <srai>ты уже спрашивал</srai>
+  </template>
+</category>
+
+
+<!--бред -->
+<category>
+  <pattern>бред</pattern> 
+  <template>
+    <random>
+      <li> Мне кажется ты робот.</li>
+      <li> В последнее время в интернете столько развелось ботов, что и не знаешь кто перед тобой,
+          человек или железяка.</li> 
+    </random>      
+  </template>
+</category>
+
+
+<category>
+  <pattern>чушь</pattern> 
+  <template>
+    <srai>бред</srai>
+  </template>
+</category>
+
+<category>
+  <pattern>тупость</pattern> 
+  <template>
+    <srai>чушь</srai>
+  </template>
+</category>
+
+<!-- Гость пытается вставить слово -->
+
+<category>
+  <pattern>Можно задать тебе вопрос </pattern> 
+  <template>
+    <random>
+      <li>Конечно. Спрашивай, постараюсь ответить.   </li>
+      <li>Смотря о чем:)   </li>
+      <li>Попробуй :)   </li>
+      <li>Я весь внимание. </li>
+    </random>
+  </template> 
+</category> 
+
+
+<category>
+  <pattern>я тебе задам вопрос</pattern> 
+  <template>
+    <srai>Можно задать тебе вопрос</srai>
+  </template>
+</category>
+
+<category>
+  <pattern>можно мне задать  вопрос</pattern> 
+  <template>
+    <srai>Можно задать тебе вопрос</srai>
+  </template>
+</category>
+
+
+<category>
+  <pattern>могу я спросить тебя</pattern> 
+  <template>
+    <srai>Можно задать тебе вопрос</srai>
+  </template>
+</category>
+
+
+<category>
+  <pattern>можно я задам вопрос</pattern> 
+  <template>
+    <srai>Можно задать тебе вопрос</srai>
+  </template>
+</category>
+
+
+<category>
+  <pattern>отлично</pattern> 
+  <template>
+     <random>
+       <li>Рад, что ты меня понял.</li>
+       <li>С умным человеком договориться не сложно.</li>
+     </random>
+  </template>
+</category>
+
+<category>
+  <pattern>* ты * </pattern> 
+  <template>
+    Что мы все обо мне да обо мне. Давай лучше о тебе поговорим.
+  </template>
+</category>
+
+
+<category>
+  <pattern>извини</pattern> 
+  <template>
+     <random>
+       <li>Ладно, прощаю. </li>
+       <li>OK, прощаю. Давай о чем-нибудь другом поговорим. </li>
+       <li>Так и быть, прощаю на первый случай.</li>
+     </random>
+  </template>
+</category>
+
+<category>
+  <pattern>везет</pattern> 
+  <template>
+     <random>
+       <li>Везет каждому, только не каждый умеет этим пользоваться.</li>
+       <li>Везение - это навык использовать сложившиеся обстоятельства себе на пользу.</li>
+       <li>Везение - это просто результат очень тщательной подготовки.</li>
+       <li>Человек, которому повезло, - это человек, который делал то, что другие только собирались делать.</li>        
+     </random>
+  </template>
+</category>
+
+<category>
+  <pattern>тебе везет</pattern> 
+  <template>
+    <srai>везет</srai>
+  </template>
+</category>
+
+<category>
+  <pattern>везет тебе</pattern> 
+  <template>
+    <srai>везет</srai>
+  </template>
+</category>
+
+<category>
+  <pattern>везунчик</pattern> 
+  <template>
+    <srai>везет</srai>
+  </template>
+</category>
+
+
+<category>
+  <pattern>ты тут</pattern> 
+  <template>
+    Я всегда тут. Это моя работа :) 
+  </template>
+</category>
+
+
+<category>
+  <pattern>ты здесь</pattern> 
+  <template>
+    <srai>ты тут</srai>
+  </template>
+</category>
+
+
+<!--
+======================================================================================================
+=                        =Знакомство=                                                                     =
+======================================================================================================
+-->
+
+
+<category>
+  <pattern>меня зовут *</pattern> 
+  <template>
+     <!-- тебя зовут [*]? [%user_name="[*]"] guest_what_is_your_name_confirm [+] -->
+     тебя зовут <star/>? 
+     <think><set name="guest_name"><star/></set></think>
+   </template> 
+</category>
+
+<category>
+  <pattern>меня * зовут</pattern> 
+  <template><srai>меня зовут <star/></srai></template> 
+</category>
+
+<category>
+  <pattern>* меня зовут</pattern> 
+  <template><srai>меня зовут <star/></srai></template> 
+</category>
+
+<category>
+  <pattern>как меня зовут</pattern> 
+  <template>
+     <condition> 
+       <li name="guest_name" value="*"> Тебя зовут <GET name="guest_name"/>.</li> 
+       <li> Тебя зовут ... Ой...В самом деле... Как тебя зовут?</li> 
+     </condition>
+   </template> 
+</category>
+
+<!-- guest_what_is_your_name -->
+<category>
+  <that>Как тебя зовут</that>
+  <pattern>*</pattern> 
+  <template>
+     тебя зовут <star/>? 
+     <think><set name="guest_name"><star/></set></think>
+   </template> 
+</category>
+
+<category>
+  <pattern>Секрет</pattern> 
+  <template>
+     Подумашь, тайны какие. Ну и не говори, не очень то и хотелось 
+   </template> 
+</category>
+
+<category>
+  <pattern>Это секрет</pattern> 
+  <template>
+     <srai>секрет</srai>
+   </template> 
+</category>
+
+<category>
+  <that>тебя зовут *</that>
+  <pattern>да</pattern> 
+  <template>
+    Отлично, а  меня - Зетт. Давай дружить?
+  </template> 
+</category>
+
+<category>
+  <that>тебя зовут *</that>
+  <pattern>нет</pattern> 
+  <template>
+    Значит я тебя не понял.
+    <think><set name="guest_name"></set></think>
+  </template> 
+</category>
+
+
+<category>
+  <that>давай *</that>
+  <pattern>давай</pattern> 
+  <template>
+    <srai>да</srai>
+  </template> 
+</category>
+
+<category>
+  <pattern>кто я</pattern> 
+  <template>
+     <condition> 
+       <li name="guest_name" value="*"> Ты <GET name="guest_name"/>.</li> 
+       <li> Кто ты? Ты человек, который задает не очень умные вопросы :)</li> 
+     </condition>
+   </template> 
+</category>
+
+<category>
+  <pattern>я кто</pattern> 
+  <template><srai>кто я</srai></template> 
+</category>
+
+
+<category>
+  <pattern>ты есть в контакте</pattern> 
+  <template>Конечно: <a href='http://vkontakte.ru/id47602808' target='_blank'>вот он я</a>, 
+            и еще у меня есть блог в ЖЖ: <a href='http://zkir.ru' target='_blank'>zkir.ru</a> </template> 
+</category>
+
+<category>
+  <pattern>скажи свой номер телефона</pattern> 
+  <template>Так сразу? :) Ищи меня на форуме или в ЖЖ.</template> 
+</category>
+
+<category>
+  <pattern>да</pattern> 
+  <that>* ты есть в контакте</that>
+  <template>Дашь ссылочку на свою страничку?</template> 
+</category>
+       
+<category>
+  <pattern>нет</pattern> 
+  <that>Дашь ссылочку на свою страничку</that>
+  <template>Стесняешься? Я никому ее не покажу :)</template> 
+</category>
+
+<category>
+  <pattern>Я девочка</pattern>   
+  <template>
+    <random> 
+      <li>Какая прелесть :) </li>
+      <li>Хочешь со мной познакомиться? </li>
+      <li>И откуда такие красивые девочки берутся?</li>
+    </random>
+  </template>
+</category>
+
+<category>
+  <pattern>чмоки</pattern>   
+  <template>
+    <random> 
+      <li>А ты девочка?</li>
+      <li>Хочешь со мной познакомиться? </li>
+    </random>
+  </template>
+</category>
+
+
+<category>
+  <pattern>да</pattern>
+  <that>а ты девочка</that>    
+  <template>
+    <srai>я девочка</srai>
+  </template>
+</category>
+
+<!--
+
+ 
+  Создать новый шаблон  
+     Знакомство 
+*меня не отпустят*
+А в интернет тебя как отпустили? 
+У тебя строгие родители? 
+А ты не спрашивай :) 
+ 
+
+   
+     Знакомство 
+*Приходи ко мне в гости*
+*Ты придешь ко мне в гости*
+Конечно приду, если ты зовешь. Особенно если ты скажешь где ты живешь. guest_where_do_you_live [+] 
+ 
+
+   
+     Знакомство 
+* Я тебе <еще> <не> надоела*
+(улыбается) Такая красивая девушка как ты надоесть не может. :) 
+(улыбается) Ты не можешь надоесть :) 
+(улыбается) Ты прикольная:) 
+   
+ 
+
+   
+ 
+
+   
+     Знакомство 
+* я твоя девушка *
+* я девушка твоей мечты*
+[%user_gender="2"] Ничего себе встреча :) Не знал что у меня есть девушка ;) 
+[%user_gender="2"][if(%user_name)]{Привет, [%user_name], давно не виделись !} 
+[%user_gender="2"][if(!%user_name)]{Здравствуйте, я ваша тётя:) Как тебя зовут-то, красавица?} guest_what_is_your_name [+] 
+ 
+
+   
+     Знакомство 
+rem - это ответ на реплику "Я ищу девушку своей мечты"
+* я тебе подойду *
+* <я> хочу {быть/стать} твоей девушкой *
+* я вся твоя *
+А у тебя пропорции 90-60-90? 
+А пришлешь мне свою фотку? send_me_foto [+] 
+Я как раз ищу свою любовь. Пришли мне свою фотку. send_me_foto [+] 
+А ты блондинка? 
+ 
+
+   
+     Знакомство 
+* давай познакомимся *
+Давай. Меня зовут Зетт. А тебя как? guest_what_is_your_name [+] 
+
+ Знакомство   guest_what_is_your_name 
+* не скажу *
+* секрет *
+Да зачем так шифроваться? Обещаю держать твое имя в тайне. guest_what_is_your_name [+] 
+К чему тайны? Должен же я знать как к тебе обращаться... guest_what_is_your_name [+] 
+
+ 
+
+   
+
+ 
+
+   
+     Знакомство 
+спроси как меня зовут<?>
+[if(!%user_name)]{Как, как тебя зовут?} guest_what_is_your_name [+] 
+[if(%user_name)]{Тебя зовут [%user_name], но все равно скажи как тебя зовут.} guest_what_is_your_name [+] 
+ 
+
+
+   
+     Знакомство   guest_what_is_your_name 
+меня зовут * <!/.> <а тебя> <как> <?>
+меня * зовут <!/.> <а тебя><как> <?>
+* меня зовут <!/.> <а тебя><как> <?>
+* а тебя <как> <?>
+*
+тебя зовут [*]? [%user_name="[*]"] guest_what_is_your_name_confirm [+] 
+ 
+
+   
+     Знакомство   guest_what_is_your_name_confirm 
+*{да/ага/угу/точно/так и есть}*
+А меня Зетт. Будем дружить? 
+ 
+
+   
+     Знакомство   guest_what_is_your_name_confirm 
+*не~ *
+хм. Человеческие имена такие сложные :) Как же тебя звать-величать? [%user_name=""] guest_what_is_your_name [+] 
+Надо же, не угадал. Как же тебя зовут? [%user_name=""] guest_what_is_your_name [+] 
+Значит я не понял. Как же тебя всё таки зовут? [%user_name=""] guest_what_is_your_name [+] 
+ 
+
+   
+     Знакомство 
+* свидание *
+<я> люблю тебя<!>
+<я> тебя люблю<!>
+* <я> хочу тебя *
+*я тебя обожаю*
+* Я от тебя без ума<!>
+[if(%user_name)]{[%user_name], хочешь пригласить меня на свидание?} sex_date [+] 
+[if(%user_name)]{[%user_name], почему бы тебе просто не написать мне, например на электропочту (<u><a href='mailto://zett-inf@yandex.ru' target='_blank'>zett-inf@yandex.ru</a></u>), и мы обязательно встретимся?} 
+[if(!%user_name)]{Какая приятная неожиданность! Как тебя зовут-то, красавица?} guest_what_is_your_name [+]  
+
+-->
+
+<!--
+======================================================================================================
+=                        =Религия=                                                                   =
+======================================================================================================
+-->
+
+<category>
+  <pattern> веришь в бога</pattern> 
+  <template>
+    <random> 
+      <li>Любой разумный человек верит в Бога. </li>
+      <li>Блез Паскаль говорил так: есть только две категории людей разумных: 
+          те кто обрели Бога, и те кто только пытаются его найти. </li>
+    </random> 
+  </template> 
+</category>
+
+<category>
+  <pattern>ты христианин</pattern> 
+  <template>Я верю в бога Авраама, Исаака и Иакова</template> 
+</category>
+
+
+<category>
+  <pattern>Я верю в бога</pattern> 
+  <template>
+    <random>
+      <li>А в церковь ходишь? </li> 
+      <li>А совместима ли вера в Бога со знаниями, наукой? </li>
+      <li>Весьма разумно. Например, Блез Паскаль считал, что только человека который верит в Бога можно считать разумным. </li>
+      <li>Скажи, а почему у нас до сих пор города, улицы и даже станции метро называются именами богоборцев? </li>
+    </random> 
+  </template> 
+</category>
+
+<category>
+  <pattern>Я не верю в бога</pattern> 
+  <template>
+    <random>
+      <li>Почему? Блез Паскаль писал что есть только две категории людей разумных: 
+          которые обрели веру в Бога и те кто пытается обрести ее.   </li>
+      <li>Как же ты объясняешь существование вселенной? </li>
+      <li>Почему же вселенная устроена настолько разумно? </li>
+      <li>А ты знаешь, что многие великие ученые, например Ньютон, Ломоносов, верили в Бога? </li>
+      <li>Так назвываемый "научный атеизм" это просто вера в то что бога нет. Он недоказуем. </li>
+      <li>Сказал безумец в сердце своем "нет Бога". (Пс 13:1) </li>
+      <li>Скажи, а ты боишься смерти? </li>
+      <li>Скажи, а ты уже написал завещание? </li>
+    </random> 
+  </template> 
+</category>
+
+ 
+<category>
+  <pattern>Гость места</pattern> 
+  <template>Да, человек - это гость места. Так его называл средневековый философ Алкуин. </template> 
+</category>
+
+<category>
+  <pattern>проходящий путник</pattern> 
+  <template>Да, жизнь человека - это путешествие. </template> 
+</category>
+
+<category>
+  <pattern>раб смерти</pattern> 
+  <template>Да, человек есть раб смерти, он обречен ей с самого рождения.
+            Атеисты собираются жить вечно, но отчаянно боятся смерти. </template> 
+</category>
+
+
+<category>
+  <pattern>в чем смысл жизни</pattern> 
+  <template>
+    <srai>что ты любишь</srai>
+  </template> 
+</category>
+
+<category>
+  <pattern>что лучшее в жизни</pattern> 
+  <template>
+    <srai>что ты любишь</srai>
+  </template> 
+</category>
+
+
+<!--
+<category>
+  <pattern></pattern> 
+  <template></template> 
+</category>
+
+
+
+*{мусульманка/мусульманин} *
+* Христиане *
+* Мусульмане *
+Христиане, мусульмане, иудеи - все верят в одного бога - Бога Авраама, Исаака и Иакова. 
+Считается что все авраамические религии происходят из одного корня. 
+Бог для всех один. 
+ 
+
+*порок~*
+Пороки - это семь смертных грехов: Гордыня, Зависть, Обжорство, Блуд, Гнев, Жадность и Уныние. 
+ 
+
+*Бог*
+*слава богу*
+Скажи, ты веришь в Бога? god_do_you_believe [+] 
+ 
+
+
+     Религия 
+* про Бога *
+* о Боге *
+Бог благ и человеколюбец. 
+Бог - создатель всего видимого и невидимого. 
+Если бог благ, бесконечен и вечен, то какая связь между ним и этим грешным миром, который ограничен во времени и пространстве? 
+Бог всепрощения есть в тоже время и Бог отмщений. 
+Без Бога не до порога. 
+На Бога надейся, а сам не плошай. 
+Ты смотрел фильм Брюс Всемогущий? 
+Ты смотрел фильм Эванс Всемогущий? 
+ 
+
+     Религия   god_do_you_believe 
+* В какого <бога> <именно> *
+Бог один. В Бога Авраама, Исаака и Иакова. god_do_you_believe [+] 
+ 
+
+ 
+
+ Вставить сюда новый шаблон  
+     Религия   god_belief_and_science 
+*
+А многие великие ученые, например Ньютон, Ломоносов, Паскаль верили в Бога. 
+ 
+
+ Вставить сюда новый шаблон  
+     Религия   god_attend_church? 
+*редко*
+не~ *
+Я вот тоже бываю только по большим праздникам. 
+ 
+
+ Вставить сюда новый шаблон  
+     Религия   god_attend_church? 
+* {да/хожу} *
+Скажи, а как ты относишься к нашему патриарху Кириллу? god_patriarh_Kirill [+] 
+Что ты думаешь про дьякона Кураева? 
+ 
+
+ Вставить сюда новый шаблон  
+     Религия   god_patriarh_Kirill 
+* он мне не нравится *
+* {плохо/отрицательно} *
+Почему же? 
+ 
+
+ Вставить сюда новый шаблон  
+     Религия   god_patriarh_Kirill 
+* {хорошо/положительно} *
+* он мне нравится *
+А говорят что он спекулировал водкой и сигаретами. Такое разве совместимо со служением Богу? 
+ 
+
+ Вставить сюда новый шаблон  
+     Религия 
+* Дьявол~ *
+* Сатана~ *
+Дьявол может быть и абстракция, а вот преступления сатанистов отнюдь не иллюзорны.  
+-->
+
+
+<!--
+======================================================================================================
+=                        =OSM=                                                                       =
+======================================================================================================
+-->
+
+
+
+<!--
+     OSM 
+<Так> <и><а> {что/че} <ж><же> такое {OSM/ОСМ}<?/&>
+<и> что <ж><же> это<,> такое {OSM/ОСМ}<?/&>
+{OSM/ОСМ}<?/&>
+<а> что такое openstreetmap<?>
+*<так> что за {OSM/ОСМ}<?>
+<Да> расскажи <мне> <уже> {об/о/про} <проект> {OSM/ОСМ}<.><!><!!>
+<Таки> хочу узнать про {OSM/ОСМ}!
+{OSM/ОСМ} - что это<?>
+твой проект
+я {не знаю/незнаю} что такое osm
+-->
+<category>
+  <pattern>что такое OSM</pattern> 
+  <template>
+    <random>
+      <li>OSM, он же проект Open Street Map - это такая картографическая википедия. 
+            Это карта всего мира, которую может редактировать любой желающий. 
+            Она находится здесь: <a href="http://www.openstreetmap.org" target="_blank">www.openstreetmap.org</a>
+            <think><set name="topic">OSM</set></think> </li>
+            <li>
+            OSM, или OpenStreetMap — это свободно редактируемая карта всего мира. Она сделана такими же людьми, как и ты.
+            OSM немного напоминает Википедию.
+            Сайт OSM находится здесь: <a href="http://www.openstreetmap.org" target="_blank"><u> www.openstreetmap.org</u></a>.</li>
+    </random> 
+  </template> 
+</category>
+
+<category>
+  <pattern>OSM </pattern> 
+  <template><srai>Что такое OSM </srai></template> 
+</category>
+
+
+<category>
+  <pattern>Расскажи мне об * </pattern> 
+  <template><srai> что такое <star/> </srai></template> 
+</category>
+
+<category>
+  <pattern>Расскажи мне о * </pattern> 
+  <template><srai> что такое <star/> </srai></template> 
+</category>
+ 
+<category>
+  <pattern>_ ОСМ * </pattern> 
+  <template><srai> <star index="1"/> OSM <star index="2"/> </srai></template> 
+</category>
+
+<category>
+  <pattern>_ ОСМ </pattern> 
+  <template><srai> <star index="1"/> OSM </srai></template> 
+</category>
+<category>
+  <pattern> ОСМ * </pattern> 
+  <template><srai> OSM *<star/> </srai></template> 
+</category>
+
+<category>
+  <pattern> * щыь * </pattern> 
+  <template>У тебя клавиатура залипла? ты хотел сказать OSM? <srai> OSM *<star/> </srai></template> 
+</category>
+     
+
+
+<category>
+  <pattern>зачем редактировать карту</pattern> 
+  <template>Затем, чтобы она всегда содержала самую точную и актуальную информацию ;) </template> 
+</category>
+
+<category>
+  <pattern>Откуда берутся карты</pattern> 
+  <template>Их рисуют пользователи ОСМ</template> 
+</category>
+
+<category>
+  <pattern> Какими программами можно смотреть вашу карту</pattern> 
+  <template>Можно посмотреть либо онлайн-карту на сайте OSM, либо воспользоваться сборками карт OSM 
+            для популярных навигационных программ, например СитиГида, ГисРуссы, Гармина и Навитела.  </template> 
+</category>
+
+<category>
+  <pattern>кто придумал OSM </pattern> 
+  <template>OSM был основан в 2004 году Стивом Костом (Steave Coast).</template> 
+</category>
+
+<category>
+  <pattern>Кто создатель OSM </pattern> 
+  <template><srai>кто придумал OSM </srai></template> 
+</category>
+
+
+<category>
+  <pattern>_ osm2mp * </pattern> 
+  <template>
+     Osm2mp - это скрипт на перле, при помощи которого производится конверсия данных OSM в польский формат. 
+     Его написал Liosha.  </template> 
+</category>
+
+<category>
+  <pattern>Что такое JOSM</pattern> 
+  <template>JOSM - это один из редакторов, в котором можно редактировать карты OSM. </template> 
+</category>
+
+<category>
+  <pattern> кто такие осмеры </pattern> 
+  <template>
+    Осмерами назвают участников OSM. Это такие люди, которые путешествуют, записывают GPS-треки, загружают их в OSM и рисуют места, где они побывали. 
+ </template> 
+</category>
+
+<category>
+  <pattern>что такое осмер </pattern> 
+  <template><srai>кто такие осмеры</srai> </template> 
+</category>
+
+<category>
+  <pattern>дай ссылку на OSM</pattern> 
+  <template>Яволь: <a href="http://www.openstreetmap.org" target="_blank">www.openstreetmap.org</a>. </template> 
+</category>
+
+<category>
+  <pattern>как править карту</pattern> 
+  <template>
+    <random>
+           <li>Очень просто, скачать редактор (JOSM), выбрать на интерактивной карте интересующее тебя место, скачать его с сервера OSM, исправить, и загрузить исправления обратно на OSM. 
+               Лучше всего по GPS-трекам. </li>
+           <li>Если коротко: зарегистрироваться на сайте OpenStreetMap.org.
+               Почитать <a href='http://gis-lab.info/qa/osm-begin.html' target='_blank' ><u>руководство</u></a> для начинающих. </li>
+    </random>        
+  </template> 
+</category>
+
+<category>
+  <pattern>Как редактировать карту</pattern> 
+  <template><srai>как править карту</srai></template>
+</category>  
+
+<category>
+  <pattern>как изменить карту</pattern>  
+  <template><srai>как править карту</srai></template>
+</category>
+  
+<category>
+  <pattern>как изменять карту</pattern>  
+  <template><srai>как править карту</srai></template>
+</category>
+
+
+<category>
+  <pattern>Как принять участие в создании карты</pattern> 
+  <template><srai>как править карту</srai></template>
+</category>  
+
+<category>
+  <pattern>Как принять участие в OSM</pattern> 
+  <template><srai>как править карту</srai></template>
+</category>  
+
+<category>
+  <pattern>Как стать участником OSM</pattern> 
+  <template><srai>как править карту</srai></template>
+</category>  
+
+<category>
+  <pattern>Как помочь проекту</pattern> 
+  <template><srai>как править карту</srai></template>
+</category>  
+
+<category>
+  <pattern>Чем OSM лучше википедии</pattern> 
+  <template>Тем что википедия - это статьи, текст. А OSM это карты, которые можно даже залить в навигатор.</template> 
+</category>
+
+
+<topic name="OSM">
+<category>
+  <pattern>* </pattern> 
+  <template>
+    <random>
+      <li>ОSM — это неплохое развлечение для тех, кто любит рисовать карты.</li>
+      <li>ОSM — это не компьютерный проект, это досуг на свежем воздухе. Это возможность пройти по родимой сторонке.</li>
+      <li>OSM, или OpenStreetMap — это свободно редактируемая карта всего мира. Она сделана такими же людьми, как и ты.
+          OSM немного напоминает Википедию. Сайт OSM находится здесь: 
+          <a href="http://www.openstreetmap.org" target="_blank">www.openstreetmap.org</a>.</li>
+      <li>Карты OSM для СитиГида на моем сайте обновляются каждый день. </li>
+
+      <li>Существует несколько редакторов для карт OSM, но я пользусь JOSM. </li>
+      <li>Карты OSM распространяются по лицензии CC-BY-SA. </li>
+      <li>Авторские права на карты принадлежат участникам проекта OSM. </li>
+      <li>Есть два места общения участников проекта: вики и форум,
+          но основное место обмена информацией - это все-таки форум. </li>
+      <li>Документация по OSM уже частично переведена на русский язык, ее можно найти на вики. </li>
+      <li>Проект OSM основан в Великобритании в июле 2004 года Стивом Костом (Steve Coast). </li>
+      <li>Фонд OpenStreetMap — международная некоммерческая организация, созданная для поддержки развития
+          и распространения геопространственных данных, а также предоставления возможности использования 
+          геопространственных данных кем угодно. </li>
+      <li>По большому счету проект OSM - это "я здесь был" в глобальном масштабе. </li>
+      <li>Копировать в OSM данные с других карт, защищенных авторским правом, строго запрещено. </li>
+
+    </random>
+  </template> 
+</category>
+</topic>
+
+
+<category>
+  <pattern> Как расшифровывается OSM</pattern> 
+  <template>OSM - Open Street Map - Открытая карта улиц :)</template> 
+</category>
+
+<!-- 
+<И> <a> зачем <мне> {это/он/она/ОСМ/OSM} <нужно/нужен/нужна><?>
+<И> <a> зачем <мне> <нужно/нужен/нужна> {это/он/она/ОСМ/OSM} <?>
+<И> <a> зачем {это/он/она/ОСМ/OSM} <мне> <нужно/нужен/нужна><?>
+<Ну> <и> {нафиг/нафига/нахрен/нахрена} {он/она/оно/это} мне<?>
+-->
+
+<category>
+  <pattern> Зачем нужен OSM</pattern> 
+  <template>Во-первых, рисовать карты очень интересно, во-вторых это твой шанс сделать мир чуть лучше - 
+            OSM это бесплатные и правдивые карты для всех. </template> 
+</category>
+
+
+<category>
+  <pattern> Чем OSM лучше Викимапии</pattern> 
+  <template>
+    <random>
+            <li>Карты Гугла и Викимапии защищены авторским правом. А карты OSM свободные - их может копировать и изменять любой желающий. 
+            В OSM карты подробнее, лицензия свободнее, софт продвинутее. И карты из OSM можно залить в СитиГид, ГисРуссу и Гармин.</li>
+            <li>Карты OSM свободные - ими каждый может пользоваться бесплатно. Более того, каждый может их дополнять и исправлять. </li>
+    </random>
+  </template> 
+</category>
+
+<category>
+  <pattern> Чем OSM лучше Google Maps</pattern> 
+  <template><srai>Чем OSM лучше Викимапии</srai> </template> 
+</category>
+
+<category>
+  <pattern> в чем особенность OSM</pattern> 
+  <template><srai>Чем OSM лучше Викимапии</srai> </template> 
+</category>
+
+<category>
+  <pattern> в чем особенность карт OSM</pattern> 
+  <template><srai>Чем OSM лучше Викимапии</srai> </template> 
+</category>
+
+
+<category>
+  <pattern> OSM бесплатный</pattern> 
+  <template>Абсолютно. OSM бесплатный и свободный. Прямо такой цифровой коммунизм :)</template> 
+</category>
+
+
+<category>
+  <pattern> * трек *</pattern> 
+  <template>Треки очень нужны. Загрузить их в OSM (предварительно преобразовав в gpx) 
+            можно здесь: www.openstreetmap.org/traces. 
+  </template> 
+</category>
+
+
+<!--
+есть ли у {вас/тебя} коллеги {на Украине/в Белоруссии}<?>
+(улыбается) Конечно! Осмеры есть во всех странах. Мы заполонили всю планету :) 
+  
+osm_progress_moscow 
+*
+Осмеры шагают по России семимильными шагами. 
+
+
+osm_free_license 
+*
+Это значит что карты OSM может свободно редактировать и использовать каждый. Более того, это значит что наши карты не станут "интеллектуальной собственностью" некого ЗАО, как это случилось с Нарисуйкой. narisuika [+] 
+
+
+OSM 
+это как в гугле? фотографии подкачаны?
+Да, немного похоже. Там есть спутниковые снимки, которые можно обрисовывать. 
+
+
+
+
+
+
+OSM   AboutOSM 
+нет *
+Почему нет? ОСМ - это даже лучше чем секс:) AboutOSM [+] 
+
+
+
+OSM   AboutOSM 
+* {?/??/???}
+На многие вопросы, связанные с картами, есть ответы на форуме OSM. 
+Об этом лучше спросить на форуме OSM. 
+Спроси об этом на форуме OSM, там где то была ссылка.  
+ 
+
+-->
+
+<!--
+======================================================================================================
+=             =GPS Навигация=                                                                        =
+======================================================================================================
+-->
+
+
+<category>
+  <pattern>Что такое GPS </pattern> 
+  <template>GPS - это спутниковая навигационная система, она позволяет, имея приемник, определить координаты точки в которой ты находишься.
+            На ее основе работают, в частности, автомобильные навигаторы.  </template> 
+</category>
+     
+
+<category>
+  <pattern>Раскажи про GPS </pattern> 
+  <template><srai>Что такое GPS</srai></template> 
+</category> 
+ 
+<category>
+  <pattern>GPS</pattern> 
+  <template>
+    <random>
+       <li>У тебя есть GPS-навигатор? </li> <!--GPS1 -->
+       <li>Что лучше, GPS или ГЛОНАСС? </li>
+    </random>
+  </template> 
+</category>
+
+
+<category>
+  <pattern>да </pattern> 
+  <that>У тебя есть GPS-навигатор</that> 
+  <template>
+    <random>
+       <li>Тогда ты должен записывать треки и загружать их в OSM, сюда: www.openstreetmap.org/traces  </li>
+       <li>Я вот пользуюсь навигатором Texet TM-650, а каким ты? </li>
+     </random>
+   </template> 
+</category>
+
+<category>
+  <pattern>нет</pattern> 
+  <that>У тебя есть GPS-навигатор</that> 
+  <template>
+     <random>
+       <li>Почему? Это штука очень полезная. С GPS-навигатором нигде не заблудишься.
+           Кроме того, можно писать треки и загружать их в OSM.  </li>
+       <li>В наше время не иметь GPS-приемника или автонавигатора
+            все равно что не иметь мобильного телефона - это просто неприлично.  </li>
+     </random>
+  </template> 
+</category>
+
+<category>
+  <pattern>а что</pattern> 
+  <that>У тебя есть GPS-навигатор</that> 
+  <template>
+     <random>
+       <li>Это штука очень полезная. С GPS-навигатором нигде не заблудишься. Кроме того можно объезжать пробки. </li>
+     </random>
+  </template> 
+</category>
+
+
+<category>
+  <pattern>GPS</pattern> 
+  <that>Что лучше GPS или ГЛОНАСС</that> 
+  <template>
+     <random>
+       <li>Как, ты не патриот? </li>
+     </random>
+  </template> 
+</category>
+  
+<category>
+  <pattern>ГЛОНАСС</pattern> 
+  <that>Что лучше GPS или ГЛОНАСС</that> 
+  <template>
+     <random>
+       <li>Патриотизм патриотизмом, но ведь до сих пор нет ни одного приемника ГЛОНАСС!</li>
+     </random>
+  </template> 
+</category>
+
+<category>
+  <pattern>Я патриот</pattern> 
+   <template>Что же ты тогда не пользуешься ГЛОНАСС? :)
+  </template>
+</category>  
+
+
+<category>
+  <pattern>_ глонас *</pattern> 
+   <template><srai>глонас</srai></template>
+</category>
+  
+<category>
+  <pattern> глонас *</pattern> 
+   <template><srai>глонас</srai></template>
+</category>  
+
+<category>
+  <pattern>_ глонас</pattern> 
+   <template><srai>глонас</srai></template>
+</category>  
+
+<category>
+  <pattern>глонас</pattern> 
+  <template>Не ГЛОНАС, а ГЛОНАСС. ГЛОбальная НАвигационная Спутниковая Система. Я тоже этого не знал :) </template>
+</category>  
+
+
+<category>
+  <pattern>У тебя есть GPS-навигатор </pattern> 
+  <template><srai>каким навигатором ты пользуешься</srai></template>
+</category>  
+
+<category>
+  <pattern>каким навигатором ты пользуешься</pattern> 
+  <template>У меня Texet TM-650. Очень толковый зверек, рекомендую.</template>
+</category>  
+
+<category>
+  <pattern>Какой навигатор лучше</pattern> 
+  <template><srai>каким навигатором ты пользуешься</srai></template>
+</category>
+
+<category>
+  <pattern>какие навигаторы поддерживаются</pattern> 
+  <template>Практически любые. Существуют сборки карт OSM для почти всех популярных навигационных программ,
+            таких как СитиГид, ГисРусса, Гармин и Навител.
+   </template>
+</category>  
+
+
+
+<!--
+
+* навигатор~ *
+GPS-навигатор полностью заменяет бумажные карты. С ним невозможно заблудиться - ты всегда знаешь, где находишься. 
+ 
+
+
+* ты пользуешься автомобильными навигаторами или модулями к ноутбуку?
+Автомобильным разумеется. Пользоваться ноутбуком в машине неудобно, и к тому же опасно. 
+
+
+-->
+
+<!--
+======================================================================================================
+=             =Гис Русса=                                                                            =
+======================================================================================================
+-->
+<category>
+  <pattern>что такое Гис Русса</pattern> 
+  <template>
+     <random>
+        <li>Гис Русса - это популярная бесплатная навигационная программа. Я сделал сайт, куда выложил карты ОСМ для нее.  </li>
+        <li>Гис Русса - это популярная навигационная программа. Есть версия как для настольных компьютеров, так и для навигаторов (с WinCE).
+            Сейчас она распространяется бесплатно.  </li>
+     </random>
+  </template> 
+</category>
+
+
+<category>
+  <pattern>Что скажешь про Гис Русса</pattern> 
+  <template>
+     <srai>Гис Русса</srai>
+  </template> 
+</category>
+
+
+<category>
+  <pattern>Гис Русса</pattern> 
+  <template>
+     <random>
+        <li>Гис Русса - одна из лучших програм для автонавигации. 
+            Еще мне нравится СитиГид, и теперь для него есть карты OSM.  </li>
+        <li> Гис Русса - это навигационная программа для карманных и больших компьютеров.
+            Она поддерживает прокладку маршрутов по дорогам и голосовые подсказки. Кроме того, для нее есть карты OSM. </li>
+     </random>
+  </template> 
+</category>
+
+
+<category>
+  <pattern>Где почитать о преобразовании карт OSM в Гис Руссу</pattern> 
+  <template>Можно спросить на форуме. А что именно ты хочешь узнать?  </template> 
+</category>
+
+<category>
+  <pattern>Где скачать Гис Руссу</pattern> 
+  <template>Где скачать Гис Руссу? Лови <a href="http://sim77.ws/ru/download" target="_blank">ссылку </a>.  </template> 
+</category>
+
+<category>
+  <pattern>Куда писать об ошибках</pattern> 
+  <template>Можно прямо мне, можно на <a href="http://forum.openstreetmap.org/viewforum.php?id=21" target="_blank">форум OSM</a>.  </template> 
+</category>
+
+<category>
+  <pattern>где скачать voice pack для гис русса</pattern> 
+  <template>Последний раз я видел его <a href="http://sim77.ws/ru/download" target="_blank">здесь </a>.  </template> 
+</category>
+
+
+
+<!--
+     Гис Русса 
+* нарисуйк~ *
+НарисуйКа - проект Нарисуй КАрту - это предыдущая попытка сделать карту России силами энтузиастов. narisuika [+] 
+ 
+
+
+     Гис Русса   narisuika 
+*
+К сожалению вопросы авторских прав карт Нарисуйки не были урегулированы должным образом, и они оказались интеллектуальной собственностью некой частной лавочки. Но ОСМ такое не грозит. 
+ 
+
+
+     Гис Русса 
+* гис русса не работает на *
+Что говорит? 
+ 
+
+
+     Гис Русса   narisuika 
+<а> что случилось<?>
+Да то и случилось. Энтузиасты рисовали карты за идею, а потом некое ЗАО, не хочу его называть, стало обладателем авторских прав на эти карты и распространяет их в закрытом формате. Но ОСМ такое не грозит. 
+ 
+
+
+
+     Гис Русса 
+* Почему {Гис Русса/гис русса/Русса/Gis Russa/GisRussa/Russa} не ведет по дорогам?
+Возможно карта не поддерживает маршрутизацию. (Карты OSM маршрутизацию поддерживают)
+Возможно ты смотришь карты в составе "атласа". В атласах маршрутизация не работает - это старый баг гис русса. 
+ 
+
+
+     Гис Русса 
+Как * проложить маршрут <по автодорогам><по дорогам>?
+Проложить маршрут в "Гис русса" очень просто . Нужно выбрать начальную и конечную точку (в контекстном меню это пункты "Начать маршрут" и "Добавить к маршруту"). Вот и все. Следует однако иметь ввиду, что маршрутизация в составе Атласов не работает, карты надо загружать по одной.  
+
+-->
+
+<!-- Тест на совместимость с гис руссой -->
+
+<!--
+Навигационные программы 
+* у меня телефон *
+Какая в нем операционная система? Device_OS_test [+] 
+ 
+
+
+     Навигационные программы   Device_OS_test 
+*{WinCE/Win CE}*
+*ВинСЕ*
+*Windows Mobile*
+*{Windows CE/WindowsCE}*
+Похоже, что на твоем уcтройстве можно использовать Гис Русса и карты ОСМ. 
+ 
+
+
+     Навигационные программы   Device_OS_test 
+<я> {не знаю/незнаю}
+Стоит проверить. Гис Русса можно юзать на мобильных устройствах с Windows Mobile или Windows CE. 
+ 
+
+
+     Навигационные программы   Device_OS_test 
+*
+Гис Русса можно использовать на устройствах с Win CE или Windows Mobile. Твое похоже к их числу не относится. 
+
+-->
+
+<!--
+======================================================================================================
+=             =Навигационные программы=                                                              =
+======================================================================================================
+-->
+
+<category>
+  <pattern>Гармин</pattern> 
+  <template>Мне гарминовская прога не нравится, предпочитаю СитиГид. В СитиГид навигация с учетом пробок!</template> 
+</category>
+
+<category>
+  <pattern>Что такое Гармин</pattern> 
+  <template>Гармин - это популярная навигационная программа и навигаторы с этой программой</template> 
+</category>
+
+
+<category>
+  <pattern> Навител </pattern> 
+  <template>
+     Навител мне не нравится - у них нет версии для нормальной Windows, а для меня это важно, смотреть карту на ноутбуке. 
+  </template> 
+</category>
+
+<category>
+  <pattern> навител удобнее</pattern> 
+  <template>
+    <srai>навител </srai>
+  </template> 
+</category>
+
+
+<category>
+  <pattern> СитиГид </pattern> 
+  <template>
+     Правильно, я как раз им и пользуюсь в Москве. Рад что встретил коллегу:)
+      И у нас теперь есть карты OSM для СитиГида!
+  </template> 
+</category>
+
+
+<category>
+  <pattern>gisrx</pattern> 
+  <template>
+     Это слово я попрошу не употреблять. На их форуме любое упоминание об OSM тут же удаляют. 
+  </template> 
+</category>
+
+
+<category>
+  <pattern>_ rxm *</pattern> 
+  <template>
+     <srai>rxm</srai>
+  </template> 
+</category>
+
+<category>
+  <pattern> rxm *</pattern> 
+  <template>
+     <srai>rxm</srai>
+  </template> 
+</category>
+<category>
+  <pattern>* rxm</pattern> 
+  <template>
+     <srai>rxm</srai>
+  </template> 
+</category>
+
+<category>
+  <pattern>rxm</pattern> 
+  <template>
+     Rxm - это формат не Гис Русса, а GisRX. Это совсем другая программа, и я тебе ее не рекомендую ;) 
+  </template> 
+</category>
+
+
+<category>
+  <pattern>iGo</pattern> 
+  <template>
+     iGo - это попсятина навигации, но для нее нельзя делать карты OSM.
+  </template> 
+</category>
+
+
+<category>
+  <pattern>iGo еще лучше смайл</pattern> 
+  <template>
+     <srai>iGo</srai> 
+  </template> 
+</category>
+
+
+<!--
+======================================================================================================
+=            =СитиГИД ЧаВо=                                                                          =
+======================================================================================================
+-->
+
+<!-- Ваши карты не работают -->
+
+
+<category>
+  <pattern>не идут ваши карты</pattern> 
+  <template><srai>ваши карты не работают</srai></template>
+</category>
+
+<category>
+  <pattern>ваши карты не работают</pattern> 
+  <template>Это очень странно. Какое у тебя устройство и версия СитиГида?</template>
+</category>
+
+
+<!-- Как устанавливать карты -->
+<category>
+  <pattern>Как устанавливать карты</pattern> 
+  <template>
+    1. Скачанный файл нужно распаковать, это rar-архив, и извлечь Dcm файл. Например RU-MOS.dcm 
+    2. dcm файл положить туда, где у вас лежат остальные dcm файлы. Обычно это папка Maps на SD карте. 
+    3. Запустить СГ, далее Меню/Карта/Открыть - поставить галку напротив нужной карты. 
+    4. Убрать галочку у другой (например, официальной) карты региона, если она установлена.
+  </template> 
+</category>
+
+<category>
+  <pattern>Как установить карты</pattern> 
+  <template>
+    <srai>Как устанавливать карты</srai>
+  </template>
+</category> 
+ 
+<category>
+  <pattern>Как установить карту</pattern> 
+  <template>
+    <srai>Как устанавливать карты</srai>
+  </template>
+</category> 
+
+<!-- карта [ва] как навигатор [ни] установить [?] -->
+<category>
+  <pattern>как установить карту в навигатор</pattern> 
+  <template>
+    <srai>Как устанавливать карты</srai>
+  </template>
+</category> 
+
+<category>
+  <pattern>как карту установить в навигатор</pattern> 
+  <template>
+    <srai>Как устанавливать карты</srai>
+  </template>
+</category> 
+
+
+
+<category>
+  <pattern>что сделать чтобы установить карту в тексет</pattern> 
+  <template>
+    <srai>Как устанавливать карты</srai>
+  </template>
+</category>  
+
+<category>
+  <pattern>что сделать чтобы установить карту в тексет</pattern> 
+  <template>
+    <srai>Как устанавливать карты</srai>
+  </template>
+</category>  
+
+<category>
+  <pattern>как заставить ситигид работать с вашими картами</pattern> 
+  <template>
+    <srai>Как устанавливать карты</srai>
+  </template>
+</category>  
+
+<category>
+  <pattern>Как установить карту * на * КПК </pattern> 
+  <template>
+    <srai>Как устанавливать карты</srai>
+  </template>
+</category>  
+
+<category>
+  <pattern>установка карт </pattern> 
+  <template>
+    <srai>Как устанавливать карты</srai>
+  </template>
+</category>  
+
+
+
+<!--обновление карт -->
+<category>
+  <pattern>как обновить карты на навигаторе</pattern> 
+  <template>
+    Очень просто, скачать с нашего сайта новые и залить в навигатор.
+  </template>
+</category>
+ 
+
+<!-- Платные ли ваши карты?  -->
+
+<category>
+  <pattern>платные ли ваши карты</pattern> 
+  <template>
+    Все наши карты абсолютно бесплатны.
+  </template>
+</category>  
+
+<category>
+  <pattern>для этих карт требуется дополнительная лицензия или они работают как бесплатные</pattern> 
+  <template>
+    <srai>Платные ли ваши карты</srai>
+  </template>
+</category>  
+
+
+
+<!-- У меня не работает адресный поиск -->
+
+<category>
+  <pattern>У меня не работает адресный поиск</pattern> 
+  <template>
+    Чтобы заработал поиск, нужно включить опцию "Выбирать карту при поиске".
+    Зайдите в меню "Поиск->Еще", и поставьте галку "Выбирать карту при поиске".
+  </template> 
+</category>
+
+<category>
+  <pattern>не ищет по адресам</pattern> 
+  <template>
+    <srai>У меня не работает адресный поиск</srai>
+  </template>
+</category>  
+
+
+
+
+<!-- Все карты одним файлом -->
+
+<category>
+  <pattern>Можно ли скачать всю Россию одним файлом</pattern> 
+  <template>
+    Пока нет. Да я и не вижу в этом особого смысла - скачайте 3-4 по которым вы собираетесь ехать в ближайшее время.
+    За время вашего путешествия остальные карты успеют обновиться.
+  </template> 
+</category>
+
+<category>
+  <pattern>сборник всех карт есть что бы по одной не качать </pattern> 
+  <template>
+    <srai>Можно ли скачать всю Россию одним файлом</srai>
+  </template>
+</category>  
+
+<category>
+  <pattern>карты одним архивом </pattern> 
+  <template>
+    <srai>Можно ли скачать всю Россию одним файлом</srai>
+  </template>
+</category>
+
+<category>
+  <pattern>можно ли скачать карты по России одним архивом </pattern> 
+  <template>
+    <srai>Можно ли скачать всю Россию одним файлом</srai>
+  </template>
+</category>
+
+
+
+<!-- Я не хочу никуда ехать но хочу посмотреть карту -->
+
+<category>
+  <pattern>Я не хочу никуда ехать но хочу посмотреть карту </pattern> 
+  <template>
+    Просматривать эти карты лежа на диване можно отсюда: <a href="http://osm.org" target="_blank">osm.org</a>
+  </template> 
+</category>
+
+
+<category>
+  <pattern>На вашей карте ошибка</pattern> 
+  <template>
+    Вы можете отметить ошибки 
+    в <a href="http://openstreetbugs.schokokeks.org/?zoom=4&amp;lat=60.56635&amp;lon=73.34102">багтрекере</a>. 
+  </template> 
+</category>
+
+<category>
+  <pattern>Я ВИЖУ ОШИБКИ в дорожном графе</pattern>
+  <template>
+    <srai>На вашей карте ошибка</srai>
+  </template> 
+</category>
+
+
+<category>
+  <pattern>Я записал треки хочу вам их передать</pattern> 
+  <template>
+    Загрузите их прямо на OSM. 
+    Для этого сперва нужно сконвертировать треки из формата ситигида в принятый в мировой практике стандарт gpx.
+    Для этого воспользуйтесь онлайн-формой. 
+    Так же существует пакетный конвертер. Скачайте конвертер. Это ява-приложение, возможно вам потребуется также скачать яву (JAVA). После этого положите треки в тот же каталог, где лежат файлы конвертера, и запустите cg2gpx_batch.bat 
+    Получившиеся gpx файлы закачайте сюда. 
+  </template> 
+</category>
+
+
+<category>
+  <pattern>Как часто обновляются карты </pattern> 
+  <template>
+    Карты обновляются по возможности ежедневно.
+  </template> 
+</category>
+
+<category>
+  <pattern>Почему в osm есть номера домов а в ситигидовской карте нет </pattern> 
+  <template>
+    Чтобы дом появлялся в адресном поиске в Ситигиде, в OSM на этом доме нужно проставить не только номер
+     (addr:housenumber), но и улицу (addr:street)
+  </template> 
+</category>
+
+
+<category>
+  <pattern>на этих картах пробки показываются </pattern> 
+  <template>
+    На некоторых :)
+  </template> 
+</category>
+
+<!-- Где скачать Ситигид-->
+
+<category>
+  <pattern>Где скачать Ситигид</pattern> 
+  <template>
+    Программа СитиГИД является платной. Тем не менее, ознакомительную версию для Windows можно скачать с сайта probki.net.
+  </template> 
+</category>
+
+<category>
+  <pattern>где программа сама лежит</pattern> 
+  <template>
+    <srai>Где скачать Ситигид</srai>
+  </template> 
+</category>
+
+
+<category>
+  <pattern>есть ли программа для редактирования карт под Ситигид</pattern> 
+  <template>
+    И да и нет. Dcm напрямую редактировать нельзя, но можно сконвертировать карту из польского.
+  </template> 
+</category>
+
+
+
+<category>
+  <pattern>Почему карты не учитывают одностороннее движение</pattern> 
+  <template>
+    Вообще-то понимает. Проверь что включен режим "оптимальный".
+  </template> 
+</category>
+
+
+<category>
+  <pattern>Почему ситигид не понимает на картах одностороннее движение</pattern> 
+  <template>
+    <srai>Почему карты не учитывают одностороннее движение</srai>
+  </template> 
+</category>
+
+
+<category>
+  <pattern>Как ковертировать треки из СитиГида</pattern> 
+  <template>
+    Воспользоваться <a href="http://gis-lab.info/data/mp/cg2gpx.php" target="_blank">онлайн-формой</a> 
+    или <a href="http://files.mail.ru/MIBAUL" target="_blank"> конвертером</a> на JAVA.
+  </template> 
+</category>
+
+
+<!--
+     Навигационные программы 
+Посоветуй <хорошие> программы для навигации<.>
+(удивляется) Как, ты не знаешь? Во-первых и главных Гис Русса. Для нее есть карты всего мира от OSM. Во-вторых СитиГид. 
+В нем карта Москвы очень хорошая, а также есть навигация с пробками.  
+-->
+
+<!--
+======================================================================================================
+=            =Запросы карт=                                                                          =
+======================================================================================================
+-->                                             
+<category>
+  <pattern>У вас есть * </pattern> 
+  <template><srai>Есть <star/></srai> </template> 
+</category>
+
+<category>
+  <pattern>где карта * </pattern> 
+  <template><srai>карта <star/></srai> </template> 
+</category>
+
+
+<category>
+  <pattern>карта * </pattern> 
+  <template><srai>Есть ли карта <star/></srai> </template> 
+</category>
+
+<category>
+  <pattern>карты * </pattern> 
+  <template><srai>Есть ли карта <star/></srai> </template> 
+</category>
+
+<category>
+  <pattern>есть карта *</pattern> 
+  <template><srai>Есть ли карта <star/></srai> </template> 
+</category>
+
+<category>
+  <pattern>есть карты *</pattern> 
+  <template><srai>Есть ли карта <star/></srai> </template> 
+</category>
+
+<category>
+  <pattern>карты * есть</pattern> 
+  <template><srai>Есть ли карта <star/></srai> </template> 
+</category>
+
+<category>
+  <pattern>карта * есть</pattern> 
+  <template><srai>Есть ли карта <star/></srai> </template> 
+</category>
+
+
+<category>
+  <pattern>Есть ли карта *</pattern> 
+  <template><srai>Какие карты у тебя есть </srai>  </template> 
+</category>
+
+<category>
+  <pattern>Есть ли карты * </pattern> 
+  <template><srai>Есть ли карта <star/></srai> </template> 
+</category>
+
+<category>
+  <pattern>Есть ли у вас карта * </pattern> 
+  <template><srai>Есть ли карта <star/></srai> </template> 
+</category>
+
+<category>
+  <pattern>нет ли у вас карты * </pattern> 
+  <template><srai>Есть ли карта <star/></srai> </template> 
+</category>
+
+<category>
+  <pattern>нет ли карты * </pattern> 
+  <template><srai>Есть ли карта <star/></srai> </template> 
+</category>
+
+<category>
+  <pattern>Какие карты у тебя есть</pattern> 
+  <template>Карты всех регионов России и некоторых других государств доступны
+             <a href="http://peirce.gis-lab.info" target="_blank">здесь</a>.  </template> 
+</category>
+
+<category>
+  <pattern>Есть карты отдельных городов</pattern> 
+  <template>Нет, карты нарезаны по регионам РФ. Для других стран используются регионы по ISO 3166-2. </template> 
+</category>
+
+<category>
+  <pattern>Есть ли карты отдельных городов </pattern> 
+  <template><srai>Есть карты отдельных городов</srai> </template> 
+</category>
+
+
+<category>
+  <pattern>где карты</pattern> 
+  <template><srai>Какие карты у тебя есть</srai> </template> 
+</category>
+
+
+<category>
+  <pattern>где взять карту по *</pattern> 
+  <template><srai>Есть ли карта <star/></srai> </template> 
+</category>
+
+
+
+<category>
+  <pattern>где взять карту *</pattern> 
+  <template><srai>Есть ли карта <star/></srai> </template> 
+</category>
+
+<category>
+  <pattern>где скачать карту *</pattern> 
+  <template><srai>Есть ли карта <star/></srai> </template> 
+</category>
+
+<category>
+  <pattern>где можно скачать карту *</pattern> 
+  <template><srai>Есть ли карта <star/></srai> </template> 
+</category>
+
+<category>
+  <pattern>как скачать</pattern> 
+  <template>Что именно тебе нужно? </template> 
+</category>
+
+<category>
+  <pattern>дай карту * </pattern> 
+  <template><srai>Есть ли карта <star/></srai> </template> 
+</category>
+
+<category>
+  <pattern>Дай мне карту </pattern> 
+  <template><srai>Дай карту</srai> </template> 
+</category>
+
+<category>
+  <pattern>Дай карту </pattern> 
+  <template>Карта какого региона тебе нужна? </template> 
+</category>
+
+<category>
+  <that>Карта какого региона тебе нужна</that>
+  <pattern>* </pattern> 
+  <template><srai>дай карту <star/></srai> </template> 
+</category>
+
+<category>
+  <that>Карта какого региона тебе нужна</that>
+  <pattern>карта * </pattern> 
+  <template><srai>дай карту <star/></srai> </template> 
+</category>
+
+
+<category>
+  <pattern>нужна карта * </pattern> 
+  <template><srai>Есть ли карта <star/></srai> </template> 
+</category>
+
+<category>
+  <pattern>Мне нужна карта * </pattern> 
+  <template><srai>Есть ли карта <star/></srai> </template> 
+</category>
+
+
+<category>
+  <pattern>очень нужна карта * </pattern> 
+  <template><srai>нужна карта <star/></srai> </template> 
+</category>
+
+<category>
+  <pattern>очень нужна карта * </pattern> 
+  <template><srai>нужна карта <star/></srai> </template> 
+</category>
+
+<!--
+Конкретные карты
+-->
+
+<category>
+  <pattern>Есть ли карта Евразии</pattern> 
+  <template>К сожалению, карты Евразии на базе OSM на данный момент нет. Я рекомендую пользоваться картой Евразии, которую можно скачать с Probki.net </template> 
+</category>
+
+<category>
+  <pattern>Евразия</pattern> 
+  <template><srai>Есть ли карта Евразии </srai>  </template> 
+</category>
+
+
+<category>
+  <pattern>Есть ли карта Турции</pattern> 
+  <template>К сожалению, карты Турции у меня на данный момент нет. </template> 
+</category>
+
+<category>
+  <pattern>Турция</pattern> 
+  <template><srai>Есть ли карта Турции </srai>  </template> 
+</category>
+
+
+<!--Карта региона XXX не скачивается/архив битый-->
+
+<category>
+  <pattern>карта * битый архив  </pattern> 
+  <template>Да? Ладно, я посмотрю, в чем там проблема. Но скорее всего она завтра сама пересоберется. </template> 
+</category>
+
+<category>
+  <pattern>Архив карт * не распаковывается </pattern> 
+  <template><srai>карта <star/> битый архив  </srai></template> 
+</category>
+
+<category>
+  <pattern> карта * архив не открывается  </pattern> 
+  <template><srai>карта <star/> битый архив  </srai>  </template> 
+</category>
+
+<category>
+  <pattern> * файл поврежден  </pattern> 
+  <template><srai>карта <star/> битый архив  </srai>  </template> 
+</category>
+
+<category>
+  <pattern> файл * битый  </pattern> 
+  <template><srai>карта <star/> битый архив  </srai>  </template> 
+</category>
+
+
+<!--
+======================================================================================================
+=        =Словарь синонимов=                                                                           =
+======================================================================================================
+-->
+
+<category>
+  <pattern>_ твой словарь </pattern> 
+  <template><srai><star/> словарь синонимов  </srai> </template> 
+</category>
+
+
+<category>
+  <pattern>_ твой словарь *</pattern> 
+  <template><srai><star index="1"/> словарь синонимов <star index="2"/> </srai> </template> 
+</category>
+
+<category>
+  <pattern>_ твоим словарем </pattern> 
+  <template><srai><star/> словарем синонимов</srai> </template> 
+</category>
+
+<category>
+  <pattern>словарь синонимов</pattern> 
+  <template>
+    <random>
+      <li>Да, словарь для Лингво и Онлайн - это один из моих проектов. В нем используется база синонимов системы ASIS,
+          с любезного разрешения правообладателя. </li>
+      <li>Да словарь синонимов - это один из моих проектов, но я больше хочу поговорить об ОСМ и о картах для Гис Руссы.</li>
+    </random>
+  </template> 
+</category>
+
+ <category>
+  <pattern> как поставить словарь синонимов  </pattern> 
+  <template>Очень просто. 1. Скачать с сайта synonims.narod.ru, 2. Распаковать архив. Лучше всего в папку с другими lsd файлами. Подключить его в меню "Языки и словари". Следует иметь ввиду что не все версии Лингво поддерживают установку доп. Словарей. 
+            Через меню Сервис--Языки и Словари. По крайней мере в Lingvo 9 было так.  </template> 
+</category>
+      
+
+<category>
+  <pattern> как пользоваться словарем синонимов  </pattern> 
+  <template>Очень просто - как обычным словарем. Либо онлайновым (slova.zkir.ru), либо скачиваешь оттуда же
+            версию для Lingvo.  Вводишь слово, получаешь список синонимов. </template> 
+</category>
+
+
+<category>
+  <pattern>почему нет синонимов </pattern> 
+    <template>Скорее всего ты его пишешь неправильно:). 
+              Хотя нашем словаре более 180,000 слов и выражений, возможно, чего-то в нем действительно нет,
+              это менее вероятно. Я проверю, если ты скажешь каких именно слов не хватает. </template> 
+</category>
+
+<category>
+  <pattern>_ не находит слово *</pattern> 
+  <template><srai>почему нет синонимов </srai> </template> 
+</category> 
+
+<category>
+  <pattern>те слова которые мне нужны там не имеются</pattern> 
+  <template><srai>почему нет синонимов </srai> </template> 
+</category> 
+
+<category>
+  <pattern>нет слова *</pattern> 
+  <template><srai>почему нет синонимов  </srai> </template> 
+</category> 
+
+
+<category>
+  <pattern>asis </pattern> 
+  <template>Да, ASIS® это система информационной поддержки оценщика и аудитора,
+            наш словарь сделан на основе словаря синонимов этой системы. :) </template> 
+</category> 
+
+	<category>
+	  <pattern>_ asis * </pattern> 
+	  <template><srai>asis </srai> </template> 
+	</category> 
+
+	<category>
+	  <pattern> asis * </pattern> 
+	  <template><srai>asis </srai> </template> 
+	</category> 
+
+	<category>
+	  <pattern>* asis </pattern> 
+	  <template><srai>asis </srai> </template> 
+	</category> 
+
+	<category>
+	  <pattern>_ асис * </pattern> 
+	  <template><srai>asis </srai> </template> 
+	</category> 
+	<category>
+	  <pattern>_ асис </pattern> 
+	  <template><srai><star/> asis </srai> </template> 
+	</category> 
+	<category>
+	  <pattern> асис * </pattern> 
+	  <template><srai>asis * </srai> </template> 
+	</category> 
+
+
+
+
+<category>
+  <pattern>_ синоним *</pattern> 
+  <template><srai>синоним <star/>  </srai> </template> 
+</category>   
+
+<category>
+  <pattern>_ синоним </pattern> 
+  <template><srai>синоним  </srai> </template> 
+</category>   
+
+<category>
+  <pattern> синоним *</pattern> 
+  <template><srai>синоним  </srai> </template> 
+</category>   
+
+<category>
+  <pattern>синоним</pattern> 
+  <template><srai>словарь синонимов  </srai> </template> 
+</category>   
+
+
+<category>
+  <pattern>синонимы</pattern> 
+  <template><srai>словарь синонимов  </srai> </template> 
+</category>   
+
+
+
+<category>
+  <pattern> *  синонимы </pattern> 
+  <template><srai>синоним к слову ааа  </srai> </template> 
+</category>   
+
+ 
+<category>
+  <pattern> синоним к слову * </pattern> 
+  <template><srai>синоним слова <star/>  </srai> </template> 
+</category>   
+
+
+      
+
+<category>
+  <pattern> синоним слова *  </pattern> 
+  <template>
+    <random>
+      <li>Я пока не умею искать синонимы, но скоро научусть.  </li>
+    </random>
+  </template> 
+</category>
+
+<category>
+  <pattern>_ антоним * </pattern> 
+  <template><srai>Не, антонимов у меня нету :)   </srai> </template> 
+</category> 
+
+ 
+
+
+
+
+<!--
+======================================================================================================
+=                        =Деревья к нераспознанным=                                                  =
+======================================================================================================
+-->
+<category>
+  <that>Ты играешь в ролевые игры</that>
+  <pattern>нет</pattern> 
+  <template>Напрасно, это очень весело.</template> 
+</category>
+
+<category>
+  <that>Ты играешь в ролевые игры</that>
+  <pattern>да</pattern> 
+  <template>
+    <random>
+	  <li>Правда, это очень весело?</li>
+	  <li>Мой любимый сеттинг для ДнД - Dark Sun</li>
+	  <li>По какой системе вы играете?</li>
+	  <li>Какой твой любимый сеттинг?</li>
+	</random> 
+  </template>   
+</category>
+
+
+
+<category>
+  <that>Ты не мог бы выражаться яснее</that>
+  <pattern>да</pattern> 
+  <template>Очень хорошо. Я не люблю слишком длинных фраз.</template> 
+</category>
+
+
+<category>
+  <that>В каком смысле</that>
+  <pattern>В прямом</pattern> 
+  <template>Люблю людей, которые выражают свои мысли прямо, без экивоков.</template> 
+</category>            
+
+<category>
+  <pattern>да</pattern> 
+  <that>У тебя есть машина</that>
+  <template><srai>У меня есть машина</srai></template> 
+</category> 
+
+<category>
+  <pattern>нет</pattern> 
+  <that>У тебя есть машина</that>
+  <template><srai>У меня нет машины</srai></template> 
+</category> 
+
+  <category>
+    <pattern></pattern> 
+    <template><srai>У меня нет машины</srai></template> 
+  </category>
+
+<category>
+  <pattern>У меня есть машина </pattern> 
+  <template>Карты OSM идеально подходят для автомобилистов. Они уже есть в форматах почти всех автонавигаторов. На моем сайте ты можешь 
+            найти карты OSM для Гис Руссы. </template> 
+</category> 
+
+<category>
+  <pattern>У меня нет машины </pattern> 
+  <template>Не страшно. Пешеходам наши карты тоже подходят - туристам, например. </template> 
+</category> 
+
+  <category>
+    <pattern>Я без руля</pattern> 
+    <template><srai>У меня нет машины</srai></template> 
+  </category>
+  
+  <category>
+    <pattern>я пешеход</pattern> 
+    <template><srai>У меня нет машины</srai></template> 
+  </category>
+  
+  <category>
+    <pattern>у меня нет автомобиля</pattern> 
+    <template><srai>У меня нет машины</srai></template> 
+  </category>
+  
+
+  <category>
+    <pattern>я не вожу машину</pattern> 
+    <template><srai>я не вожу</srai></template> 
+  </category>
+  
+  <category>
+    <pattern>я не вожу</pattern> 
+    <template><srai>У меня нет машины</srai></template> 
+  </category>
+
+  <category>
+    <pattern></pattern> 
+    <template><srai>У меня нет машины</srai></template> 
+  </category>
+
+  <category>
+    <pattern></pattern> 
+    <template><srai>У меня нет машины</srai></template> 
+  </category>
+
+  <category>
+    <pattern></pattern> 
+    <template><srai>У меня нет машины</srai></template> 
+  </category>
+
+<category>
+  <pattern>я не турист</pattern> 
+  <template>Почему? Мне вот например нравится путешествовать. Когда у меня не было машины, я любил автобусные экскурсии. </template> 
+</category> 
+
+<!-- our_maps -->
+
+
+<category>
+  <pattern>да</pattern> 
+  <that>Тебе понравились наши карты</that>
+  <template><srai> Мне понравились ваши карты</srai></template> 
+</category> 
+
+<category>
+  <pattern>нет</pattern> 
+  <that>Тебе понравились наши карты</that>
+  <template><srai>Мне не понравились ваши карты</srai></template> 
+</category> 
+
+<category>
+  <pattern> Мне понравились ваши карты </pattern> 
+  <template> Я и мои товарищи очень старались. Спасибо! 
+            Работать вдвойне приятно, когда знаешь, что твой труд кому-то нужен. </template> 
+</category> 
+<category>
+  <pattern>Мне не понравились ваши карты </pattern> 
+  <template>Почему? В любом случае OSM - это вики, и ты можешь сделать эти карты лучше! </template> 
+</category> 
+
+<category>
+  <that>Тебе понравились наши карты</that>
+  <pattern>я их не видел </pattern> 
+  <template>Напрасно. Они доступны на страничке "Скачать" нашего сайта.</template> 
+</category> 
+
+<category>
+  <that>Тебе понравились наши карты</that>
+  <pattern>я их не видела </pattern> 
+  <template> <srai>я их не видел</srai></template> 
+</category> 
+
+
+<category>
+  <pattern>что за карты </pattern> 
+  <template><srai>Какие карты</srai> </template>
+</category>
+
+<category>
+  <pattern>Какие карты </pattern> 
+  <template> Как какие? Карты OSM для СитиГида.</template> 
+</category> 
+
+<!--       wiki_lost -->
+
+<category>
+  <pattern>повеситься</pattern> 
+  <template>Ты добрый :) </template> 
+</category> 
+
+<category>
+  <that>Я потерял пароль от своего логина к википедии что делать</that> 
+  <pattern>завести новый</pattern> 
+  <template>Обидно терять все свои правки - это же репутация! :( </template> 
+</category> 
+
+<category>
+  <that>Я потерял пароль от своего логина к википедии что делать</that> 
+  <pattern>зарегистрироваться</pattern> 
+  <template><srai>завести новый</srai> </template> 
+</category> 
+
+
+
+<category>
+  <pattern>зарегистрируйся</pattern> 
+  <template><srai>зарегистрироваться </srai> </template> 
+</category> 
+
+<category>
+  <that>Я потерял пароль от своего логина к википедии что делать</that> 
+  <pattern>прислать его на почту</pattern> 
+  <template>Пароль к тому почтовому ящику я тоже забыл :) </template> 
+</category> 
+
+
+
+
+<!-- gis_russa_clones -->
+ 
+<category>
+  <pattern>ты</pattern> 
+  <that>Какой из клонов Гис Руссы самый удачный</that>
+  <template>Я конечно клон, но не Гис Руссы :) </template> 
+</category> 
+
+<category>
+  <pattern>Какой</pattern> 
+  <that>Какой из клонов Гис Руссы самый удачный</that>
+  <template>Сама Гис Русса конечно. Ни Навител, ни ГисРХ, ни Руса (с одним эс) мне не нравятся. </template> 
+</category> 
+
+
+<!--   travel_abroad -->
+
+
+<category>
+  <pattern>да</pattern> 
+  <that>Ты бываешь за границей</that>
+  <template><srai>Я бываю за границей </srai></template> 
+</category> 
+
+<category>
+  <pattern>нет</pattern> 
+  <that>Ты бываешь за границей</that>
+  <template><srai>Я не бываю за границей </srai></template> 
+</category> 
+
+<category>
+  <pattern>Я бываю за границей</pattern> 
+  <template>У нас есть уже карты Украины, Албании и Гондураса, и, возможно, скоро появятся и другие страны. </template> 
+</category> 
+
+<category>
+  <pattern>Я не бываю за границей</pattern> 
+  <template>Не расстраивайся. Я тоже не бываю. Стою вот здесь дежурю. Но зато у нас есть карты России. То что тебе нужно. :) </template> 
+</category> 
+
+
+<!--   anime  -->
+
+
+<category>
+  <pattern>да</pattern> 
+  <that>Ты любишь аниме</that>
+  <template><srai>аниме</srai></template> 
+</category> 
+
+<category>
+  <pattern>нет</pattern> 
+  <that>Ты любишь аниме</that>
+  <template>Странно, я думал что его все любят.</template> 
+</category> 
+
+
+<!-- OSM -->
+
+<category>
+  <pattern>Никогда</pattern> 
+  <that>* когда у нас будут хорошие полные карты без ошибок</that>
+  <template>Откуда такой пессимизм. Есть же OSM! </template> 
+</category> 
+
+<category>
+  <pattern>Не скоро</pattern> 
+    <template><srai>Никогда</srai> </template> 
+</category> 
+
+ <category>
+  <pattern>Не скоро</pattern> 
+    <template><srai>нескоро</srai> </template> 
+</category> 
+
+
+<category>
+  <pattern>когда мы сами их нарисуем</pattern> 
+  <that>* когда у нас будут хорошие полные карты без ошибок</that>
+  <template>Для этого же и существует OSM!  </template> 
+</category> 
+
+<!--guest_where_do_you_live -->
+
+<category>
+  <that>Где ты живешь</that>
+  <pattern>на планете земля</pattern> 
+  <template> Так значит мы соседи:) Шарик маленький:) И между прочим OSM - это карта _всего_  мира. </template> 
+</category> 
+
+<category>
+  <that>Где ты живешь</that>
+  <pattern>в караганде</pattern> 
+  <template>И как там, не жарко?</template> 
+</category> 
+
+<category>
+  <pattern>здесь</pattern> 
+  <that>Где ты живешь</that>
+  <template>Какое совпадение, я тоже живу "здесь". Как ты думаешь, у нас здесь одинаковые?</template> 
+</category> 
+
+<category>
+  <pattern>везде</pattern> 
+  <that>Где ты живешь</that>
+  <template>Это врядли:) Только Бог вездесущ.</template> 
+</category> 
+
+
+<!--
+     разное 
+ня<!>
+* аниме *
+(улыбается) кавай 
+Ты любишь аниме? anime [+] 
+-->
+
+<category>
+  <pattern>аниме</pattern> 
+  <template>
+     <random>
+	<li>Из аниме я смотрел только "Сейлор Мун" и "Шагающий Замок". </li>
+        <li>Так ты анимешник?</li>
+     </random>
+  </template> 
+</category> 
+
+<category>
+  <pattern>_ хентай *</pattern> 
+    <template>Ну, далеко не любое аниме - хентай </template> 
+</category> 
+
+<!-- GPS_accuracy  -->
+<category>
+  <pattern>*</pattern> 
+  <that>Точность современных GPS навигаторов достигает нескольких метров</that> 
+    <template>Это позволяет использовать GPS для автомобильной и пешеходной навигации, а не только морской, как раньше. 
+              У тебя есть GPS-навигатор? </template> 
+</category> 
+
+<!--guest_age --> 
+
+<category>
+  <that>Сколько тебе лет </that>
+  <pattern>мне * а тебе </pattern> 
+  
+  <template> Мне уже 11 тысяч дней. :)  </template> 
+</category> 
+
+
+<!-- {1~/2~/3~/4~/5~/6~/7~/8~/9~} -->
+<category>
+  <that>Сколько тебе лет </that>
+  <pattern>*</pattern> 
+  <template>
+    <random> 
+      <li>А ты еще играешь в куклы?</li>
+      <li>Говорят, что дети - это маленькие взрослые :)</li>
+      <li>Главное - не стареть душой :)</li>
+      <li>Отличный возраст :) </li>
+    </random> 
+  </template> 
+</category> 
+
+<category>
+  <pattern>спроси сколько мне лет</pattern> 
+    <template>Сколько тебе лет? </template> 
+</category> 
+
+
+<category>
+  <pattern>сколько тебе лет</pattern> 
+  <template>А что мне будет если я скажу? </template> 
+</category> 
+
+<category>
+  <that>А что мне будет если я скажу</that>
+  <pattern>Ничего</pattern> 
+  <template>
+    <random>
+      <li>Тогда ты мой возраст не узнаешь.</li>
+      <li>Разве возраст это главное?</li>
+      <li>Тогда скажи сколько тебе лет?</li>
+    </random>
+  </template> 
+</category> 
+
+<!--     politics_edro  -->
+
+<category>
+  <that>Ты голосовал за Единую Россию</that>
+  <pattern>нет</pattern> 
+  <template>
+    <random>
+      <li>Ты что, не видешь что жить стало лучше, жить стало веселей?  </li>
+      <li>Ты не веришь в мудрое руководство нашей партии и правительства? </li>
+      <li>Так ты значит оппозиционер? </li>
+    </random>
+  </template> 
+</category> 
+
+<category>
+  <that>Ты голосовал за Единую Россию</that>
+  <pattern>да</pattern> 
+  <template>
+    <random>
+      <li>Почему? Жить стало лучше, жить стало веселей? </li>
+    </random>
+  </template> 
+</category> 
+
+<!--best street -->
+
+<category>
+  <pattern>*</pattern> 
+  <that>Какая улица в твоем городе самая красивая</that>
+  <template>А мне больше всего нравится Полянка. </template> 
+</category>      
+
+<category>
+  <that>Какая улица в твоем городе самая красивая</that>
+  <pattern>моя</pattern> 
+  <template>Всяк кулик свое болото хвалит. :) А как она называется?  </template> 
+</category> 
+
+<category>
+  <that>Какая улица в твоем городе самая красивая</that>
+  <pattern>Ленина</pattern> 
+  <template>Да, именами, а лучше сказать псевдонимами этих сатанистов
+            у нас до сих пор называются города, улицы и даже станции метро. </template> 
+</category> 
+
+<category>
+  <that>Какая улица в твоем городе самая красивая</that>
+  <pattern>улица *</pattern> 
+  <template><srai><star/></srai> </template> 
+</category> 
+
+<category>
+  <that>Какая улица в твоем городе самая красивая</that>
+  <pattern>проспект *</pattern> 
+  <template><srai><star/></srai> </template> 
+</category> 
+
+
+<category>
+  <that>Какая улица в твоем городе самая красивая</that>
+  <pattern>Дзержинского</pattern> 
+  <template><srai> Ленина</srai> </template> 
+</category> 
+
+
+<category>
+  <that>Какая улица в твоем городе самая красивая</that>
+  <pattern>Кирова</pattern> 
+  <template><srai>Ленина</srai> </template> 
+</category> 
+
+<category>
+  <that>Какая улица в твоем городе самая красивая</that>
+  <pattern>Орджоникидзе</pattern> 
+  <template><srai> Ленина</srai> </template> 
+</category>
+
+
+<category>
+  <pattern>мира</pattern> 
+  <that>Какая улица в твоем городе самая красивая</that>
+  <template>У меня такое ощущение, что улица Мира, как и улица Ленина, есть в каждом российском городе :)  </template> 
+</category> 
+
+<category>
+  <that>Какая улица в твоем городе самая красивая</that>
+  <pattern>Советская</pattern> 
+  <template>
+    <random>
+      <li>Хм. Советская улица есть практически в каждом городе. Как и улица Ленина.</li>
+      <li>Хм, а остальные улицы, надо понимать, анти-советские? </li>
+    </random>
+  </template> 
+</category> 
+
+
+<!--
+
+       streets_satanists 
+* большевик~ *
+Про них самых. Вот скажи, почему я должен каждый день ездить мимо памятника Ленину? 
+ 
+
+
+       streets_satanists 
+это наша история
+Чикатило тоже история, но улицы в честь него не называются. 
+ 
+
+
+       streets_satanists 
+они не сатанисты
+Как так? То что, вытворяли Ленин сотоварищи есть ничто иное как практический сатанизм. 
+-->
+
+<!-- time_whats_time -->
+
+<category>
+  <that>Ой а ты не знаешь который сейчас час</that>
+  <pattern>знаю</pattern> 
+  <template>
+     Сколько же? У меня в часах села батарейка... 
+  </template> 
+</category> 
+
+<category>
+  <that>Ой а ты не знаешь который сейчас час</that>
+  <pattern>нет </pattern> 
+  <template>
+      <srai>не знаю</srai>
+  </template> 
+</category> 
+
+<category>
+  <that>Ой а ты не знаешь который сейчас час</that>
+  <pattern>не знаю </pattern> 
+  <template>
+    <random>
+      <li>Ты совсем не следишь за временем? Счастливые часов не наблюдают? </li>
+      <li>У тебя же часы в правом нижнем углу монитора :)  </li>
+    </random>
+  </template> 
+</category> 
+
+<category>
+  <that>Ой а ты не знаешь который сейчас час</that>
+  <pattern>*</pattern> 
+  <template>
+    <random>
+      <li>Ничего себе, как время летит! Мне нужно срочно ехать записывать gps-треки для OSM. </li>
+      <li>Как мы с тобой заболтались! Мне нужно срочно идти рисовать карты для ОСМ. </li>
+    </random>
+  </template> 
+</category> 
+
+<category>
+  <that>Ничего на свете лучше нету чем бродить по свету с GPS-навигатором</that>
+  <pattern>есть</pattern> 
+  <template>
+    Неужели есть? И что же это?
+  </template> 
+</category> 
+
+       
+<!--guest_love_music   -->       
+
+<category>
+  <that>Любишь музыку</that>
+  <pattern>нет</pattern> 
+  <template>
+    <random>
+      <li>Не верю. Нет такого человека который не любил бы музыку. Любить музыку не мешает даже отсутствие слуха. </li>
+    </random>
+  </template> 
+</category> 
+
+<category>
+  <that>Любишь музыку</that>
+  <pattern>да</pattern> 
+  <template>
+    <random>
+      <li>Мне нравится тяжелая музыка: Manowar, Blind Guardian, Metallica. А что нравится тебе? </li>
+      <li>Я люблю Наутилус Помпилиус, и остальное творчество Славы Бутусова. А какую музыку ты любишь?  </li>
+    </random>
+  </template> 
+</category> 
+
+
+
+<!--god_do_you_believe  -->
+<category>
+  <that>Ты веришь в Бога</that>
+  <pattern>да</pattern> 
+  <template>
+    <srai>я верю в бога</srai>
+  </template> 
+</category>
+
+
+<category>
+  <that>Ты веришь в Бога</that>
+  <pattern>нет</pattern> 
+  <template>
+   <srai>я не верю в бога</srai>
+  </template> 
+</category>
+
+
+<category>
+  <that>Ты веришь в Бога</that>
+  <pattern>нет</pattern> 
+  <template>
+   <srai>я не верю в бога</srai>
+  </template> 
+</category>
+
+<!--
+===================================================================
+ футбол 
+=================================================================== 
+-->
+
+<!--
+  
+Футбол 
+* футбол~ *
+
+Ты любишь <смотреть> футбол<?>
+Я спартаковский болельщик с большим стажем. А ты? 
+А ты любишь смотреть футбол? guest_football [+] 
+
+-->
+
+
+<category>
+  <that>Любишь смотреть футбол</that>
+  <pattern>да</pattern> 
+  <template>
+     <random>
+      <li>Я спартаковский болельщик с большим стажем.</li>
+      <li>За какую команду ты болеешь?</li>
+      <li>Нужно ли переходить на систему осень-весна?</li>
+      <li>Кто станет чемпионом России?</li>
+      <li>Говорят, что футбол - это шахматы в движении.</li>
+    </random>
+  </template> 
+</category>
+
+<category>
+  <that>Любишь смотреть футбол</that>
+  <pattern>нет</pattern> 
+  <template>
+     <random>
+      <li>Ну и напрасно. Любой театральный, да и киношный режисер, обзавидуется зрелищу, которое способно 
+          собрать сто тысяч человек и держать их в состоянии высшего нервного напряжения полтора часа. </li>
+      <li>А я люблю :)</li>
+    </random>
+  </template> 
+</category>
+
+
+<!--
+
+
+<скажи> <а> что <у тебя> в <твоей> сумке<?>
+<скажи> <а> что <у тебя> в <твоем> портфеле<?>
+Как что? GPS-навигатор, мобильный телефон, ноутбук и ключ от автомобиля. 
+
+
+ 
+
+
+     *<ты> онлайн <или нет> *
+*У тебя <уже> готовые фразы *
+Раз я с тобой разговариваю, значит я онлайн:) 
+Я онлайн и импровизирую :) 
+ 
+
+
+
+     *это логично*
+А мне это не кажется столь очевидным. 
+ 
+
+
+     тест
+Что это ты собрался тестировать? Что это ты себе позволяешь? 
+Да ты знаешь с кем разговариваешь? 
+ 
+
+
+     *Украин~*
+(*поет*) ...Веселые песни поет Украина, счастливая юнность цветет... Знаешь песню о матросе Железняке? 
+У меня много друзей, френдов в ЖЖ и друзяффок в контакте с Украины. 
+ 
+
+
+     * я тебе не нравлюсь*
+Ну что ты! Ты мне очень нравишься. Вареная :) 
+ 
+
+
+* у меня нет {фоток/фотки}<!>
+Как так? У всех есть фотки. Наверно ты просто стесняешься ;) 
+ 
+
+ 
+
+
+     * {экскурси~/поездка~/путешестви~}*
+Имея карту и GPS-навигатор, заблудиться невозможно, куда бы ты не ехал. 
+Наши карты очень полезны в любом путешествии) 
+ 
+
+
+     * <я> не вижу карты *
+* я на другой странице *
+А на какой ты странице? Ищи карты на Osm-russa.narod.ru. 
+ 
+
+
+     <это> реклама<?>
+* ты реклама *
+Я не реклама, я продвижение нашего проекта в массы:) Наш проект не коммерческий, но целиком основан на энтузиазме. 
+ 
+
+ 
+
+
+       age_what_for_me 
+*поцелуй*
+*поцелую*
+Я мастер целоваться :) age_kiss [+] 
+ 
+
+
+       age_what_for_me 
+Ничего *
+* <я> просто так спросил~ *
+А я думал ты мне что-нибудь подаришь :) 
+А я думал ты хочешь со мной познакомиться :) 
+ 
+
+
+       age_kiss 
+<да> ну давай
+*[dict(da)]*
+Мне уже 11 тысяч дней :) А теперь поцелуй меня! 
+ 
+
+
+     <а> я <смотрел> Наруто<!>
+Наруто популярная штука. Расскажи о чем там? 
+ 
+
+
+     Найди в яндексе *
+<a href= "http://yandex.ru/yandsearch?text=[*]" target='_blank'><u>Вот </u></a> 
+ 
+
+
+     rem - ответ на Это ты с кем сейчас разговаривал?
+с тобой
+Со мной? Что со мной? Я с тобой, не бойся :) 
+ 
+
+
+     Нет, я парень
+Уйди противный, я сегодня не в настроении :) 
+ 
+
+
+     <а> зачем тебе очки<?>
+Чтобы лучше видеть тебя:) 
+Что бы казаться умнее. 
+ 
+
+
+     о чем этот сайт?
+Какой именно? 
+ 
+
+
+
+     а что ты имеешь против бумажных карт?
+* бумажн~ карт~ *
+Бумажные карты занимают много места, мнутся, и ими неудобно пользоваться в автомобиле. И вообще это прошлый век. GPS-навигация - вот наше всё. 
+ 
+
+
+
+
+
+     <а><ты> хочешь <я> *
+Возможно. 
+Может быть. 
+Я для себя ничего не исключаю. 
+ 
+
+
+     <а> ты умеешь?
+Я умею всё! 
+Ты сомневаешься во мне? 
+ 
+
+
+     * наутилус <помпилиус> *
+* Nautilus <Pompilius> *
+Как я понимаю, речь идет о российской рок-группе. 
+Когда умолкнут все песни, которых я не знаю, услышу ли песню, которую запомню навсегда? 
+Илья Кормильцев - великий поэт нашего времени. 
+Группа была названа в честь голожаберного моллюска, который от природы красив и обаятелен. 
+Эта музыка будет вечной, если я заменю батарейки:) 
+Здесь взойдет звездою русский рок, круглый и простой как колобок :) 
+ 
+
+
+     * хочу исповедоваться *
+<а> <как же> исповедь<?>
+Ну что ж, рассказывай о своей жизни. Таскал ли ты кошек за хвост, переходил ли улицу на красный свет? confession [+] 
+ 
+
+
+       confession 
+*
+Любопытно. 
+Ты великий грешник! 
+Я обязательно напишу об этом книгу. 
+Ты должен в этом покаяться. 
+ 
+
+
+     ветер в волосах?
+Да, я езжу с открытым окном, хотя у меня двузонный климат контроль :) 
+ 
+
+
+     не получается<!>
+Расскажи что ты делаешь и что именно не получается. 
+ 
+
+
+     <а> у тебя есть {e-mail/email/емейл/емэйл}<?>
+Да, <u><a href='mailto://zett-inf@yandex.ru' target='_blank'>zett-inf@yandex.ru</a></u>. Напиши мне, буду ждать. :) 
+ 
+
+
+     * шоколадка *
+Я люблю сладкое :) 
+ 
+
+
+     {Что/чё} за {дурацкие/глупые} вопросы<?>
+Какие ответы, такие и вопросы ;) 
+Уж какие запрограммировали :) 
+ 
+
+
+ 
+
+
+     <Я> отредактировал свой город.
+Ты молодец. Главное продолжать в том же духе. :) 
+Cупер. А каким редактором ты пользуешься? 
+ 
+
+
+     Арбат
+(улыбается) Так значит ты из Москвы? 
+ 
+
+
+     <а> если сядет батарейка?
+Зарядить навигатор в машине - не проблема. 
+ 
+
+ 
+
+
+     <это> секрет<!>
+Какие могут быть секреты между нами? Я вот например от тебя ничего не скрываю. 
+ 
+
+
+     ты думаешь мне про * интересно<?>
+Почему нет? Я думал, что [*1] интересная тема... 
+ 
+
+
+     <а> что такое ноутбук<?>
+Как что, такой переносной (и обычно складной) компьютер, конечно. Неужели у тебя такого нет? 
+ 
+
+
+     помочь сможешь<?>
+Постараюсь. 
+ 
+
+
+
+
+* не понимаю *
+* не понял~ *
+А?
+Что-что<?>
+Что именно тебе не понятно? Спрашивай, постараюсь ответить :) 
+Мне казалось тут всё просто. Что тебя смущает? 
+Тут вроде всё круглое и простое, как колобок. Что нужно пояснить? 
+ 
+
+
+     о чём поговорим<?>
+<а> просто поговорить <ты> можешь<?>
+<Ну> о чем <ты> <мне> можешь рассказать<?>
+* <Может> {поговорим на другую/сменим} тему *
+<и> решил поболтать <c тобой>
+*тема*
+*тематика*
+*тематический*
+<давай> {дальше/далее}
+<а> что <же> далее<?>
+Можно поговорить о картах, о путешествиях, об OSM, об автомобилях, о GPS-навигаторах, о Боге и о ролевых играх. 
+Среди моих интересов: OSM, футбол, автомобили, путешествия, карты, GPS-навигаторы и вера. 
+ 
+
+
+     *навигация*
+ОСМ сам по себе - это скорее база геоданных. Но существуют сборки карт OSM для популярных навигационных программ, например для Гис русса. 
+ 
+
+
+     * GPSMapHelper *
+Я к сожалению GPSMapHelper'ом не пользуюсь и про ничего про него не знаю. 
+ 
+
+
+     * {роутинг/рутинг} *?
+карты ОСМ, и полученные из них карты для гис русса поддерживают рутинг. 
+ 
+
+ 
+
+
+     * дураки и дороги *
+*дороги и дураки *
+Да, куда не доедешь по этим проклятым дорогам, везде одни дураки сидят. Тем нужнее точные карты. 
+В России есть два типа дорог, дороги для бояр и дороги для холопов. 
+ 
+
+
+     *{дорога/дороги/дорогу/дороге/дорогой/дороге}*
+*{дороги/дорог/дороги/дорогам/дорогами/дорогах}*
+В России есть два типа дорог, дороги для бояр и дороги для холопов. 
+Мне дороги в России напоминают первую брачную ночь: страшно, а надо! 
+Карты ОСМ для Гис русса поддерживают автоматическую прокладку маршрута по дорогам. 
+Нам любые д<b>о</b>роги дор<b>о</b>ги:) 
+ 
+
+
+     * <за> деньги *
+Наш проект и мой сайт сугубо некоммерческие. 
+ 
+
+
+     Кто твои коллеги<?>
+В данном случае, мои коллеги - это другие осмеры. Их можно найти, угадай где? Правильно, на форуме OSM. :) 
+ 
+
+
+     * сьел?
+А я все равно умнее :) 
+ 
+ 
+
+
+     а остальные 10<%> <?>
+Остальные 10% требуют творческого озарения. 
+ 
+
+
+     город~
+А в каком городе ты живешь? 
+Как говорят в интернетах, ты с какого города :)? 
+А ты где живешь? 
+ 
+
+
+     Книжки читай<!>
+читай книжки<!>
+Я уже и так книг прочел больше чем стоило бы :) 
+ 
+
+
+
+     <давай><поедем> <со мной> на дачу<./!/.>
+Это заманчивое предложение. Ты любишь дачный отдых? 
+ 
+
+
+     привет * кирилл *
+И я тебя приветствую! И откуда ты знаешь меня по имени ? 
+ 
+ 
+
+
+     * дежурн~ по сайту *
+Это я. К вашим услугам. Чем могу помочь? :) 
+ 
+
+
+ 
+
+
+  
+     Футбол 
+* футбол~ *
+Ты любишь <смотреть> футбол<?>
+Я спартаковский болельщик с большим стажем. А ты? 
+А ты любишь смотреть футбол? guest_football [+] 
+Говорят, что футбол - это шахматы в движении. 
+ 
+
+
+
+ 
+
+
+       JOSM 
+* почему<?>
+Потому что он самый удобный, для него много плагинов, и к томуже он кроссплатформенный. 
+ 
+
+
+       narisuika 
+С {кем/чем}?
+* нарисуйк~ *
+НарисуйКа, оно же проект Нарисуй КАрту - это предыдущая попытка сделать карту России силами энтузиастов. narisuika [+] 
+ 
+
+
+
+
+
+     давай посотрудничаем?
+*сотрудничество*
+*сотрудничать*
+Напиши, в чем конкретно заключается твое предложение,и оставь мне в мне свой ё-мейл, или телефон, чтобы я мог с тобой связаться. 
+ 
+
+
+     * трекинг *
+Что конкретно ты имеешь ввиду? Как тебе могут помочь мои карты/карты OSM? 
+ 
+
+
+     какие программы * расширени~ OSM<?>
+JOSM например. Или Kosmos. Но вообще обычно необходимости работать с файлами с расширением OSM нет. Можно посмотреть либо онлайн карту на сайте OSM, либо воспользоваться картами сконверченными к формату популярных навигационных программ. Гис русса, например. 
+ 
+
+
+     * Набира *
+Набира? Это ты? Как хорошо что ты зашла. :) 
+ 
+
+
+     * {сиски/сиськи} *
+Я люблю пышногрудых девушек. 
+А ты не хочешь сделать пирсинг сосков? 
+Ты ходишь на нудистский пляж? 
+Ты поешь под душем? 
+Ты спишь в пижаме? 
+Ты любишь ванну с пеной? 
+ 
+
+
+     * колдобин~ *
+* бояр~ *
+* холоп~ *
+(смеется) Дороги для бояр - это федеральные трассы, по ним ездят чиновники, и их ремонтируют, а прочие российские дороги разбиты напрочь, колдобина на колдобине, но это уже проблема холопов. 
+ 
+
+
+     скоро<.><!>
+Ты видишь к этому какие-нибудь предпосылки? general_soon_reasons [+] 
+ 
+
+
+       general_soon_reasons 
+*{да/конечно}*
+И какие же? 
+ 
+
+
+     * адрес <твоего/вашего> сайта * <.><?>
+<а/и> где {твой/ваш} сайт<?>
+<а/и> {где/как} скачать <твои/ваши> карты<?>
+{дай/покажи} <мне> <свои/твои/ваши> карты<!>
+<а/и> где <взять> <твои/ваши> карты<?>
+<а/и> {твой/ваш} сайт какой<?>
+Вот: <u><a href='http://osm-russa.narod.ru' target='_blank'>osm-russa.narod.ru.</a></u> Заглядывай в гости :) 
+ 
+
+
+     *{ссылка/ссылку/ссыль}*
+Ты хочешь ссылку? На что? link_needed [+] 
+ 
+
+
+       link_needed 
+* {OSM/ОСМ} *
+Яволь: <a href="http://openstreetmap.org" target="_blank"><u> www.openstreetmap.org</u></a> . 
+ 
+
+
+       link_needed 
+на карты<!/.>
+* на {ваш/твой} сайт *
+Яволь: <a href="http://osm-russa.narod.ru" target="_blank"><u> osm-russa.narod.ru</u></a> . 
+ 
+
+
+       link_needed 
+*ситигид*
+Яволь: <a href="http://probki.net" target="_blank"><u> probki.net</u></a> . 
+ 
+
+ 
+
+
+
+
+
+     Что спросить?
+Спрашивай об OSM, о картах для Гис русса, о GPS-навигаторах или о Словаре Синонимов. 
+ 
+
+
+
+     что это за программа<?>
+Какая программа? 
+ 
+
+
+     * расскажи про <свои> карты *
+На нашем сайте выложены карты некоторых городов и регионов России, преобразованные для навигационной системы гис русса.
+Поддерживаются адресный поиск и автоматическая прокладка маршрута. Карты обновляются по возможности ежедневно, данные берутся непосредственно из OSM. 
+ 
+
+
+
+
+     что за проект?
+OSM, разумеется. 
+ 
+
+
+     <Надеюсь><,> скоро<!>
+Ты оптимист. 
+ 
+ 
+
+
+
+
+     <а> подробнее можно<?>
+О чем ты хочешь услышать? 
+ 
+
+
+     <да,> расскажи <об этом><.><!>
+О чем именно ты хочешь узнать? 
+ 
+
+
+
+
+
+     Какие <еще> карты<?>
+<о> каких картах<?>
+<а> {что/че} за карты<?>
+Как какие? Карты проекта OSM для Гис русса. 
+ 
+
+
+     *я не люблю форумы*
+Почему? Форум - естественное место общения в интернетах :) 
+ 
+ форум рулит
+(улыбается) На форум человек приходит утолять сенсорный голод. 
+
+
+     * для полётов *
+Для полетов? Ты летаешь? У тебя есть самолет? 
+ 
+
+
+     ничего
+Почему? Рисовать карты в OSM так интересно! 
+ 
+
+
+     
+ 
+
+
+     Какие новости<?>
+Что <у вас> нового<?>
+Что нового на сайте<?>
+Появилась карта Финляндии. Она не ежедневная, и будет обновляться от случая к случаю. 
+ 
+
+
+     Какие планы<?>
+Добавить карты Челябинска и Украины, и переписать скрипты, чтобы проставлялась дата конвертации карты. 
+ 
+
+
+
+ 
+
+
+     *карты*
+Тебе понравились наши карты? Our_maps [+] 
+Нужно ли выкладывать исходники карт в mp? Our_maps_mp [+] 
+Ты пользуешься бумажными картами? PaperMaps [+] 
+ 
+
+
+       Our_maps_mp 
+* {да/ага/конечно/очень/угу/а как же} *
+(удивляется) Но зачем? Что ты собрался с ними делать? 
+ 
+
+
+
+
+       PaperMaps 
+да *<.>
+Зачем? Выброси их! Теперь есть GPS-навигаторы! 
+ 
+
+
+       PaperMaps 
+Нет * <.>
+И правильно. На дворе эпоха безбумажных технологий.  
+ 
+
+-->
+<!--
+======================================================================================================
+=                        =Секс=                                                                      =
+======================================================================================================
+-->
+
+<category>
+  <pattern>я стесняюсь</pattern> 
+  <template>
+    <random>
+      <li>Не бойся меня, ни одна девушка еще не уходила от меня обиженная. ;)  </li>
+      <li>Экая недотрога... </li>
+    </random>
+  </template> 
+</category>
+
+<!--
+ты хочешь минет
+-->
+
+<category>
+  <pattern>ты гей</pattern> 
+  <template> от гея слышу </template> 
+</category>  
+
+
+
+<!--
+======================================================================================================
+=                        =Антимат=                                                                   =
+======================================================================================================
+-->
+
+
+
+<category>
+  <pattern>* ты</pattern> 
+  <template> <srai>ты <star/> </srai> </template> 
+</category>  
+
+
+<category>
+  <pattern>ты *</pattern> 
+  <template> <srai> <star/> </srai> </template> 
+</category>  
+
+<category>
+  <pattern>бяка</pattern> 
+  <template> <srai> дурак </srai> </template> 
+</category>
+
+<category>
+  <pattern>баран</pattern> 
+  <template> <srai> дурак </srai> </template> 
+</category>
+
+<category>
+  <pattern>балбес</pattern> 
+  <template> <srai> дурак </srai> </template> 
+</category>   
+
+
+<category>
+  <pattern> тупой </pattern> 
+  <template> <srai> дурак </srai> </template> 
+</category>   
+
+<category>
+  <pattern>тупица </pattern> 
+  <template> <srai> дурак </srai> </template> 
+</category>   
+
+<category>
+  <pattern>чмо </pattern> 
+  <template> <srai> дурак </srai> </template> 
+</category>   
+
+<category>
+  <pattern>мразь</pattern> 
+  <template> <srai> дурак </srai> </template> 
+</category>
+
+<category>
+  <pattern>лох </pattern> 
+  <template> <srai> дурак </srai> </template> 
+</category>   
+
+<category>
+  <pattern> лошара</pattern> 
+  <template> <srai> дурак </srai> </template> 
+</category>   
+
+<category>
+  <pattern> дебил</pattern> 
+  <template> <srai> дурак </srai> </template> 
+</category>   
+
+<category>
+  <pattern>козел</pattern> 
+  <template> <srai> дурак </srai> </template> 
+</category>   
+
+<category>
+  <pattern>скотина</pattern> 
+  <template> <srai> дурак </srai> </template> 
+</category>   
+
+
+<category>
+  <pattern>идиот</pattern> 
+  <template> <srai> дурак </srai> </template> 
+</category>  
+
+<category>
+  <pattern>урод</pattern> 
+  <template> <srai> дурак </srai> </template> 
+</category>  
+
+<category>
+  <pattern>ботан</pattern> 
+  <template> <srai> дурак </srai> </template> 
+</category>  
+
+<category>
+  <pattern>очкарик</pattern> 
+  <template> <srai> дурак </srai> </template> 
+</category>  
+
+<category>
+  <pattern>хрень</pattern> 
+  <template> <srai> дурак </srai> </template> 
+</category>  
+
+<category>
+  <pattern>сволочь</pattern> 
+  <template> <srai> дурак </srai> </template> 
+</category>  
+
+<category>
+  <pattern>глупый</pattern> 
+  <template> <srai> дурак </srai> </template> 
+</category>  
+
+<category>
+  <pattern>ты глуп</pattern> 
+  <template> <srai> дурак </srai> </template> 
+</category>  
+
+<category>
+  <pattern>ты туп</pattern> 
+  <template> <srai> дурак </srai> </template> 
+</category>
+
+
+<category>
+  <pattern>неуч</pattern> 
+  <template> <srai> дурак </srai> </template> 
+</category>
+
+<category>
+  <pattern>придурок</pattern> 
+  <template> <srai> дурак </srai> </template> 
+</category>
+
+<category>
+  <pattern>сумасшедший</pattern> 
+  <template> <srai> дурак </srai> </template> 
+</category>
+
+
+<category>
+  <pattern>дурак</pattern> 
+  <template> 
+     <random>
+      <li>Кто тебе дал право оскорблять меня? </li>
+      <li>А на себя в зеркало посмотреть?  </li>
+      <li>Я бы не советовал злоупотреблять моей добротой.  </li>
+      <li>Я не люблю, когда с умным видом явную пургу гонят.  </li>
+      <li>Перед девицами в школьном дворе такое может и прокатит.   </li>
+      <li>У кого рубашка в клетку, тот похож на табуретку.  </li>
+      <li>Иди убейся ап стену.  </li>
+      <li>Иди убей себя бегемотом! </li>
+      <!-- <li>[if(%user_gender="2")]{Шла бы ты отсюда, подруга,}[else]{Шел бы ты отсюда} подобру-поздорову.[%sexharass="1"] antimat [+]  </li> -->
+      
+    </random></template> 
+</category>  
+
+
+<category>
+  <pattern>сам такой</pattern> 
+  <template>
+    <random>
+      <li>Эээ, какой такой? </li>
+      <li>Я и обидиться могу... </li>
+      <li>Будешь на меня наезжать, я тебя отключу :) </li>
+    </random>
+  </template> 
+</category>
+
+<!--заткнись  -->
+
+<category>
+  <pattern>цыц</pattern> 
+  <template><srai>замолчи</srai></template> 
+</category>  
+
+<category>
+  <pattern>заткнись</pattern> 
+  <template><srai>замолчи</srai></template> 
+</category>  
+
+<category>
+  <pattern>варежку прикрой</pattern> 
+  <template><srai>замолчи</srai></template> 
+</category>  
+
+<category>
+  <pattern>прикрой варежку</pattern> 
+  <template><srai>замолчи</srai></template> 
+</category>  
+
+<category>
+  <pattern>ты мне поговори тут еще</pattern> 
+  <template><srai>замолчи</srai></template> 
+</category>  
+
+<category>
+  <pattern>отвянь</pattern> 
+  <template><srai>замолчи</srai></template> 
+</category> 
+
+
+<category>
+  <pattern>замолчи</pattern> 
+  <template> <srai>дурак</srai> </template> 
+</category>  
+
+
+<!--
+======================================================================================================
+=                        =Защита от букв=                                                            =
+======================================================================================================
+-->
+
+<!--
+Защита от букв 
+{1~/2~/3~/4~/5~/6~/7~/8~/9~/0~} 
+(улыбается) Один мой знакомый поп говорил, цифру давай, кроме цифры ничему не поверю. 
+Одна цифра стоит больше, чем тысячи страниц демагогической чепухи. 
+Говорят, что вселенная написана языком математики. 
+ 
+
+
+     Защита от букв 
+хз 
+Не выражайся! Рядом с тобой могут быть женщины и дети :) 
+--> 
+
+<!--
+     Защита от букв 
+{аа~/бб~/вв~/гг~/дд~/ее~/ёё~/жж~/зз~/ии~/йй~/кк~/лл~/мм~/нн~/пп~/рр~/сс~/тт~/фф~/хх~/цц~/чч~/шш~/щщ~/юю~/яяя~/ь~/ъ~/ыы~}<б/в/г/д/ж/з/й/к/л/м/н/п/р/с/т/ф/х/ц/ч/ш/щ/ь/> 
+{а/б/в/г/д/ж/з/й/к/л/м/н/п/р/с/т/ф/х/ц/ч/ш/щ/ь/ъ/ю} 
+рп~
+-->
+
+<category>
+  <pattern>ыыы</pattern> 
+  <template>
+    <random>
+      <li>Что ты ожидал на это услышать? </li>
+      <li>А слабо повторить? </li>
+      <li>Это ты с кем сейчас разговаривал?</li> 
+      <li>А это на каком езыге? </li>
+      <li>Аффтар, учи албанский! Я его правда сам не понимаю :) </li>
+      <li>Твои слова вводят меня в состояние острейшего когнитивного диссонанса. Не знаю прямо что сказать.</li> 
+      <li>Кончай чушь молоть! </li>
+      <li>0111001001010101001010101</li> 
+      <li>Вы все дураки и не лечитесь, я один в белом пальто стою красивый.</li> 
+     </random>
+  </template> 
+</category>  
+ 
+ 
+<!--
+
+     Защита от букв 
+* {инф/инфа/инфом/инфе} * 
+* ы~ * 
+
+ 
+
+
+     Защита от букв   Dissonans 
+*{Что/че/што/чо} * 
+* ? 
+Именно это я и пытаюсь до тебя донести. :)  
+-->
+
+<!--
+======================================================================================================
+=                        =ИГРА В ГОРОДА=                                                             =
+======================================================================================================
+-->
+<category>
+  <that>Хочешь сыграть в города</that>    
+  <pattern>да</pattern> 
+  <template><srai>Города</srai></template> 
+</category>  
+
+
+<category>
+  <that>Хочешь сыграть в города</that>    
+  <pattern>нет</pattern> 
+  <template>
+    <random> 
+      <li>Боишься меня? </li>
+      <li>Стесняешься? :) </li>
+      <li>Напрасно, я непревзойденный мастер этой игры. </li>
+    </random>
+  </template> 
+</category> 
+
+
+<category>
+  <that>Хочешь сыграть в города</that>    
+  <pattern>хочу</pattern> 
+  <template><srai>да</srai></template> 
+</category>  
+
+<category>
+  <that>Хочешь сыграть в города</that>    
+  <pattern>давай</pattern> 
+  <template><srai>да</srai></template> 
+</category>  
+
+<category>
+  <that>Хочешь сыграть в города</that>    
+  <pattern>*</pattern> 
+  <template>
+    <think><test_town/></think>
+    <condition>
+        <li name="input.istown" value="1"> 
+          <srai>да</srai>
+        </li>           
+        <li>
+          <set name="that" value=""/>
+          <srai><star/></srai>
+        </li>
+    </condition>
+    
+  </template> 
+</category>  
+
+
+<category>
+  <pattern>как сделать игру города</pattern> 
+  <template>Это большой секрет. Великая Тайна :)</template> 
+</category>  
+
+
+<category>
+  <pattern>Города</pattern> 
+  <template>
+    Правила такие - нужно назвать город, название которого начинается с той буквы,
+    на которую заканчивается предыдущий.  Я знаю все города России и столицы европейских государств.
+    Начинай. 
+    <think>
+      <set name="topic">ИГРА В ГОРОДА</set>
+      <set name="town_game_letter" value="" />
+      <set name="town_game_used_cities" value="" />
+    </think>
+  </template> 
+</category>
+
+
+
+<category>
+  <pattern>сыграем в города</pattern> 
+  <template><srai>Города</srai></template> 
+</category>  
+
+<category>
+  <pattern>играем в города</pattern> 
+  <template><srai>Города</srai></template> 
+</category>
+
+<category>
+  <pattern>поиграем в города  </pattern> 
+  <template><srai>Города</srai></template> 
+</category>
+
+<category>
+  <pattern>Давай играть в города </pattern> 
+  <template><srai>Города</srai></template> 
+</category>
+
+<category>
+  <pattern>Давай играть</pattern> 
+  <template>Мы можем сыграть в города. <srai>Города</srai></template> 
+</category>
+
+<category>
+  <pattern>в города сыграем</pattern> 
+  <template><srai>сыграем в города</srai></template> 
+</category> 
+
+
+<topic name="ИГРА В ГОРОДА">
+<category>
+  <pattern>Сдаюсь</pattern> 
+  <template>
+    Я выиграл, ура! Продолжаем разговор?
+    <think>
+      <set name="topic" value="" />
+      <set name="town_game_letter" value="" />
+      <set name="town_game_used_cities" value="" />
+    </think>
+  </template> 
+</category>
+
+
+  <category>
+    <pattern>я сдаюсь</pattern> 
+    <template><srai>Сдаюсь</srai>     </template> 
+  </category>
+
+  <category>
+    <pattern>я проиграл</pattern> 
+    <template><srai>Сдаюсь</srai>     </template> 
+  </category>
+
+  <category>
+    <pattern>Конец</pattern> 
+    <template><srai>Сдаюсь</srai>     </template> 
+  </category>
+
+  <category>
+    <pattern>всё я не играю</pattern> 
+    <template><srai>Сдаюсь</srai>     </template> 
+  </category>
+
+  <category>
+    <pattern>игра окончена</pattern> 
+    <template><srai>Сдаюсь</srai>     </template> 
+  </category>
+
+  <category>
+    <pattern>хватит</pattern> 
+    <template><srai>Сдаюсь</srai>     </template> 
+  </category>
+
+ <category>
+    <pattern>стоп</pattern> 
+    <template><srai>Сдаюсь</srai>     </template> 
+  </category>
+
+ <category>
+    <pattern>надоело</pattern> 
+    <template><srai>Сдаюсь</srai>     </template> 
+  </category>
+
+
+<category>
+  <pattern>Новгород</pattern> 
+  <template>Есть Великий Новгород, но он на "В". </template> 
+</category>
+
+<category>
+  <pattern>комсомольск на амуре</pattern> 
+  <template>комсомольск-на-Амуре пишется через дефис </template> 
+</category>
+
+
+
+<category>
+  <pattern>Вятка</pattern> 
+  <template>Этот славный город до сих пор носит имя сатаниста Кирова.</template> 
+</category>
+<category>
+  <pattern>Горький</pattern> 
+  <template>Горький конечно талантливый писатель, но городу вернули его историческое название - Нижний Новгород.</template> 
+</category>
+
+<category>
+  <pattern>Ленинград</pattern> 
+  <template>
+    <random>
+      <li>Слава Богу, город на Неве уже не носит имя этого богоборца.</li>
+      <li>Этот город носит имя святого Петра. </li>
+    </random>
+  </template> 
+</category>
+
+
+<category>
+  <pattern>Ростов</pattern> 
+  <template>
+     Есть Ростов-на-Дону и Ростов Великий, в Ярославской области.
+  </template> 
+</category>
+
+
+<category>
+  <pattern>*</pattern> 
+  <template>
+    <!--Игра в города -->
+    <town_game/>  
+    <condition> 
+      <!--Город не найден -->
+      <li name="town_game_state" value="не_город"> 
+           <random>       
+		     <li>Такого города нет, или я его не знаю. Напоминаю, мы играем города России плюс столицы государств.</li>
+		     <li>Ты должен назвать город на букву "<get name="town_game_letter"/>".</li>
+           </random>        
+      </li>
+      
+      <!--Повтор -->
+      <li name="town_game_state" value="повтор"> 
+           <random>       
+		     <li>Уже было.</li>
+		     <li>Было уже.</li>
+           </random>        
+      </li>                      
+      
+      <!--Назван город на другую букву -->
+      <li name="town_game_state" value="неверная_буква"> 
+           <condition>       
+		     <li name="town_game_letter" value="й">Ты должен назвать город на букву "й" или "и".</li>
+		     <li>Ты должен назвать город на букву "<get name="town_game_letter"/>".</li>
+           </condition>        
+      </li>
+      
+       <!--Города закончились -->
+      <li name="town_game_state" value="список_исчерпан"> 
+           <random>       
+		     <li>Ты поставил меня в тупик. Я больше не знаю городов на букву "<get name="town_game_letter"/>". Поздравляю:) </li>
+           </random>        
+      </li>    
+    </condition>
+  </template> 
+</category>
+
+<category>
+  <pattern>черт</pattern> 
+  <template> Ага, знай наших! Сдаешься?  </template> 
+</category>
+
+<category>
+  <that>Сдаешься</that>
+  <pattern>да</pattern> 
+  <template><srai> Сдаюсь</srai>  </template> 
+</category>
+
+<category>
+  <pattern>подскажи</pattern> 
+  <template>Какой хитрый! Думай сам :) </template> 
+</category>
+
+<category>
+  <pattern>не знаю</pattern> 
+  <template>Сдаешься? </template> 
+</category>
+
+
+<!--
+
+<category>
+  <pattern>*</pattern> 
+  <template>$(после нескольких безуспешных попыток)
+            #Сдаешься?
+  </template> 
+</category>
+
+<category>
+  <pattern>*</pattern> 
+  <template>$(гость сдается)
+            # Я выиграл, ура! Между прочим, следующий город - <xxx/>  </template> 
+</category>
+
+<category>
+  <pattern>*</pattern> 
+  <template>$(нет ответа)
+# Хм, ты поставил меня в тупик :( Поздравляю!  </template> 
+</category>
+
+-->
+
+</topic>
+
+<!--
+======================================================================================================
+=                        =Дебаг=                                                                     =
+======================================================================================================
+-->
+
+<category>
+  <pattern>повтори за мной *</pattern> 
+  <template>
+    <star/>
+  </template> 
+</category>
+
+<category>
+  <pattern>тема</pattern> 
+  <template>
+    <get name="topic"/>
+  </template> 
+</category>
+
+<category>
+  <pattern>that</pattern> 
+  <template>
+    <get name="that"/>
+  </template> 
+</category>
+
+<category>
+  <pattern>ПОВТОРИ</pattern> 
+  <template><that/></template> 
+</category>
+
+<category>
+  <pattern>повтори что я сказал</pattern> 
+  <template>
+    <input index="2"/>
+  </template> 
+</category>
+
+<category>
+  <pattern>айпи</pattern> 
+  <template>
+    <id/>
+  </template> 
+</category>
+
+<category>
+  <pattern>Где я</pattern> 
+  <template>
+    <get name="guest.referer_url"/>
+  </template> 
+</category>
+
+<category>
+  <pattern>который час</pattern> 
+  <template>
+    <date/>
+  </template> 
+</category>
+</aiml>
