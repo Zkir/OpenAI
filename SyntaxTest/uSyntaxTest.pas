@@ -1,13 +1,34 @@
 unit uSyntaxTest;
 
+//' Наша задача - разделить текст (ввод пользователя) на предложения (клаузы)
+//' Будем пытаться распознать во входной строке наперед заданные синтаксические шаблоны
+//' каждый отдельный найденный шаблон будем считатать клаузой
+//'
+//' Требуется найти наиболее "жадное" разбиение, т.е. рабиение с *наименьшим* числом клауз
+//' (не исключено, что потребуется "поиск и возврат")
+//'
+//' кроме того, нам нужно привести клаузы во внутреннее представление, с левым развертыванием
+//' (зависимые элементы предшествуют главным (как в японском ^ ^) )
+//
+// Сверхидея - разделить текст на клаузы, а сами клаузы привести к левому развертыванию (со строгим порядком)
+// чтобы можно было сравнивать с образцами, не парясь порядком слов.
+
+//  1. на первом этапе нужно разбить "текст" на слова
+//  2. на втором этапе нужно присвоить словам (словоформам) грамматические
+//     признаки.  для этого будем использовать компонент от AOT, он умеет это делать.
+//  3. на третьем этапе нужно "узнавать синтаксические шаблоны во входной строке"
+
 interface
 uses Classes;
 
-Function TransformString(strInput: String): String;
+//Function TransformString(strInput: String; log:TStringList): String;
+function ProcessUserInput(strInput: String):String;
+function TestAIML(FileName:String):String;
+function TestTextFile(FileName:String):String;
 
 
 implementation
-uses  StrUtils, SysUtils,ActiveX,
+uses  StrUtils, SysUtils,ActiveX,  LibXMLParser,  XMLDoc, XMLIntf,  UUtils,
 LEMMATIZERLib_TLB,AGRAMTABLib_TLB;
 
 type
@@ -118,7 +139,8 @@ begin
   result:=true;
   //понимаем под "совпадением" наличие грамеммы в списке
   //возможно это не совсем аккуратно, может быть следует давать отрицательный результат,
-  //только если граммема образа не совместима с граммами слова, например если указан ип, а у слова вп
+  //только если граммема образа не совместима с граммами слова, например если указан ип,
+  //а у слова вп
   //а положительный, если у него нет такой граммемы, слова совместимо с любой г.
   // данной категории, например глагол в наст. вр. совместим с любым родом.
    for i:=0 to Grammems.Count-1   do
@@ -204,13 +226,13 @@ begin
       if PE.WordForm<>'*' then
       begin
       //конкретное слово
-        if PE.WordForm<>WF.WordForm then
+        if AnsiUpperCase(PE.WordForm)<>AnsiUpperCase(WF.WordForm) then
           continue;//соответствия не найдено, нужно перейти к следующему варианту
       end
       else
       begin
         //Часть речи
-        if PE.PartOfSpeach <> WF.PartOfSpeach[j]  then
+        if (PE.PartOfSpeach<>'*') and (PE.PartOfSpeach <> WF.PartOfSpeach[j])  then
           continue;//соответствия не найдено, нужно перейти к следующему варианту словоформы.
 
         //граммемы
@@ -259,8 +281,7 @@ begin
   ParadigmCollection := RusLemmatizer.CreateParadigmCollectionFromForm(aWordForm, 1, 1);
   if (ParadigmCollection.Count = 0) then
   begin
-    writeln('not found');
-    exit;
+    Raise Exception.Create('Не найдена парадигма для слова '+aWordForm);
   end;
 
   for j:=0 to ParadigmCollection.Count-1 do
@@ -286,27 +307,6 @@ begin
 end;
 
 
-
-//' Наша задача - разделить текст (ввод пользователя) на предложения (клаузы)
-//' Будем пытаться распознать во входной строке наперед заданные синтаксические шаблоны
-//' каждый отдельный найденный шаблон будем считатать клаузой
-//'
-//' Требуется найти наиболее "жадное" разбиение, т.е. рабиение с *наименьшим* числом клауз
-//' (не исключено, что потребуется "поиск и возврат")
-//'
-//' кроме того, нам нужно привести клаузы во внутреннее представление, с левым развертыванием
-//' (зависимые элементы предшествуют главным (как в японском ^ ^) )
-//
-// Сверхидея - разделить текст на клаузы, а сами клаузы привести к левому развертыванию (со строгим порядком)
-// чтобы можно было сравнивать с образцами, не парясь порядком слов.
-
-//  1. на первом этапе нужно разбить "текст" на слова
-//  2. на втором этапе нужно присвоить словам (словоформам) грамматические
-//     признаки.  для этого будем использовать компонент от AOT, он умеет это делать.
-//  3. на третьем этапе нужно "узнавать синтаксические шаблоны во входной строке"
-
-
-
 //2. Лемматизация, присваивание граммем  (грамматических признаков)
 // даже если одна словоформа опознается как принадлежащая нескольким исходным словам,
 // (например, "мыла" <- мыть|мыло, они запоминаются все, узнаванию синтаксических структур
@@ -325,13 +325,17 @@ begin
   result:=Phrase;
 end;
 
-function SyntaxAnalysis(Phrase: TPhrase; var intMatchedWords, intUnmatchedWords:integer): TSyntaxPattern;
+//Cобственно, список шаблонов, с которыми мы будем сравнивать нашу фразу.
+//Откуда получать этот список, из файла, или из "порождающей грамматики",
+//не столь важно.
+// Как сократить его объем, предстоит подумать.
+// Этот список должен быть упорядочен по "специфичности", самые длинные в начале.
+function GetPatternList1: TList;
 var
   Pattern,Pattern2,Pattern3: TSyntaxPattern;
   PatternList: TList;
-  i:integer;
 begin
-  //Cоздаем некий список шаблонов, которые мы будем проверять
+ //Cоздаем некий список шаблонов, которые мы будем проверять
   PatternList:=  TList.Create;
   //Мама моет раму
   Pattern:= TSyntaxPattern.Create;
@@ -339,6 +343,24 @@ begin
   Pattern.AddElement( '','Г','' );
   Pattern.AddElement( '','С','вн' );
   Pattern.TrasformationFormula:='#1l [кто] #3l [кого] #2 [.]';
+  PatternList.Add(Pattern);
+
+  Pattern:=nil;
+  //Как редактировать карту
+  Pattern:= TSyntaxPattern.Create;
+  Pattern.AddElement( 'как','','' );
+  Pattern.AddElement( '','ИНФИНИТИВ','' );
+  Pattern.AddElement( '','С','вн' );
+  Pattern.TrasformationFormula:='#КАК  #3l [кого] #2 [.]';
+  PatternList.Add(Pattern);
+
+  Pattern:=nil;
+  //Как стать звездой
+  Pattern:= TSyntaxPattern.Create;
+  Pattern.AddElement( 'как','','' );
+  Pattern.AddElement( '','ИНФИНИТИВ','' );
+  Pattern.AddElement( '','С','тв' );
+  Pattern.TrasformationFormula:='#КАК  #3l [кем] #2 [.]';
   PatternList.Add(Pattern);
 
    // раму  моет Мама
@@ -361,6 +383,64 @@ begin
   Pattern3.TrasformationFormula:='#3l [кого] #1 #2 [.]';
   PatternList.Add(Pattern3);
 
+  Result:=PatternList;
+end;
+
+function GetPatternList: TList;
+var
+  xml:IXMLDocument;
+  PhraseNode,ElementNode:IXMLNode;
+  PatternList: TList;
+  Pattern: TSyntaxPattern;
+  i,j:integer;
+  strWord,strPartOfSpeach,strGrammems,Formula:string;
+begin
+  PatternList:=  TList.Create;
+  xml:=LoadXMLDocument('d:\OpenAI\_SRC\grammar.xml');
+ // xml.LoadFromFile();
+  xml.Active:=True;
+
+
+
+
+
+  for i := 0 to xml.DocumentElement.ChildNodes.Count-1 do
+  if xml.DocumentElement.ChildNodes[i].NodeName='Phrase' then
+  begin
+    Pattern:= TSyntaxPattern.Create;
+    PhraseNode:=xml.DocumentElement.ChildNodes[i];
+    strWord:= PhraseNode.NodeName;
+    for j := 0 to PhraseNode.ChildNodes['Pattern'].ChildNodes.Count-1 do
+    begin
+      ElementNode:=PhraseNode.ChildNodes['Pattern'].ChildNodes[j];
+      strWord:= ElementNode.ChildNodes['WordForm'].Text ;
+      strPartOfSpeach:= ElementNode.ChildNodes['Category'].Text ;
+      strGrammems:=ElementNode.ChildNodes['Grammems'].Text ;
+      Pattern.AddElement( strWord,strPartOfSpeach,strGrammems );
+    end;
+
+    Pattern.TrasformationFormula:=PhraseNode.ChildNodes['TrasformationFormula'].Text;
+    PatternList.Add(Pattern);
+  end;
+
+
+  Result :=PatternList;
+end;
+
+
+//Синтаксический разбор.
+// - Функция принимает фразу,
+//   а возвращает заматченный шаблон и число совпавших слов с начала фразы.
+function SyntaxAnalysis(Phrase: TPhrase; var intMatchedWords, intUnmatchedWords:integer): TSyntaxPattern;
+var
+  Pattern,Pattern2,Pattern3: TSyntaxPattern;
+  PatternList: TList;
+  i:integer;
+begin
+
+  //Cоздаем некий список шаблонов, которые мы будем проверять
+  PatternList := GetPatternList();
+
 
   //Проверка в цикле, начиная от наиболее специфичных
   Result:=nil;
@@ -375,30 +455,59 @@ begin
     end
   end;
 
+  //Другая альтернативная идея, делить фразу на фрагметы по предлогам  и союзам "а"
+  // и вопросительным словам.
+  // (предлог так или иначе начинает предложно именную группу), фрагменты анализировать шаблонами,
+  // а получившиеся после анализа синтаксические группы комбинировать (тоже шаблонами).
+  // еще бы понять какую нужно получить структуру. :)
+
   PatternList.Free;
 end;
 
-//' Главная функция
-//' strInput - входная строка, предполагается что она "токенизирована"
-// (из нее удалены пробелы и спец. символы)
-Function TransformString(strInput: String): String;
+//Несколько альтернативная идея
+//Будем строить синтаксическую структуру снизу вверх, перебирая последовательно
+// слова и применяя правила.
+// Концепция
+// перебирать слова в цикле.
+// - если слово способно быть главным в синтаксической группе, начать новую группу.
+// - если синтаксическая группа уже начата, проверять (пропущенные) слова слева,
+//   нельзя ли распространить ими эту группу
+// - если группа уже начата (т.е. находится слева), проверить, нельзя ли присоединть это слово
+//   к группе.
+// - если ничего из этого сделать нельзя, пропустить слово и перейти к следующему.
+// т.е мы всегда присоединяем зависимое слово к главному.
+function SyntaxAnalysis2(Phrase: TPhrase; var intMatchedWords, intUnmatchedWords:integer): TSyntaxPattern;
+var i:integer;
+begin
+  //здесь мы предполагаем, что грамматическая омонимия устранна, и мы имеем дело с неким
+  //вариантом лемматизации.  Хотя может надо наоборот, и тогда нужен поиск и возврат.
+  for i:=0 to Phrase.Count-1 do
+  begin
+
+  end;
+
+end;
+
+
+Function TransformString(strInput:String; log:TStringList):String;
   var SplittedPhrase:TStringList;
       i,j:integer;
       Phrase: TPhrase;
 
       MatchedPattern: TSyntaxPattern;
-      log : TStringList;
+
       tmp: String;
       intMatchedWords, intUnmatchedWords:integer;
+
+
 begin
 
 
-  log:=TStringList.Create;
 
-  // 1. разбиение на слова
-  SplittedPhrase:= Split(trim(strInput),' ');
+  // 2. разбиение на слова
+  SplittedPhrase:= Split(strInput,' ');
 
-//2. присвоение словоформам грамматических признаков
+  //3. присвоение словоформам грамматических признаков
 // даже если одна словоформа опознается как принадлежащая нескольким исходным словам,
 // (например, "мыла" <- мыть|мыло, они запоминаются все, узнаванию синтаксических структур
 // это мешать не должно.
@@ -408,8 +517,12 @@ begin
 
   Phrase:=Lemmatize(SplittedPhrase);
 
+  if TWordForm(Phrase[0]).WordForm='а' then
+    Phrase.Delete(0);
 
-  //3.
+
+
+  //4.
   //Синтаксический разбор. На этом этапе мы должны получить структуру данных, которая
   //отражает синтаксическую структуру предложения и содержит слова с приписанными
   //синтаксическими признаками (зависимостями?)
@@ -418,7 +531,7 @@ begin
 
    MatchedPattern:=SyntaxAnalysis(Phrase, intMatchedWords, intUnmatchedWords);
 
-  //4. Трансформация
+  //5. Трансформация
    if MatchedPattern <> nil then
      log.Add(MatchedPattern.ProcessTrasformationFormula);
    log.Add( IntToStr( intMatchedWords) +'/'+  IntToStr( intUnmatchedWords));
@@ -441,23 +554,113 @@ begin
     tmp:=tmp+' }';
     log.add(tmp);
   end;
-  result:=Log.Text;
+  result:='xxx';
   SplittedPhrase.Free;
   Phrase.Free;
-  log.Free;
+
   MatchedPattern.Free;
 End;
+
+//' Главная функция
+//' strInput - ввод собеседника в сыром виде
+// возращает лог :)
+function ProcessUserInput(strInput: String):String;
+//Идеальный алгоритм.
+// 1. Берется ввод пользователя.
+// 2. Делится на предложенися по знакам препинания. '.!?;'
+// 3. Каждое из предложений обрабатывается:
+//      - делается его синтаксический разбор, возможно разбивается дополнительно.
+//      - на основе синтаксической структуры делается трансформация  каждого предложения
+//          в язык внутреннего представления (ЯВП).
+//4. Получившийся набор предложений на ЯВП проталкивается дальше (в алису :) )
+var
+  _SentenceSplitter:TStringTokenizer;
+  log : TStringList;
+  i:integer;
+  strPhrase:string;
+begin
+  log:=TStringList.Create;
+
+   // 1. разбиение на предложения
+  _SentenceSplitter:=TStringTokenizer.Create('.!?;');
+
+  strInput:=  AnsiLowerCase (strInput) ;
+  _SentenceSplitter.Tokenize(trim( strInput));
+  //SplittedPhrase:= Tokenizer._tokens;
+  for i:=0 to _SentenceSplitter._count-1 do
+  begin
+    strPhrase:=trim(_SentenceSplitter._tokens[i]);
+
+    if strPhrase<>'' then
+      TransformString(strPhrase,log);
+  end;
+  result:=Log.Text;
+  log.Free;
+end;
+
+//Проверка существующих Aiml шаблонов
+//В сущности, нас интересует только <pattern>...</pattern>
+function TestAIML(FileName:String):String;
+var
+  CurrentFile : TStringList;
+  MyXml : TXmlParser;
+begin
+  CurrentFile := TStringList.Create;
+
+  MyXml := TXmlParser.Create;
+  MyXml.LoadFromFile (FileName);
+
+  MyXml.StartScan;
+  WHILE MyXml.Scan DO
+    CASE MyXml.CurPartType OF
+
+      ptContent, ptCData:
+        if AnsiLowerCase (MyXml.CurName) ='pattern' then
+        begin
+           CurrentFile.Add(MyXml.CurContent);
+           CurrentFile.Add(ProcessUserInput(MyXml.CurContent));
+           CurrentFile.Add('');
+        end;
+    END;
+  MyXml.Free;
+
+
+  result:=   CurrentFile.Text;
+end;
+function TestTextFile(FileName:String):String;
+var
+  CurrentFile : TStringList;
+  TextFile : TStringList;
+  i:integer;
+begin
+  CurrentFile := TStringList.Create;
+
+  TextFile:= TStringList.Create ;
+  TextFile.LoadFromFile(FileName);
+
+  for i := 0 to TextFile.Count-1  do
+    begin
+           CurrentFile.Add(TextFile[i]);
+           CurrentFile.Add( ProcessUserInput(TextFile[i]));
+           CurrentFile.Add('');
+
+    END;
+  TextFile.Free;
+
+
+  result:=   CurrentFile.Text;
+end;
 
 
 //Инициализация  лемматизатора.
 var   hr :  HRESULT;
 initialization
 try
-    hr := CoInitialize(nil);
+   // hr := CoInitialize(nil);
     if (hr <> S_OK) then
     begin
        // writeln('cannot load Component Object Model(COM) library');
-        halt(1);
+      //  halt(1);
     end;
      // loading morphological dicitonary
     RusLemmatizer := CoLemmatizerRussian.Create;

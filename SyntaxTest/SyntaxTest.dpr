@@ -4,8 +4,7 @@ uses
   Forms,
   uMainForm in 'uMainForm.pas' {Form1},
   uSyntaxTest in 'uSyntaxTest.pas',
-  LEMMATIZERLib_TLB in 'C:\Program Files\Borland\Delphi7\Imports\LEMMATIZERLib_TLB.pas',
-  AGRAMTABLib_TLB in 'C:\Program Files\Borland\Delphi7\Imports\AGRAMTABLib_TLB.pas';
+  UUtils in 'UUtils.pas';
 
 {$R *.res}
 
