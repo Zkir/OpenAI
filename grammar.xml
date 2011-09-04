@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="windows-1251"?> 
+<Grammar>
+<!--
+Нечто вроде грамматики русского языка
+-->
+<!--5 -->
+<Phrase>
+  <TestPhrase>Карта Турции существует для СГ</TestPhrase>
+  <Pattern>
+    <Element><WordForm></WordForm><Category>С</Category><Grammems>им</Grammems></Element>
+    <Element><WordForm></WordForm><Category>С</Category><Grammems>рд</Grammems></Element>
+    <Element><WordForm></WordForm><Category>Г</Category><Grammems></Grammems></Element>
+    <Element><WordForm>для</WordForm><Category>ПРЕДЛ</Category><Grammems></Grammems></Element>
+    <Element><WordForm></WordForm><Category>С</Category><Grammems>рд</Grammems></Element>
+  </Pattern>
+  <TrasformationFormula>#2l [рд] #1l [кто] #5l [для-рд] #3[.]</TrasformationFormula>
+</Phrase>
+
+
+<!--4 -->
+<!--3 -->
+
+<Phrase>
+  <TestPhrase>бесплатные аналоги есть</TestPhrase>
+  <Pattern>
+    <Element><WordForm></WordForm><Category>П</Category><Grammems>им</Grammems></Element>
+    <Element><WordForm></WordForm><Category>С</Category><Grammems>им</Grammems></Element>
+    <Element><WordForm></WordForm><Category>Г</Category><Grammems></Grammems></Element>
+  </Pattern>
+  <TrasformationFormula>#1l #2l [кто] #3 [.]</TrasformationFormula>
+</Phrase>
+
+
+<Phrase>
+  <TestPhrase>Мама моет раму</TestPhrase>
+  <Pattern>
+    <Element><WordForm></WordForm><Category>С</Category><Grammems>им</Grammems></Element>
+    <Element><WordForm></WordForm><Category>Г</Category><Grammems></Grammems></Element>
+    <Element><WordForm></WordForm><Category>С</Category><Grammems>вн</Grammems></Element>
+  </Pattern>
+  <TrasformationFormula>#1l [кто] #3l [кого] #2 [.]</TrasformationFormula>
+</Phrase>
+
+<Phrase>
+  <TestPhrase>раму моет Мама</TestPhrase>
+  <Pattern>  
+    <Element><WordForm></WordForm><Category>С</Category><Grammems>вн</Grammems></Element>
+    <Element><WordForm></WordForm><Category>Г</Category><Grammems></Grammems></Element>
+    <Element><WordForm></WordForm><Category>С</Category><Grammems>им</Grammems></Element>
+  </Pattern>
+  <TrasformationFormula>#3l [кто] #1l [кого] #2 [.]</TrasformationFormula>
+</Phrase>
+
+<Phrase>
+  <TestPhrase>Как редактировать карту</TestPhrase>
+  <Pattern>
+    <Element><WordForm>как</WordForm><Category></Category><Grammems></Grammems></Element>
+    <Element><WordForm></WordForm><Category>ИНФИНИТИВ</Category><Grammems></Grammems></Element>
+    <Element><WordForm></WordForm><Category>С</Category><Grammems>вн</Grammems></Element>
+  </Pattern>
+<TrasformationFormula>КАК #3l [кого] #2 [.]</TrasformationFormula>
+</Phrase>
+
+<Phrase>
+  <TestPhrase>Как стать звездой</TestPhrase>
+  <Pattern>  
+    <Element><WordForm>как</WordForm><Category></Category><Grammems></Grammems></Element>
+    <Element><WordForm></WordForm><Category>ИНФИНИТИВ</Category><Grammems></Grammems></Element>
+    <Element><WordForm></WordForm><Category>С</Category><Grammems>тв</Grammems></Element>
+  </Pattern>
+  <TrasformationFormula>#КАК #3l [кем] #2 [.]</TrasformationFormula>
+</Phrase>
+
+
+<Phrase>
+  <TestPhrase>Обновите пожалуйста Молдову</TestPhrase>
+  <Pattern>
+    <Element><WordForm></WordForm><Category>Г</Category><Grammems>пвл</Grammems></Element>
+    <Element><WordForm>пожалуйста</WordForm><Category></Category><Grammems></Grammems></Element>
+    <Element><WordForm></WordForm><Category>С</Category><Grammems>вн</Grammems></Element>
+  </Pattern>
+  <TrasformationFormula>#3l [кого] #1 #2 [.]</TrasformationFormula>
+</Phrase>
+
+
+<Phrase>
+  <TestPhrase>где карта греции</TestPhrase>
+  <Pattern>
+    <Element><WordForm>где</WordForm><Category></Category><Grammems></Grammems></Element>
+    <Element><WordForm></WordForm><Category>С</Category><Grammems>им</Grammems></Element>
+    <Element><WordForm></WordForm><Category>С</Category><Grammems>рд</Grammems></Element>
+  </Pattern>
+  <TrasformationFormula>#3l [рд] #2l [кто] ГДЕ [.]</TrasformationFormula>
+</Phrase>
+
+<!--2 -->
+<Phrase>
+  <TestPhrase>где армения?</TestPhrase>
+  <Pattern>
+    <Element><WordForm>где</WordForm><Category></Category><Grammems></Grammems></Element>
+    <Element><WordForm></WordForm><Category>С</Category><Grammems>им</Grammems></Element>
+  </Pattern>
+  <TrasformationFormula>#2l [кто] ГДЕ [.]</TrasformationFormula>
+</Phrase>
+
+
+<Phrase>
+  <TestPhrase>вы кто</TestPhrase>
+  <Pattern>
+    <Element><WordForm>вы</WordForm><Category></Category><Grammems></Grammems></Element>
+    <Element><WordForm>кто</WordForm><Category></Category><Grammems></Grammems></Element>
+  </Pattern>
+  <TrasformationFormula>ВЫ [кто] КТО [.]</TrasformationFormula>
+</Phrase>
+
+<Phrase>
+  <TestPhrase>кто вы</TestPhrase>
+  <Pattern>
+    <Element><WordForm>кто</WordForm><Category></Category><Grammems></Grammems></Element>
+    <Element><WordForm>вы</WordForm><Category></Category><Grammems></Grammems></Element>
+  </Pattern>
+  <TrasformationFormula>ВЫ [кто] КТО [.]</TrasformationFormula>
+</Phrase>
+
+<Phrase>
+  <TestPhrase>ты кто</TestPhrase>
+  <Pattern>
+    <Element><WordForm>вы</WordForm><Category></Category><Grammems></Grammems></Element>
+    <Element><WordForm>кто</WordForm><Category></Category><Grammems></Grammems></Element>
+  </Pattern>
+  <TrasformationFormula>ТЫ [кто] КТО [.]</TrasformationFormula>
+</Phrase>
+
+<Phrase>
+  <TestPhrase>кто ты</TestPhrase>
+  <Pattern>
+    <Element><WordForm>кто</WordForm><Category></Category><Grammems></Grammems></Element>
+    <Element><WordForm>ты</WordForm><Category></Category><Grammems></Grammems></Element>
+  </Pattern>
+  <TrasformationFormula>ТЫ [кто] КТО [.]</TrasformationFormula>
+</Phrase>
+
+
+</Grammar>  
