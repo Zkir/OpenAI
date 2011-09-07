@@ -76,13 +76,17 @@ type
   TSyntaxPattern =class
     private
       FPatternElements:TList;
+      FRootElement:TSyntaxPatternElement;
       function GetElementCount:integer;
       function GetElement(Index : Integer):TSyntaxPatternElement;
     public
       TrasformationFormula:string;
       property ElementCount:integer read GetElementCount;
       property Elements[Index : Integer]:TSyntaxPatternElement  read GetElement;  default;
-      function AddElement(const strWordForm,strPartOfSpeach,strGrammems: String):integer; //Добавление элемента в шаблон
+      //Добавление элемента в шаблон
+      function AddElement(const strWordForm,strPartOfSpeach,strGrammems: String):integer;
+      //Задание корневого элемента
+      function SetRootElement(const strPartOfSpeach,strGrammems: String):integer;
 
       //Тестирование  фразы (Phrase), на соответствие синтаксическому шаблону (Pattern).
       function TestPhrase(Phrase:TPhrase;
@@ -117,12 +121,12 @@ end;
 //Элемент синтаксического шаблона
 constructor TSyntaxPatternElement.Create(const strWordForm,strPartOfSpeach,strGrammems: String);
 begin
-  if  strWordForm<>'' then
+  if  (strWordForm<>'')and (strWordForm<>'*') then
     begin
       //задано конкретное слово
       WordForm:=strWordForm;
       PartOfSpeach:='';
-      Grammems:=nil; //TStringList.Create;
+      Grammems:=TStringList.Create;   // nil;
     end
   else
     begin
@@ -159,6 +163,7 @@ end;
 constructor TSyntaxPattern.Create();
 begin
   FPatternElements:=TList.create;
+  FRootElement:=nil;
 end;
 function TSyntaxPattern.GetElementCount:integer;
 begin
@@ -176,6 +181,12 @@ var
 begin
   aSyntaxPatternElement := TSyntaxPatternElement.Create(strWordForm,strPartOfSpeach,strGrammems);
   Result:=FPatternElements.Add(aSyntaxPatternElement);
+end;
+
+function TSyntaxPattern.SetRootElement(const strPartOfSpeach,strGrammems: String):integer;
+begin
+  FRootElement:=TSyntaxPatternElement.Create('',strPartOfSpeach,strGrammems);
+  Result:=0;
 end;
 
 //Самая веселая операция в данном классе - заматченный шаблон трансформируется
@@ -330,63 +341,20 @@ end;
 //не столь важно.
 // Как сократить его объем, предстоит подумать.
 // Этот список должен быть упорядочен по "специфичности", самые длинные в начале.
-function GetPatternList1: TList;
-var
-  Pattern,Pattern2,Pattern3: TSyntaxPattern;
-  PatternList: TList;
-begin
- //Cоздаем некий список шаблонов, которые мы будем проверять
-  PatternList:=  TList.Create;
-  //Мама моет раму
-  Pattern:= TSyntaxPattern.Create;
-  Pattern.AddElement( '','С','им' );
-  Pattern.AddElement( '','Г','' );
-  Pattern.AddElement( '','С','вн' );
-  Pattern.TrasformationFormula:='#1l [кто] #3l [кого] #2 [.]';
-  PatternList.Add(Pattern);
 
-  Pattern:=nil;
-  //Как редактировать карту
-  Pattern:= TSyntaxPattern.Create;
-  Pattern.AddElement( 'как','','' );
-  Pattern.AddElement( '','ИНФИНИТИВ','' );
-  Pattern.AddElement( '','С','вн' );
-  Pattern.TrasformationFormula:='#КАК  #3l [кого] #2 [.]';
-  PatternList.Add(Pattern);
+//Сравнение цепочек по числу элементов.
+function ComparePatternLength(Item1, Item2: Pointer): Integer;
+  begin
 
-  Pattern:=nil;
-  //Как стать звездой
-  Pattern:= TSyntaxPattern.Create;
-  Pattern.AddElement( 'как','','' );
-  Pattern.AddElement( '','ИНФИНИТИВ','' );
-  Pattern.AddElement( '','С','тв' );
-  Pattern.TrasformationFormula:='#КАК  #3l [кем] #2 [.]';
-  PatternList.Add(Pattern);
+    Result :=0;
+    if TSyntaxPattern(Item1).ElementCount> TSyntaxPattern(Item2).ElementCount  then
+      Result :=-1;
+    if TSyntaxPattern(Item1).ElementCount< TSyntaxPattern(Item2).ElementCount  then
+      Result :=1;
+  end;
 
-   // раму  моет Мама
-  Pattern2:= TSyntaxPattern.Create;
-
-  Pattern2.AddElement( '','С','вн' );
-  Pattern2.AddElement( '','Г','' );
-  Pattern2.AddElement( '','С','им' );
-
-  Pattern2.TrasformationFormula:='#3l [кто] #1l [кого] #2 [.]';
-  PatternList.Add(Pattern2);
-
-  //Обновите пожалуйста Молдову
-  Pattern3:= TSyntaxPattern.Create;
-
-  Pattern3.AddElement( '','Г','пвл' );
-  Pattern3.AddElement( 'пожалуйста','','' );
-  Pattern3.AddElement( '','С','вн' );
-
-  Pattern3.TrasformationFormula:='#3l [кого] #1 #2 [.]';
-  PatternList.Add(Pattern3);
-
-  Result:=PatternList;
-end;
-
-function GetPatternList: TList;
+//Получаем все правила  - фразы и фразовые категории
+function GetAllRuleList: TList;
 var
   xml:IXMLDocument;
   PhraseNode,ElementNode:IXMLNode;
@@ -394,18 +362,16 @@ var
   Pattern: TSyntaxPattern;
   i,j:integer;
   strWord,strPartOfSpeach,strGrammems,Formula:string;
+
 begin
   PatternList:=  TList.Create;
-  xml:=LoadXMLDocument('d:\OpenAI\_SRC\grammar.xml');
+  xml:=LoadXMLDocument('d:\OpenAI\_SRC\grammar.xml');//
  // xml.LoadFromFile();
   xml.Active:=True;
 
-
-
-
-
   for i := 0 to xml.DocumentElement.ChildNodes.Count-1 do
-  if xml.DocumentElement.ChildNodes[i].NodeName='Phrase' then
+  if (xml.DocumentElement.ChildNodes[i].NodeName='Phrase') or
+     (xml.DocumentElement.ChildNodes[i].NodeName='PhraseCategory') then
   begin
     Pattern:= TSyntaxPattern.Create;
     PhraseNode:=xml.DocumentElement.ChildNodes[i];
@@ -420,29 +386,161 @@ begin
     end;
 
     Pattern.TrasformationFormula:=PhraseNode.ChildNodes['TrasformationFormula'].Text;
+    if (PhraseNode.NodeName='PhraseCategory') then
+    begin
+      ElementNode:=PhraseNode.ChildNodes['Def'];
+      strPartOfSpeach:= ElementNode.ChildNodes['Category'].Text ;
+      strGrammems:=ElementNode.ChildNodes['Grammems'].Text ;
+      Pattern.SetRootElement (strPartOfSpeach,strGrammems );
+    end;
     PatternList.Add(Pattern);
   end;
-
 
   Result :=PatternList;
 end;
 
+function GetPhraseCategoryList(RightElement:TSyntaxPatternElement; AllRules:TList): TList;
+var i:integer;
+    PE:TSyntaxPatternElement;
+begin
+ Result:= TList.Create();
+ //Получаем список шаблонов соответсвующих заданной фразовой категории
+  for i:=0 to AllRules.Count-1 do
+  begin
+    PE:=TSyntaxPattern(AllRules[i]).FRootElement;
+    if PE<>nil then
+      if (PE.PartOfSpeach=RightElement.PartOfSpeach) and (PE.Grammems.Text=RightElement.Grammems.Text)  then
+        Result.Add(AllRules[i]);
+  end;
+end;
+
+//Формулу саму надо трансформировать. На место j-го элемента нужно поставить формулу
+//Распространенного элемента, а то что справа - сдвинуть.
+// strFormula  - формула фразы
+// strElFormula - формула замененного элемента
+// j - номер замененного элемента
+function ModifyTransformationFormula(strFormula, strElFormula:String;N,M,j:integer):String;
+var lstFormula:TStringList;
+    i:integer;
+begin
+  //lstFormula:=Split(strFormula,' ');
+  for i := N downto j+1 do
+  begin
+    strFormula:=StringReplace(strFormula, '#'+IntToStr(i)+' ', '#'+IntToStr(i+M-1)+' ', [rfReplaceAll]) ;
+    strFormula:=StringReplace(strFormula, '#'+IntToStr(i)+'l', '#'+IntToStr(i+M-1)+'l', [rfReplaceAll]) ;
+  end;
+
+  //в распространенном элементе 1 становится j, поскольку вставляется в j-ю позицию
+  for i := M downto 1 do
+  begin
+    strElFormula:=StringReplace(strElFormula, '#'+IntToStr(i)+' ', '#'+IntToStr(j+i-1)+' ', [rfReplaceAll]) ;
+    strElFormula:=StringReplace(strElFormula, '#'+IntToStr(i)+'l', '#'+IntToStr(j+i-1)+'l', [rfReplaceAll]) ;
+  end;
+
+  strFormula:=StringReplace(strFormula, '#'+IntToStr(j), strElFormula,[rfReplaceAll]) ;
+  result:=strFormula;
+
+
+  //result:=Join(lstFormula,' ');
+end;
+
+function GetPatternList(): TList;
+var
+  i,j,k,l:integer;
+  AllRules:TList;
+  Expansions:TList;
+  NewPattern,CurrentPattern: TSyntaxPattern;
+  blnNonTerminalElementsExist:boolean;
+begin
+  Result:= TList.Create();
+  AllRules:= GetAllRuleList;
+
+  //Получаем список шаблонов (т.е. цепочек, разворачивающих "фразу": S->xxx)
+  for i:=0 to AllRules.Count-1 do
+  begin
+    if TSyntaxPattern(AllRules[i]).FRootElement=nil then
+      Result.Add(AllRules[i]);
+  end;
+  //Это мы получили список фраз (S->xxx), который содержит в основном,
+  //нетерминальные цепочки
+
+  //После этого мы должны развернуть нетерминальные цепочки в терминальные
+  //  алгоритм самый простой.
+  //  проверяются все цепочки в списке. Если оказывается, что в цепочке есть нетерминальный
+  //  элемент, эта цепочка удаляется, а вместо нее вставляется N вариантов замены данного элемента,
+  //  вместе с неизменным концом цепочки.
+  repeat
+
+  blnNonTerminalElementsExist:=False;
+  for i:=0 to Result.Count-1 do
+  begin
+    CurrentPattern:=TSyntaxPattern(Result[i]);
+    for j:=0 to CurrentPattern.ElementCount-1  do
+    begin
+      //Если этот элемент составной
+      if CurrentPattern.Elements[j].PartOfSpeach='Иг' then
+      begin
+        blnNonTerminalElementsExist:=True;
+        //Надо получить правила, соответствующие данной фразовой категории.
+        Expansions:=GetPhraseCategoryList(TSyntaxPattern(Result[i]).Elements[j],AllRules);
+        for k := 0 to Expansions.Count-1  do
+        begin
+          NewPattern:=TSyntaxPattern.Create;
+          for l := 0 to j-1 do
+            NewPattern.AddElement(CurrentPattern[l].WordForm, CurrentPattern[l].PartOfSpeach, CurrentPattern[l].Grammems.text);
+
+          for l := 0 to TSyntaxPattern(Expansions[k]).ElementCount-1  do
+            NewPattern.AddElement(TSyntaxPattern(Expansions[k])[l].WordForm, TSyntaxPattern(Expansions[k])[l].PartOfSpeach, TSyntaxPattern(Expansions[k])[l].Grammems.text);
+
+
+          for l := j+1 to CurrentPattern.ElementCount-1 do
+            NewPattern.AddElement(CurrentPattern[l].WordForm,
+                                  CurrentPattern[l].PartOfSpeach,
+                                  CurrentPattern[l].Grammems.text);
+          //Формулу саму надо трансформировать. На место j-го элемента нужно поставить формулу
+          //Распространенного элемента, а то что справа - сдвинуть.
+          NewPattern.TrasformationFormula:=
+          ModifyTransformationFormula(CurrentPattern.TrasformationFormula,
+                                      TSyntaxPattern(Expansions[k]).TrasformationFormula,
+                                      CurrentPattern.ElementCount,
+                                      TSyntaxPattern(Expansions[k]).ElementCount,
+                                      j+1 ) ;
+          Result.Add(NewPattern);
+        end; //кц по вариантам развертывания данного элемента.
+
+        //После развертывания элемента цепочка удаляется.
+        Result.Delete(i);
+        //надо перейти к следующей цепочке
+        break;
+      end;//if нетерминальный элемент
+    end;
+  end;
+  Result.Pack;
+  //Вот здесь можно удалить из списка те цепочки, которые
+  //(начальные терминальные элементы которых) не соответствуют заданной фразе.
+
+  //следует повторить цикл, потому что в цепочках могут еще оставаться
+  //нетерминальные элементы
+  until Not blnNonTerminalElementsExist ;
+end;
 
 //Синтаксический разбор.
 // - Функция принимает фразу,
 //   а возвращает заматченный шаблон и число совпавших слов с начала фразы.
 function SyntaxAnalysis(Phrase: TPhrase; var intMatchedWords, intUnmatchedWords:integer): TSyntaxPattern;
 var
-  Pattern,Pattern2,Pattern3: TSyntaxPattern;
+//  Pattern,Pattern2,Pattern3: TSyntaxPattern;
   PatternList: TList;
   i:integer;
 begin
 
   //Cоздаем некий список шаблонов, которые мы будем проверять
+  //(сверху вниз)
+
   PatternList := GetPatternList();
 
-
   //Проверка в цикле, начиная от наиболее специфичных
+  PatternList.sort(ComparePatternLength);
   Result:=nil;
   //Я хочу потестировать фразу на соответствие некому синтаксическому шаблону.
   for i:=0 to PatternList.Count-1 do
