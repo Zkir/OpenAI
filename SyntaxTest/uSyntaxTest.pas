@@ -67,6 +67,8 @@ type
       MatchedWordForm:String;//словоформа
       MatchedLemma:String; // лемма
 
+      function isTerminalElement:boolean; //Является ли данный элемент терминальным,
+      //или же "фразовой категорией"
       function CompareGrammems(strGrammems:String): boolean;//сравнение шаблона граммем с данными
 
       constructor Create(const strWordForm,strPartOfSpeach,strGrammems: String);
@@ -157,6 +159,11 @@ begin
      end
    end
 
+end;
+
+function TSyntaxPatternElement.isTerminalElement:boolean;
+begin
+  Result:=not ((PartOfSpeach='Иг')or (PartOfSpeach='Гг') );
 end;
 
 //TSyntaxPattern  - синтаксический шаблон
@@ -284,6 +291,7 @@ var
      Paradigm : IParadigm;
      OneAncode, SrcAncodes : string;
      i,j : integer;
+     strLemma,strPartOfSpeach:string;
 begin
   WordForm:=aWordForm;
   Lemma:=TStringList.Create;
@@ -304,9 +312,14 @@ begin
     while  i < Length(SrcAncodes) do
     begin
       OneAncode := Copy(SrcAncodes,i,2);
-      Lemma.Add ( Paradigm.Norm);
-      PartOfSpeach.Add(RusGramTab.GetPartOfSpeechStr( RusGramTab.GetPartOfSpeech(OneAncode)));
-      Grammems.Add(RusGramTab.GrammemsToStr( RusGramTab.GetGrammems(OneAncode) ));
+      strLemma:=Paradigm.Norm;
+      strPartOfSpeach:=RusGramTab.GetPartOfSpeechStr( RusGramTab.GetPartOfSpeech(OneAncode));
+      if not((strLemma='ЛИ')and (strPartOfSpeach='С')) then
+      begin
+        Lemma.Add(strLemma);
+        PartOfSpeach.Add(strPartOfSpeach);
+        Grammems.Add(RusGramTab.GrammemsToStr( RusGramTab.GetGrammems(OneAncode) ));
+      end;
       inc (i, 2);
     end;
   end;
@@ -423,19 +436,26 @@ function ModifyTransformationFormula(strFormula, strElFormula:String;N,M,j:integ
 var lstFormula:TStringList;
     i:integer;
 begin
+  if strElFormula='#2-НЕ' then
+    i:=0;
+
   //lstFormula:=Split(strFormula,' ');
   for i := N downto j+1 do
   begin
     strFormula:=StringReplace(strFormula, '#'+IntToStr(i)+' ', '#'+IntToStr(i+M-1)+' ', [rfReplaceAll]) ;
+    strFormula:=StringReplace(strFormula, '#'+IntToStr(i)+'-', '#'+IntToStr(i+M-1)+'-', [rfReplaceAll]) ;
     strFormula:=StringReplace(strFormula, '#'+IntToStr(i)+'l', '#'+IntToStr(i+M-1)+'l', [rfReplaceAll]) ;
   end;
 
+  strElFormula:=strElFormula+' ';
   //в распространенном элементе 1 становится j, поскольку вставляется в j-ю позицию
   for i := M downto 1 do
   begin
     strElFormula:=StringReplace(strElFormula, '#'+IntToStr(i)+' ', '#'+IntToStr(j+i-1)+' ', [rfReplaceAll]) ;
+    strElFormula:=StringReplace(strElFormula, '#'+IntToStr(i)+'-', '#'+IntToStr(j+i-1)+'-', [rfReplaceAll]) ;
     strElFormula:=StringReplace(strElFormula, '#'+IntToStr(i)+'l', '#'+IntToStr(j+i-1)+'l', [rfReplaceAll]) ;
   end;
+  strElFormula:=trim(strElFormula);
 
   strFormula:=StringReplace(strFormula, '#'+IntToStr(j), strElFormula,[rfReplaceAll]) ;
   result:=strFormula;
@@ -478,7 +498,7 @@ begin
     for j:=0 to CurrentPattern.ElementCount-1  do
     begin
       //Если этот элемент составной
-      if CurrentPattern.Elements[j].PartOfSpeach='Иг' then
+      if not CurrentPattern.Elements[j].isTerminalElement  then
       begin
         blnNonTerminalElementsExist:=True;
         //Надо получить правила, соответствующие данной фразовой категории.
