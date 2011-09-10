@@ -1789,6 +1789,23 @@
 </category>
 
 <category>
+  <pattern>ты машина</pattern> 
+  <template><srai>ты бот</srai></template> 
+</category>
+
+<category>
+  <pattern>ты человек или бот</pattern> 
+  <template><srai>ты бот</srai></template> 
+</category>
+<category>
+  <pattern>ты программа</pattern> 
+  <template><srai>ты бот</srai></template> 
+</category>
+
+
+
+
+<category>
   <pattern>самый умный</pattern> 
   <template> 
      <srai>умный</srai>
@@ -3907,8 +3924,6 @@ GPS-навигатор полностью замен€ет бумажные карты. — ним невозможно заблудитьс€ - 
   <template>ƒа? Ћадно, € посмотрю, в чем там проблема. Ќо скорее всего она завтра сама пересоберетс€. </template> 
 </category>
 
-
-
 <category>
   <pattern>архив карты * битый </pattern> 
   <template><srai>карта <star/> битый архив  </srai></template> 
@@ -3932,6 +3947,12 @@ GPS-навигатор полностью замен€ет бумажные карты. — ним невозможно заблудитьс€ - 
 <category>
   <pattern> файл * битый  </pattern> 
   <template><srai>карта <star/> битый архив  </srai>  </template> 
+</category>
+
+
+<category>
+  <pattern> ќбновите *  </pattern> 
+  <template> арты обновл€ютс€ в пор€дке общей очереди, но € посмотрю, что можно сделать. </template> 
 </category>
 
 
