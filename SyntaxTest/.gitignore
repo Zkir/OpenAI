@@ -1,2 +1,6 @@
 /*.dcu
 /__history/
+/*.~dsk
+/*.~pas
+/uMainForm.ddp
+/SyntaxTest.identcache
