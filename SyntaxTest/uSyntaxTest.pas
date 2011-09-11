@@ -22,11 +22,13 @@ interface
 uses Classes;
 
 //Function TransformString(strInput: String; log:TStringList): String;
-function ProcessUserInput(strInput: String):String;
+function ProcessUserInput(strInput: String; log:TStringList):String;
 function TestAIML(FileName:String):String;
-function TestTextFile(FileName:String):String;
+function TestTextFile(SourceFileName,ResultFileName:String):String;
 
-
+var
+  ElementCount:integer;
+  PatternCount:integer;
 implementation
 uses  StrUtils, SysUtils,ActiveX,  LibXMLParser,  XMLDoc, XMLIntf,  UUtils,
 LEMMATIZERLib_TLB,AGRAMTABLib_TLB;
@@ -72,10 +74,12 @@ type
       function CompareGrammems(strGrammems:String): boolean;//сравнение шаблона граммем с данными
 
       constructor Create(const strWordForm,strPartOfSpeach,strGrammems: String);
+      destructor Destroy; Override;
   end;
 
   //тоже, очевидно, список (последовательность) элементов "слов-пустышек"
-  TSyntaxPattern =class
+  // т.е. элементов, которым назначены части речи и грамеммы, а лемма может быть любой
+  TSyntaxPattern=class
     private
       FPatternElements:TList;
       FRootElement:TSyntaxPatternElement;
@@ -97,6 +101,8 @@ type
       //Трансформация фразы во "внутреннее" представление
       function ProcessTrasformationFormula():string;
       constructor Create();
+      constructor CreateCopy(Source:TSyntaxPattern);
+      destructor Destroy; override;
   end;
 
 var
@@ -123,6 +129,8 @@ end;
 //Элемент синтаксического шаблона
 constructor TSyntaxPatternElement.Create(const strWordForm,strPartOfSpeach,strGrammems: String);
 begin
+  inherited Create;
+  inc(ElementCount);
   if  (strWordForm<>'')and (strWordForm<>'*') then
     begin
       //задано конкретное слово
@@ -136,6 +144,12 @@ begin
       PartOfSpeach:=strPartOfSpeach;
       Grammems:=Split(strGrammems,',') ;
     end;
+end;
+destructor TSyntaxPatternElement.Destroy;
+begin
+  Grammems.Free;
+  dec(ElementCount);
+  inherited Destroy;
 end;
 
 //сравнение шаблона граммем с данными
@@ -169,9 +183,37 @@ end;
 //TSyntaxPattern  - синтаксический шаблон
 constructor TSyntaxPattern.Create();
 begin
-  FPatternElements:=TList.create;
+  FPatternElements:=TList.Create;
   FRootElement:=nil;
+  inc(PatternCount);
 end;
+constructor TSyntaxPattern.CreateCopy(Source:TSyntaxPattern);
+var i:integer;
+begin
+  FPatternElements:=TList.Create;
+  FRootElement:=nil;
+  inc(PatternCount);
+  //Копируем содержимое
+  TrasformationFormula:= Source.TrasformationFormula;
+  if Source.FRootElement<>nil then
+    SetRootElement(Source.FRootElement.PartOfSpeach, Source.FRootElement.Grammems.Text);
+
+  for i:= 0 to Source.ElementCount-1 do
+    AddElement(Source[i].WordForm, Source[i].PartOfSpeach, Source[i].Grammems.text);
+end;
+destructor TSyntaxPattern.Destroy();
+var i:integer;
+begin
+  //Освободим корневой элемент данного шаблона
+  FRootElement.Free;
+  //Освободим входящие в данный шаблон элементы
+  for i := 0 to FPatternElements.Count-1  do
+    TSyntaxPatternElement(FPatternElements[i]).Free;
+  FPatternElements.free;
+  dec(PatternCount);
+end;
+
+
 function TSyntaxPattern.GetElementCount:integer;
 begin
   Result:=FPatternElements.Count;
@@ -367,17 +409,19 @@ function ComparePatternLength(Item1, Item2: Pointer): Integer;
   end;
 
 //Получаем все правила  - фразы и фразовые категории
-function GetAllRuleList: TList;
+function GetAllRuleList: TObjectList;
 var
   xml:IXMLDocument;
   PhraseNode,ElementNode:IXMLNode;
-  PatternList: TList;
+  PatternList: TObjectList;
   Pattern: TSyntaxPattern;
   i,j:integer;
   strWord,strPartOfSpeach,strGrammems,Formula:string;
 
 begin
-  PatternList:=  TList.Create;
+  PatternList:=TObjectList.Create;
+  PatternList.OwnsObjects:=True;
+
   xml:=LoadXMLDocument('d:\OpenAI\_SRC\grammar.xml');//
  // xml.LoadFromFile();
   xml.Active:=True;
@@ -412,18 +456,32 @@ begin
   Result :=PatternList;
 end;
 
-function GetPhraseCategoryList(RightElement:TSyntaxPatternElement; AllRules:TList): TList;
+//выборка элементов, соответсвующих "правой части" правила (RightElement).
+//для фразы ("S") RightElement - nil
+
+function GetRuleListSubset(RightElement:TSyntaxPatternElement; AllRules:TList): TObjectList;
 var i:integer;
     PE:TSyntaxPatternElement;
 begin
- Result:= TList.Create();
- //Получаем список шаблонов соответсвующих заданной фразовой категории
+  Result:= TObjectList.Create();
+  Result.OwnsObjects:=True;
+  //Получаем список шаблонов соответсвующих заданной фразовой категории
   for i:=0 to AllRules.Count-1 do
   begin
     PE:=TSyntaxPattern(AllRules[i]).FRootElement;
-    if PE<>nil then
-      if (PE.PartOfSpeach=RightElement.PartOfSpeach) and (PE.Grammems.Text=RightElement.Grammems.Text)  then
-        Result.Add(AllRules[i]);
+    if RightElement<>nil then
+      begin
+        if PE<>nil then
+          if (PE.PartOfSpeach=RightElement.PartOfSpeach) and (PE.Grammems.Text=RightElement.Grammems.Text)  then
+            //В список добавляется копия(!) исходного элемента
+            Result.Add(TSyntaxPattern.CreateCopy(AllRules[i]));
+      end
+    else
+      begin
+        if PE=nil then
+          //В список добавляется копия(!) исходного элемента
+          Result.Add(TSyntaxPattern.CreateCopy(AllRules[i]));
+      end;
   end;
 end;
 
@@ -464,31 +522,29 @@ begin
   //result:=Join(lstFormula,' ');
 end;
 
-function GetPatternList(): TList;
+function GetPatternList(): TObjectList;
 var
   i,j,k,l:integer;
-  AllRules:TList;
-  Expansions:TList;
+  AllRules:TObjectList;
+  Expansions:TObjectList;
   NewPattern,CurrentPattern: TSyntaxPattern;
   blnNonTerminalElementsExist:boolean;
 begin
-  Result:= TList.Create();
+
   AllRules:= GetAllRuleList;
 
   //Получаем список шаблонов (т.е. цепочек, разворачивающих "фразу": S->xxx)
-  for i:=0 to AllRules.Count-1 do
-  begin
-    if TSyntaxPattern(AllRules[i]).FRootElement=nil then
-      Result.Add(AllRules[i]);
-  end;
+  Result:=GetRuleListSubset(nil,AllRules);
   //Это мы получили список фраз (S->xxx), который содержит в основном,
   //нетерминальные цепочки
 
   //После этого мы должны развернуть нетерминальные цепочки в терминальные
-  //  алгоритм самый простой.
-  //  проверяются все цепочки в списке. Если оказывается, что в цепочке есть нетерминальный
-  //  элемент, эта цепочка удаляется, а вместо нее вставляется N вариантов замены данного элемента,
-  //  вместе с неизменным концом цепочки.
+  // алгоритм самый простой.
+  //  проверяются все цепочки в списке. Если оказывается, что в цепочке есть
+  //  нетерминальный элемент, эта цепочка удаляется, а вместо нее вставляется
+  //  N вариантов замены данного элемента, вместе с неизменным концом цепочки.
+  //  Процесс повторяется, пока все нетерминальные элементы не будут заменены
+  //  на терминальные
   repeat
 
   blnNonTerminalElementsExist:=False;
@@ -502,7 +558,7 @@ begin
       begin
         blnNonTerminalElementsExist:=True;
         //Надо получить правила, соответствующие данной фразовой категории.
-        Expansions:=GetPhraseCategoryList(TSyntaxPattern(Result[i]).Elements[j],AllRules);
+        Expansions:=GetRuleListSubset(TSyntaxPattern(Result[i]).Elements[j],AllRules);
         for k := 0 to Expansions.Count-1  do
         begin
           NewPattern:=TSyntaxPattern.Create;
@@ -530,6 +586,8 @@ begin
 
         //После развертывания элемента цепочка удаляется.
         Result.Delete(i);
+        //варианты тоже больше не нужны
+        Expansions.Free;
         //надо перейти к следующей цепочке
         break;
       end;//if нетерминальный элемент
@@ -542,6 +600,9 @@ begin
   //следует повторить цикл, потому что в цепочках могут еще оставаться
   //нетерминальные элементы
   until Not blnNonTerminalElementsExist ;
+
+  //Чистка
+  AllRules.Free;
 end;
 
 //Синтаксический разбор.
@@ -569,16 +630,14 @@ begin
     begin
       //Cоответствие найдено
       Result:= PatternList[i];
+
+      //Найденный шаблон удаляется из списка
+      PatternList.Extract(Result);
       break;
     end
   end;
 
-  //Другая альтернативная идея, делить фразу на фрагметы по предлогам  и союзам "а"
-  // и вопросительным словам.
-  // (предлог так или иначе начинает предложно именную группу), фрагменты анализировать шаблонами,
-  // а получившиеся после анализа синтаксические группы комбинировать (тоже шаблонами).
-  // еще бы понять какую нужно получить структуру. :)
-
+  //Чистка памяти
   PatternList.Free;
 end;
 
@@ -594,6 +653,12 @@ end;
 //   к группе.
 // - если ничего из этого сделать нельзя, пропустить слово и перейти к следующему.
 // т.е мы всегда присоединяем зависимое слово к главному.
+ //Другая альтернативная идея, делить фразу на фрагметы по предлогам  и союзам "а"
+  // и вопросительным словам.
+  // (предлог так или иначе начинает предложно именную группу), фрагменты анализировать шаблонами,
+  // а получившиеся после анализа синтаксические группы комбинировать (тоже шаблонами).
+  // еще бы понять какую нужно получить структуру. :)
+
 function SyntaxAnalysis2(Phrase: TPhrase; var intMatchedWords, intUnmatchedWords:integer): TSyntaxPattern;
 var i:integer;
 begin
@@ -616,12 +681,8 @@ Function TransformString(strInput:String; log:TStringList):String;
 
       tmp: String;
       intMatchedWords, intUnmatchedWords:integer;
-
-
 begin
-
-
-
+  result:='';
   // 2. разбиение на слова
   SplittedPhrase:= Split(strInput,' ');
 
@@ -638,8 +699,6 @@ begin
   if TWordForm(Phrase[0]).WordForm='а' then
     Phrase.Delete(0);
 
-
-
   //4.
   //Синтаксический разбор. На этом этапе мы должны получить структуру данных, которая
   //отражает синтаксическую структуру предложения и содержит слова с приписанными
@@ -651,12 +710,13 @@ begin
 
   //5. Трансформация
    if MatchedPattern <> nil then
-     log.Add(MatchedPattern.ProcessTrasformationFormula);
-   log.Add( IntToStr( intMatchedWords) +'/'+  IntToStr( intUnmatchedWords));
+     result:= MatchedPattern.ProcessTrasformationFormula;
 
   //вывод того что получилось.
+   log.Add(result);
+   log.Add( IntToStr( intMatchedWords) +'/'+  IntToStr( intUnmatchedWords));
 
-  result:='';
+
   for i:=0 to Phrase.Count-1 do
   begin
     log.add(TWordForm(Phrase[i]).WordForm+':');
@@ -672,7 +732,6 @@ begin
     tmp:=tmp+' }';
     log.add(tmp);
   end;
-  result:='xxx';
   SplittedPhrase.Free;
   Phrase.Free;
 
@@ -682,7 +741,7 @@ End;
 //' Главная функция
 //' strInput - ввод собеседника в сыром виде
 // возращает лог :)
-function ProcessUserInput(strInput: String):String;
+function ProcessUserInput(strInput: String; log:TStringList):String;
 //Идеальный алгоритм.
 // 1. Берется ввод пользователя.
 // 2. Делится на предложенися по знакам препинания. '.!?;'
@@ -693,27 +752,26 @@ function ProcessUserInput(strInput: String):String;
 //4. Получившийся набор предложений на ЯВП проталкивается дальше (в алису :) )
 var
   _SentenceSplitter:TStringTokenizer;
-  log : TStringList;
+
   i:integer;
   strPhrase:string;
 begin
-  log:=TStringList.Create;
-
    // 1. разбиение на предложения
   _SentenceSplitter:=TStringTokenizer.Create('.!?;');
 
-  strInput:=  AnsiLowerCase (strInput) ;
-  _SentenceSplitter.Tokenize(trim( strInput));
+  strInput:=AnsiLowerCase(strInput);
+  _SentenceSplitter.Tokenize(trim(strInput));
   //SplittedPhrase:= Tokenizer._tokens;
+  result:='';
   for i:=0 to _SentenceSplitter._count-1 do
   begin
     strPhrase:=trim(_SentenceSplitter._tokens[i]);
 
     if strPhrase<>'' then
-      TransformString(strPhrase,log);
+      result:=result+TransformString(strPhrase,log)+' ';
   end;
-  result:=Log.Text;
-  log.Free;
+  result:=trim(result);
+  _SentenceSplitter.Free;
 end;
 
 //Проверка существующих Aiml шаблонов
@@ -736,7 +794,7 @@ begin
         if AnsiLowerCase (MyXml.CurName) ='pattern' then
         begin
            CurrentFile.Add(MyXml.CurContent);
-           CurrentFile.Add(ProcessUserInput(MyXml.CurContent));
+           ProcessUserInput(MyXml.CurContent, CurrentFile);
            CurrentFile.Add('');
         end;
     END;
@@ -745,34 +803,42 @@ begin
 
   result:=   CurrentFile.Text;
 end;
-function TestTextFile(FileName:String):String;
+function TestTextFile(SourceFileName,ResultFileName:String):String;
 var
   CurrentFile : TStringList;
+  NewFile: TStringList;
   TextFile : TStringList;
   i:integer;
+  SourcePhrase,ResultPhrase:String;
 begin
   CurrentFile := TStringList.Create;
+  NewFile := TStringList.Create;
 
   TextFile:= TStringList.Create ;
-  TextFile.LoadFromFile(FileName);
+  TextFile.LoadFromFile(SourceFileName);
 
   for i := 0 to TextFile.Count-1  do
     begin
-           CurrentFile.Add(TextFile[i]);
-           CurrentFile.Add( ProcessUserInput(TextFile[i]));
-           CurrentFile.Add('');
+      SourcePhrase:=TextFile[i];
+      CurrentFile.Add(SourcePhrase);
+      ResultPhrase:=ProcessUserInput(TextFile[i],CurrentFile);
+      CurrentFile.Add('');
+      NewFile.Add(SourcePhrase+' --> '+ResultPhrase);
+    end;
 
-    END;
+  NewFile.SaveToFile(ResultFileName);
   TextFile.Free;
+  NewFile.Free;
 
 
   result:=   CurrentFile.Text;
 end;
 
-
 //Инициализация  лемматизатора.
 var   hr :  HRESULT;
 initialization
+  ElementCount:=0;
+  PatternCount:=0;
 try
    // hr := CoInitialize(nil);
     if (hr <> S_OK) then
@@ -796,7 +862,6 @@ try
         halt(1);
     end;
     RusGramTab.Load;
-
 
 except
    // writeln('an exception occurred!');

@@ -13,6 +13,7 @@ type
     Button1: TButton;
     Button2: TButton;
     XMLDocument1: TXMLDocument;
+    Label1: TLabel;
     procedure Button1Click(Sender: TObject);
     procedure Button2Click(Sender: TObject);
   private
@@ -30,14 +31,26 @@ uses uSyntaxTest;
 {$R *.dfm}
 
 procedure TForm1.Button1Click(Sender: TObject);
+var
+  log:TStringList;
 begin
-  memo2.Lines.Text:= ProcessUserInput( memo1.Lines.Text);
+  log:=TStringList.Create;
+  ProcessUserInput( memo1.Lines.Text,log);
+  memo2.Lines.Text:=log.Text;
+  log.Free;
+  Label1.Caption:=IntToStr(ElementCount)+'/'+IntToStr(PatternCount);
 end;
 
 procedure TForm1.Button2Click(Sender: TObject);
+//var
+  //log:TStringList;
 begin
+  //log:=TStringList.Create;
   //memo2.Lines.Text:= TestAIML( 'd:\OpenAI\_SRC\WebAlice\Zett.aiml\1.aiml');
-  memo2.Lines.Text:= TestTextFile( 'C:\Users\Zkir\Desktop\phrases.rpt');
+  memo2.Lines.Text:=TestTextFile( 'C:\Users\Zkir\Desktop\phrases.rpt',
+                                  'C:\Users\Zkir\Desktop\phrases.2l.rpt' );
+  //memo2.Lines.Text:=log.Text;
+  //log.Free;
 end;
 
 end.
