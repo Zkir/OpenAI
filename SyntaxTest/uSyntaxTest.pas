@@ -19,7 +19,7 @@ unit uSyntaxTest;
 //  3. на третьем этапе нужно "узнавать синтаксические шаблоны во входной строке"
 
 interface
-uses Classes;
+uses Classes,IniFiles;
 
 //Function TransformString(strInput: String; log:TStringList): String;
 function ProcessUserInput(strInput: String; log:TStringList):String;
@@ -71,7 +71,8 @@ type
 
       function isTerminalElement:boolean; //Является ли данный элемент терминальным,
       //или же "фразовой категорией"
-      function CompareGrammems(strGrammems:String): boolean;//сравнение шаблона граммем с данными
+      function CompareGrammems(strGrammems:String): boolean;overload;//сравнение шаблона граммем с данными
+      function CompareGrammems(lstGrammems:TStringList): boolean; overload;
 
       constructor Create(const strWordForm,strPartOfSpeach,strGrammems: String);
       destructor Destroy; Override;
@@ -83,6 +84,7 @@ type
     private
       FPatternElements:TList;
       FRootElement:TSyntaxPatternElement;
+      FVariables:THashedStringList;
       function GetElementCount:integer;
       function GetElement(Index : Integer):TSyntaxPatternElement;
     public
@@ -97,7 +99,7 @@ type
       //Тестирование  фразы (Phrase), на соответствие синтаксическому шаблону (Pattern).
       function TestPhrase(Phrase:TPhrase;
                           var intMatchedWords, intUnmatchedWords:integer):boolean;
-
+      function SetVariableValue(VarName,VarValue:String):boolean;
       //Трансформация фразы во "внутреннее" представление
       function ProcessTrasformationFormula():string;
       constructor Create();
@@ -153,26 +155,42 @@ begin
 end;
 
 //сравнение шаблона граммем с данными
-function TSyntaxPatternElement.CompareGrammems(strGrammems:String): boolean;
-var i:integer;
-begin
-  result:=true;
-  //понимаем под "совпадением" наличие грамеммы в списке
+//понимаем под "совпадением" наличие грамеммы в списке
+//Все грамеммы данного шаблона должны присутствовать в эталоне, чтобы было защитано совпадение
   //возможно это не совсем аккуратно, может быть следует давать отрицательный результат,
   //только если граммема образа не совместима с граммами слова, например если указан ип,
   //а у слова вп
   //а положительный, если у него нет такой граммемы, слова совместимо с любой г.
   // данной категории, например глагол в наст. вр. совместим с любым родом.
+function TSyntaxPatternElement.CompareGrammems(strGrammems:String): boolean;
+var i:integer;
+begin
+  result:=true;
    for i:=0 to Grammems.Count-1   do
    begin
      //Мы перебираем граммемы образца (в нем они заданны каждая в отдельном элементе списка)
-     if Pos(Grammems[i] +',',strGrammems )=0 then
+     if  Pos(Grammems[i] +',',strGrammems )=0 then
      begin
        result:=false;
        break;
      end
    end
+end;
 
+//То же самое, только граммемы в виде списка
+function TSyntaxPatternElement.CompareGrammems(lstGrammems:TStringList): boolean;
+var i:integer;
+begin
+  result:=true;
+   for i:=0 to Grammems.Count-1   do
+   begin
+     //Мы перебираем граммемы образца (в нем они заданны каждая в отдельном элементе списка)
+     if lstGrammems.IndexOf(Grammems[i])=-1 then
+     begin
+       result:=false;
+       break;
+     end
+   end
 end;
 
 function TSyntaxPatternElement.isTerminalElement:boolean;
@@ -185,12 +203,14 @@ constructor TSyntaxPattern.Create();
 begin
   FPatternElements:=TList.Create;
   FRootElement:=nil;
+  FVariables:=THashedStringList.Create;
   inc(PatternCount);
 end;
 constructor TSyntaxPattern.CreateCopy(Source:TSyntaxPattern);
 var i:integer;
 begin
   FPatternElements:=TList.Create;
+  FVariables:=THashedStringList.Create;
   FRootElement:=nil;
   inc(PatternCount);
   //Копируем содержимое
@@ -200,6 +220,8 @@ begin
 
   for i:= 0 to Source.ElementCount-1 do
     AddElement(Source[i].WordForm, Source[i].PartOfSpeach, Source[i].Grammems.text);
+
+  FVariables.Text:=Source.FVariables.Text;
 end;
 destructor TSyntaxPattern.Destroy();
 var i:integer;
@@ -324,7 +346,60 @@ begin
   intUnmatchedWords := Phrase.Count-intMatchedWords;
 end;
 
+function TSyntaxPattern.SetVariableValue(VarName,VarValue:String):boolean;
+var
+  i,j: Integer;
+  procedure RemoveGrammem(Grammems:TStringList;value:String);
+    var intIndex:integer;
+  begin
+    intIndex:= Grammems.IndexOf(value);
+    if intIndex <>-1 then
+    begin
+      Grammems.delete(intIndex );
+    end;
 
+  end;
+begin
+  //первым делом удалим переменную из списка
+  FVariables.Delete(FVariables.IndexOfName(VarName));
+  //Заменяем переменную  на значение во всех элементах
+  for i := 0 to ElementCount-1 do
+  begin
+
+    for j := 0 to Elements[i].Grammems.Count-1 do
+      Elements[i].Grammems[j]:=ReplaceStr(Elements[i].Grammems[j],VarName,VarValue);
+
+    //Следует проверить, совместимо ли значение переменной с данной частью речи
+    //и другими грамеммами
+    if Elements[i].PartOfSpeach = 'С' then
+      begin
+        RemoveGrammem(Elements[i].Grammems,'1л');
+        RemoveGrammem(Elements[i].Grammems,'2л');
+        RemoveGrammem(Elements[i].Grammems,'3л');
+      end;
+    if Elements[i].PartOfSpeach = 'Г' then
+    begin
+      if Elements[i].Grammems.IndexOf('прш')<> -1 then
+        begin
+          RemoveGrammem(Elements[i].Grammems,'1л');
+          RemoveGrammem(Elements[i].Grammems,'2л');
+          RemoveGrammem(Elements[i].Grammems,'3л');
+        end;
+      if (Elements[i].Grammems.IndexOf('нст')<> -1) or
+         (Elements[i].Grammems.IndexOf('мн')<> -1) then
+        begin
+          RemoveGrammem(Elements[i].Grammems,'мр');
+          RemoveGrammem(Elements[i].Grammems,'жр');
+          RemoveGrammem(Elements[i].Grammems,'ср');
+        end;
+    end;
+  end;
+  //и в том числе в корневом элементе, если есть.
+  if FRootElement<>nil then
+    for j := 0 to  FRootElement.Grammems.Count-1 do
+      FRootElement.Grammems[j]:=ReplaceStr(FRootElement.Grammems[j],VarName,VarValue);
+
+end;
 
 //Лемматизация
 constructor TWordForm.Create(const aWordForm: String);
@@ -408,16 +483,16 @@ function ComparePatternLength(Item1, Item2: Pointer): Integer;
       Result :=1;
   end;
 
-//Получаем все правила  - фразы и фразовые категории
+//Получаем все правила - фразы и фразовые категории
 function GetAllRuleList: TObjectList;
 var
   xml:IXMLDocument;
-  PhraseNode,ElementNode:IXMLNode;
+  PhraseNode,ElementNode,VarNode:IXMLNode;
   PatternList: TObjectList;
   Pattern: TSyntaxPattern;
   i,j:integer;
   strWord,strPartOfSpeach,strGrammems,Formula:string;
-
+  varName,varValue:string;
 begin
   PatternList:=TObjectList.Create;
   PatternList.OwnsObjects:=True;
@@ -450,6 +525,16 @@ begin
       strGrammems:=ElementNode.ChildNodes['Grammems'].Text ;
       Pattern.SetRootElement (strPartOfSpeach,strGrammems );
     end;
+    //Разбор переменных
+    for j := 0 to PhraseNode.ChildNodes['Vars'].ChildNodes.Count-1 do
+    begin
+      VarNode:=PhraseNode.ChildNodes['Vars'].ChildNodes[j];
+      varName:=VarNode.Attributes['Name'];
+      varValue:=VarNode.Attributes['Values'];
+      Pattern.FVariables.Add(varName +'='+varValue  );
+    end;
+
+
     PatternList.Add(Pattern);
   end;
 
@@ -465,14 +550,14 @@ var i:integer;
 begin
   Result:= TObjectList.Create();
   Result.OwnsObjects:=True;
-  //Получаем список шаблонов соответсвующих заданной фразовой категории
+  //Получаем список шаблонов соответствующих заданной фразовой категории
   for i:=0 to AllRules.Count-1 do
   begin
     PE:=TSyntaxPattern(AllRules[i]).FRootElement;
     if RightElement<>nil then
       begin
         if PE<>nil then
-          if (PE.PartOfSpeach=RightElement.PartOfSpeach) and (PE.Grammems.Text=RightElement.Grammems.Text)  then
+          if (PE.PartOfSpeach=RightElement.PartOfSpeach) and (RightElement.CompareGrammems( PE.Grammems))  then
             //В список добавляется копия(!) исходного элемента
             Result.Add(TSyntaxPattern.CreateCopy(AllRules[i]));
       end
@@ -522,7 +607,44 @@ begin
   //result:=Join(lstFormula,' ');
 end;
 
-function GetPatternList(): TObjectList;
+Procedure ExpandVariables(PatternList: TObjectList);
+var
+  VarName:String;
+  VarValue:TStringList;
+  blnNonTerminalElementsExist:boolean;
+  NewPattern,CurrentPattern: TSyntaxPattern;
+  i,j:integer;
+begin
+  //Нужно конкретизировать переменные
+  repeat
+  blnNonTerminalElementsExist:=False;
+  for i:=0 to PatternList.Count-1 do
+  begin
+    CurrentPattern:=TSyntaxPattern(PatternList[i]);
+    if CurrentPattern.FVariables.Count<>0   then
+    begin
+      blnNonTerminalElementsExist:=True;
+      //берем первую переменную
+      //Для каждого значения переменной
+       //создаем новый шаблон
+       VarName:=CurrentPattern.FVariables.Names[0];
+       VarValue:=Split(CurrentPattern.FVariables.Values[VarName],',');
+       for j := 0 to VarValue.Count-1 do
+       begin
+         NewPattern:=TSyntaxPattern.CreateCopy(CurrentPattern);
+         NewPattern.SetVariableValue(VarName,VarValue[j]);
+         PatternList.Add(NewPattern);
+       end;
+       //себя же удаляем из списка
+       PatternList.Delete(i);
+       VarValue.Free;
+    end;
+  end;
+  until Not blnNonTerminalElementsExist ;
+
+end;
+
+function GetPatternList(intMaxElements:integer): TObjectList;
 var
   i,j,k,l:integer;
   AllRules:TObjectList;
@@ -532,11 +654,14 @@ var
 begin
 
   AllRules:= GetAllRuleList;
+  ExpandVariables(AllRules);
 
   //Получаем список шаблонов (т.е. цепочек, разворачивающих "фразу": S->xxx)
   Result:=GetRuleListSubset(nil,AllRules);
   //Это мы получили список фраз (S->xxx), который содержит в основном,
   //нетерминальные цепочки
+
+
 
   //После этого мы должны развернуть нетерминальные цепочки в терминальные
   // алгоритм самый простой.
@@ -556,9 +681,12 @@ begin
       //Если этот элемент составной
       if not CurrentPattern.Elements[j].isTerminalElement  then
       begin
-        blnNonTerminalElementsExist:=True;
+
         //Надо получить правила, соответствующие данной фразовой категории.
         Expansions:=GetRuleListSubset(TSyntaxPattern(Result[i]).Elements[j],AllRules);
+        if Expansions.Count>0 then
+        begin
+        blnNonTerminalElementsExist:=True; //Это составной элемент, в котором возможна замена.
         for k := 0 to Expansions.Count-1  do
         begin
           NewPattern:=TSyntaxPattern.Create;
@@ -586,6 +714,7 @@ begin
 
         //После развертывания элемента цепочка удаляется.
         Result.Delete(i);
+        end;
         //варианты тоже больше не нужны
         Expansions.Free;
         //надо перейти к следующей цепочке
@@ -596,7 +725,14 @@ begin
   Result.Pack;
   //Вот здесь можно удалить из списка те цепочки, которые
   //(начальные терминальные элементы которых) не соответствуют заданной фразе.
+    //Удалим слишком длинные цепочки
+    // Это можно сделать потому что у нас грамматика не сокращающая
+  for i:=Result.Count-1 downto 0  do
+    if TSyntaxPattern(Result[i]).ElementCount>intMaxElements  then
+     Result.Delete(i);
 
+
+  Result.Pack;
   //следует повторить цикл, потому что в цепочках могут еще оставаться
   //нетерминальные элементы
   until Not blnNonTerminalElementsExist ;
@@ -618,7 +754,7 @@ begin
   //Cоздаем некий список шаблонов, которые мы будем проверять
   //(сверху вниз)
 
-  PatternList := GetPatternList();
+  PatternList := GetPatternList(Phrase.Count);
 
   //Проверка в цикле, начиная от наиболее специфичных
   PatternList.sort(ComparePatternLength);
