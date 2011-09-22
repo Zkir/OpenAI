@@ -27,8 +27,9 @@ function TestAIML(FileName:String):String;
 function TestTextFile(SourceFileName,ResultFileName:String):String;
 
 var
-  ElementCount:integer;
-  PatternCount:integer;
+  g_WordformCount:integer;
+  g_ElementCount:integer;
+  g_PatternCount:integer;
 implementation
 uses  StrUtils, SysUtils,ActiveX,  LibXMLParser,  XMLDoc, XMLIntf,  UUtils,
 LEMMATIZERLib_TLB,AGRAMTABLib_TLB;
@@ -49,6 +50,7 @@ type
 
       property NumberOfVariants:integer read GetNumberOfVariants;
       constructor Create(const aWordForm: String);
+      destructor Destroy; Override;
   end;
 
   //Лемматизированная фраза. Представляет просто список входящих в нее словоформ
@@ -132,7 +134,7 @@ end;
 constructor TSyntaxPatternElement.Create(const strWordForm,strPartOfSpeach,strGrammems: String);
 begin
   inherited Create;
-  inc(ElementCount);
+  inc(g_ElementCount);
   if  (strWordForm<>'')and (strWordForm<>'*') then
     begin
       //задано конкретное слово
@@ -150,7 +152,7 @@ end;
 destructor TSyntaxPatternElement.Destroy;
 begin
   Grammems.Free;
-  dec(ElementCount);
+  dec(g_ElementCount);
   inherited Destroy;
 end;
 
@@ -204,7 +206,7 @@ begin
   FPatternElements:=TList.Create;
   FRootElement:=nil;
   FVariables:=THashedStringList.Create;
-  inc(PatternCount);
+  inc(g_PatternCount);
 end;
 constructor TSyntaxPattern.CreateCopy(Source:TSyntaxPattern);
 var i:integer;
@@ -212,7 +214,7 @@ begin
   FPatternElements:=TList.Create;
   FVariables:=THashedStringList.Create;
   FRootElement:=nil;
-  inc(PatternCount);
+  inc(g_PatternCount);
   //Копируем содержимое
   TrasformationFormula:= Source.TrasformationFormula;
   if Source.FRootElement<>nil then
@@ -232,7 +234,7 @@ begin
   for i := 0 to FPatternElements.Count-1  do
     TSyntaxPatternElement(FPatternElements[i]).Free;
   FPatternElements.free;
-  dec(PatternCount);
+  dec(g_PatternCount);
 end;
 
 
@@ -386,7 +388,18 @@ begin
           RemoveGrammem(Elements[i].Grammems,'3л');
         end;
       if (Elements[i].Grammems.IndexOf('нст')<> -1) or
+         (Elements[i].Grammems.IndexOf('буд')<> -1) or
          (Elements[i].Grammems.IndexOf('мн')<> -1) then
+        begin
+          RemoveGrammem(Elements[i].Grammems,'мр');
+          RemoveGrammem(Elements[i].Grammems,'жр');
+          RemoveGrammem(Elements[i].Grammems,'ср');
+        end;
+    end;
+    //Прилагательные во множественном числе лишины рода
+    if (Elements[i].PartOfSpeach = 'П') or (Elements[i].PartOfSpeach = 'МС-П')  then
+    begin
+      if (Elements[i].Grammems.IndexOf('мн')<> -1) then
         begin
           RemoveGrammem(Elements[i].Grammems,'мр');
           RemoveGrammem(Elements[i].Grammems,'жр');
@@ -410,6 +423,7 @@ var
      i,j : integer;
      strLemma,strPartOfSpeach:string;
 begin
+  inc(g_WordformCount);
   WordForm:=aWordForm;
   Lemma:=TStringList.Create;
   Grammems:=TStringList.Create;
@@ -441,6 +455,15 @@ begin
     end;
   end;
 end ;
+
+destructor TWordForm.Destroy();
+begin
+  dec(g_WordformCount);
+  PartOfSpeach.Free;
+  Grammems.Free;
+  Lemma.Free;
+  inherited;
+end;
 
 function TWordForm.GetNumberOfVariants():integer;
 begin
@@ -973,8 +996,9 @@ end;
 //Инициализация  лемматизатора.
 var   hr :  HRESULT;
 initialization
-  ElementCount:=0;
-  PatternCount:=0;
+  g_WordformCount:=0;
+  g_ElementCount:=0;
+  g_PatternCount:=0;
 try
    // hr := CoInitialize(nil);
     if (hr <> S_OK) then

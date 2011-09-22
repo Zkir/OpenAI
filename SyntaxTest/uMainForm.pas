@@ -38,7 +38,7 @@ begin
   ProcessUserInput( memo1.Lines.Text,log);
   memo2.Lines.Text:=log.Text;
   log.Free;
-  Label1.Caption:=IntToStr(ElementCount)+'/'+IntToStr(PatternCount);
+  Label1.Caption:=IntToStr(g_WordformCount)+'/'+IntToStr(g_ElementCount)+'/'+IntToStr(g_PatternCount);
 end;
 
 procedure TForm1.Button2Click(Sender: TObject);
@@ -47,8 +47,8 @@ procedure TForm1.Button2Click(Sender: TObject);
 begin
   //log:=TStringList.Create;
   //memo2.Lines.Text:= TestAIML( 'd:\OpenAI\_SRC\WebAlice\Zett.aiml\1.aiml');
-  memo2.Lines.Text:=TestTextFile( 'C:\Users\Zkir\Desktop\phrases.rpt',
-                                  'C:\Users\Zkir\Desktop\phrases.2l.rpt' );
+  memo2.Lines.Text:=TestTextFile( 'd:\OpenAI\_SRC\phrases.txt',
+                                  'd:\OpenAI\_SRC\phrases.2l.txt' );
   //memo2.Lines.Text:=log.Text;
   //log.Free;
 end;
