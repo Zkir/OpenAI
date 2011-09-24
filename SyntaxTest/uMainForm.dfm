@@ -14,9 +14,9 @@ object Form1: TForm1
   PixelsPerInch = 96
   TextHeight = 13
   object Label1: TLabel
-    Left = 256
-    Top = 152
-    Width = 105
+    Left = 552
+    Top = 149
+    Width = 32
     Height = 13
     Caption = 'Label1'
   end
@@ -57,9 +57,14 @@ object Form1: TForm1
     TabOrder = 3
     OnClick = Button2Click
   end
-  object XMLDocument1: TXMLDocument
-    Left = 448
+  object ProgressBar1: TProgressBar
+    Left = 224
     Top = 144
-    DOMVendorDesc = 'MSXML'
+    Width = 313
+    Height = 25
+    ParentCustomHint = False
+    Smooth = True
+    MarqueeInterval = 3
+    TabOrder = 4
   end
 end

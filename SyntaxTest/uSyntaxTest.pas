@@ -24,7 +24,6 @@ uses Classes,IniFiles;
 //Function TransformString(strInput: String; log:TStringList): String;
 function ProcessUserInput(strInput: String; log:TStringList):String;
 function TestAIML(FileName:String):String;
-function TestTextFile(SourceFileName,ResultFileName:String):String;
 
 var
   g_WordformCount:integer;
@@ -54,7 +53,7 @@ type
   end;
 
   //Лемматизированная фраза. Представляет просто список входящих в нее словоформ
-  TPhrase = TList;
+  TPhrase = TObjectList;
 
   //Элемент синтаксического шаблона.
   //Довольно очевидно, что это не что иное как "фразовая категория"
@@ -93,6 +92,7 @@ type
       TrasformationFormula:string;
       property ElementCount:integer read GetElementCount;
       property Elements[Index : Integer]:TSyntaxPatternElement  read GetElement;  default;
+      function ExplicitWordformCount:integer;
       //Добавление элемента в шаблон
       function AddElement(const strWordForm,strPartOfSpeach,strGrammems: String):integer;
       //Задание корневого элемента
@@ -149,6 +149,7 @@ begin
       Grammems:=Split(strGrammems,',') ;
     end;
 end;
+
 destructor TSyntaxPatternElement.Destroy;
 begin
   Grammems.Free;
@@ -168,15 +169,15 @@ function TSyntaxPatternElement.CompareGrammems(strGrammems:String): boolean;
 var i:integer;
 begin
   result:=true;
-   for i:=0 to Grammems.Count-1   do
-   begin
-     //Мы перебираем граммемы образца (в нем они заданны каждая в отдельном элементе списка)
-     if  Pos(Grammems[i] +',',strGrammems )=0 then
-     begin
-       result:=false;
-       break;
-     end
-   end
+  for i:=0 to Grammems.Count-1   do
+  begin
+    //Мы перебираем граммемы образца (в нем они заданны каждая в отдельном элементе списка)
+    if  Pos(Grammems[i] +',',strGrammems )=0 then
+    begin
+      result:=false;
+      break;
+    end
+  end
 end;
 
 //То же самое, только граммемы в виде списка
@@ -184,15 +185,15 @@ function TSyntaxPatternElement.CompareGrammems(lstGrammems:TStringList): boolean
 var i:integer;
 begin
   result:=true;
-   for i:=0 to Grammems.Count-1   do
-   begin
-     //Мы перебираем граммемы образца (в нем они заданны каждая в отдельном элементе списка)
-     if lstGrammems.IndexOf(Grammems[i])=-1 then
-     begin
-       result:=false;
-       break;
-     end
-   end
+  for i:=0 to Grammems.Count-1   do
+  begin
+    //Мы перебираем граммемы образца (в нем они заданны каждая в отдельном элементе списка)
+    if lstGrammems.IndexOf(Grammems[i])=-1 then
+    begin
+      result:=false;
+      break;
+    end;
+  end;
 end;
 
 function TSyntaxPatternElement.isTerminalElement:boolean;
@@ -225,6 +226,7 @@ begin
 
   FVariables.Text:=Source.FVariables.Text;
 end;
+
 destructor TSyntaxPattern.Destroy();
 var i:integer;
 begin
@@ -234,13 +236,24 @@ begin
   for i := 0 to FPatternElements.Count-1  do
     TSyntaxPatternElement(FPatternElements[i]).Free;
   FPatternElements.free;
+  FVariables.Free;
   dec(g_PatternCount);
 end;
-
 
 function TSyntaxPattern.GetElementCount:integer;
 begin
   Result:=FPatternElements.Count;
+end;
+
+function TSyntaxPattern.ExplicitWordformCount:integer;
+var i:integer;
+begin
+  Result:=0;
+  for i := 0 to ElementCount-1 do
+  begin
+    if Elements[i].WordForm<>'*' then
+      inc(Result);
+  end;
 end;
 
 function TSyntaxPattern.GetElement(index:integer):TSyntaxPatternElement;
@@ -303,7 +316,7 @@ begin
   begin
     PE:=self[i];
     //Теперь перебираем варианты для словоформой с тем же номером
-    WF:=Phrase[i];
+    WF:=TWordForm(Phrase[i]);
     blnMatched:=False;
     for j:=0 to WF.NumberOfVariants-1  do
     begin
@@ -397,7 +410,9 @@ begin
         end;
     end;
     //Прилагательные во множественном числе лишины рода
-    if (Elements[i].PartOfSpeach = 'П') or (Elements[i].PartOfSpeach = 'МС-П')  then
+    if (Elements[i].PartOfSpeach = 'П') or
+       (Elements[i].PartOfSpeach = 'МС-П') or
+       (Elements[i].PartOfSpeach = 'КР_ПРИЛ')  then
     begin
       if (Elements[i].Grammems.IndexOf('мн')<> -1) then
         begin
@@ -436,6 +451,7 @@ begin
 
   for j:=0 to ParadigmCollection.Count-1 do
   begin
+    Paradigm:=nil;
     Paradigm := ParadigmCollection.Item[j];
     i:=1;
 
@@ -445,7 +461,8 @@ begin
       OneAncode := Copy(SrcAncodes,i,2);
       strLemma:=Paradigm.Norm;
       strPartOfSpeach:=RusGramTab.GetPartOfSpeechStr( RusGramTab.GetPartOfSpeech(OneAncode));
-      if not((strLemma='ЛИ')and (strPartOfSpeach='С')) then
+      if not((strLemma='ЛИ')and (strPartOfSpeach='С'))
+      and not((strLemma='МЕНЬ')and (strPartOfSpeach='С')) then
       begin
         Lemma.Add(strLemma);
         PartOfSpeach.Add(strPartOfSpeach);
@@ -454,6 +471,8 @@ begin
       inc (i, 2);
     end;
   end;
+  ParadigmCollection:=nil;
+  Paradigm:=nil;
 end ;
 
 destructor TWordForm.Destroy();
@@ -481,6 +500,7 @@ var i:integer;
 
 begin
   Phrase:= TPhrase.create;
+  Phrase.OwnsObjects:= true;
   for i:=0 to WordList.Count-1 do
   begin
 
@@ -495,16 +515,44 @@ end;
 // Как сократить его объем, предстоит подумать.
 // Этот список должен быть упорядочен по "специфичности", самые длинные в начале.
 
-//Сравнение цепочек по числу элементов.
+//Сравнение цепочек  по специфичности.
+// должно учитывается
+//  1 - число элементов.
+//  2 - число явно заданных словоформ
+//  3 - полную фразу ([.]) следует предпочесть неполной ([...])
 function ComparePatternLength(Item1, Item2: Pointer): Integer;
-  begin
+var Pattern1,Pattern2:TSyntaxPattern;
+begin
+  Pattern1:=TSyntaxPattern(Item1);
+  Pattern2:=TSyntaxPattern(Item2);
 
-    Result :=0;
-    if TSyntaxPattern(Item1).ElementCount> TSyntaxPattern(Item2).ElementCount  then
+  //сперва проверим длинну
+  Result :=0;
+  if Pattern1.ElementCount> Pattern2.ElementCount  then
+    Result :=-1;
+  if Pattern1.ElementCount< Pattern2.ElementCount  then
+    Result :=1;
+
+  //проверим число явно заданных словоформ
+  if Result=0 then
+  begin
+    if Pattern1.ExplicitWordformCount> Pattern2.ExplicitWordformCount  then
       Result :=-1;
-    if TSyntaxPattern(Item1).ElementCount< TSyntaxPattern(Item2).ElementCount  then
+    if Pattern1.ExplicitWordformCount< Pattern2.ExplicitWordformCount  then
       Result :=1;
   end;
+
+  if Result=0 then
+  begin
+    //Проверим полноту
+    if (Pos('[.]',Pattern1.TrasformationFormula)<>0) and (Pos('[.]',Pattern2.TrasformationFormula)=0)   then
+      Result :=-1;
+    if (Pos('[.]',Pattern1.TrasformationFormula)=0) and (Pos('[.]',Pattern2.TrasformationFormula)<>0)  then
+      Result :=1;
+  end;
+  Pattern1:=nil;
+  Pattern2:=nil;
+end;
 
 //Получаем все правила - фразы и фразовые категории
 function GetAllRuleList: TObjectList;
@@ -562,7 +610,11 @@ begin
   end;
 
   Result :=PatternList;
-end;
+  xml:=nil;
+  PhraseNode:=nil;
+  ElementNode:=nil;
+  VarNode:=nil;
+ end;
 
 //выборка элементов, соответсвующих "правой части" правила (RightElement).
 //для фразы ("S") RightElement - nil
@@ -599,7 +651,7 @@ end;
 // strElFormula - формула замененного элемента
 // j - номер замененного элемента
 function ModifyTransformationFormula(strFormula, strElFormula:String;N,M,j:integer):String;
-var lstFormula:TStringList;
+var //lstFormula:TStringList;
     i:integer;
 begin
   if strElFormula='#2-НЕ' then
@@ -664,7 +716,6 @@ begin
     end;
   end;
   until Not blnNonTerminalElementsExist ;
-
 end;
 
 function GetPatternList(intMaxElements:integer): TObjectList;
@@ -911,7 +962,6 @@ function ProcessUserInput(strInput: String; log:TStringList):String;
 //4. Получившийся набор предложений на ЯВП проталкивается дальше (в алису :) )
 var
   _SentenceSplitter:TStringTokenizer;
-
   i:integer;
   strPhrase:string;
 begin
@@ -958,36 +1008,6 @@ begin
         end;
     END;
   MyXml.Free;
-
-
-  result:=   CurrentFile.Text;
-end;
-function TestTextFile(SourceFileName,ResultFileName:String):String;
-var
-  CurrentFile : TStringList;
-  NewFile: TStringList;
-  TextFile : TStringList;
-  i:integer;
-  SourcePhrase,ResultPhrase:String;
-begin
-  CurrentFile := TStringList.Create;
-  NewFile := TStringList.Create;
-
-  TextFile:= TStringList.Create ;
-  TextFile.LoadFromFile(SourceFileName);
-
-  for i := 0 to TextFile.Count-1  do
-    begin
-      SourcePhrase:=TextFile[i];
-      CurrentFile.Add(SourcePhrase);
-      ResultPhrase:=ProcessUserInput(TextFile[i],CurrentFile);
-      CurrentFile.Add('');
-      NewFile.Add(SourcePhrase+' --> '+ResultPhrase);
-    end;
-
-  NewFile.SaveToFile(ResultFileName);
-  TextFile.Free;
-  NewFile.Free;
 
 
   result:=   CurrentFile.Text;
