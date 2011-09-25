@@ -100,7 +100,7 @@ type
 
       //Тестирование  фразы (Phrase), на соответствие синтаксическому шаблону (Pattern).
       function TestPhrase(Phrase:TPhrase;
-                          var intMatchedWords, intUnmatchedWords:integer):boolean;
+                          var intMatchedWords, intUnmatchedWords:integer):integer;
       function SetVariableValue(VarName,VarValue:String):boolean;
       //Трансформация фразы во "внутреннее" представление
       function ProcessTrasformationFormula():string;
@@ -198,7 +198,10 @@ end;
 
 function TSyntaxPatternElement.isTerminalElement:boolean;
 begin
-  Result:=not ((PartOfSpeach='Иг')or (PartOfSpeach='Гг') );
+  Result:=not(
+                (PartOfSpeach='Иг')or
+                (PartOfSpeach='Иг_прост')or
+                (PartOfSpeach='Гг') );
 end;
 
 //TSyntaxPattern  - синтаксический шаблон
@@ -301,20 +304,42 @@ end;
 //Возвращается
 // intMatchedWords   - число сопоставленных слов в начале фразы
 // intUnmatchedWords - число не сопоставленных слов в хвосте фразы
-// Функция возвращает True, если фраза соответствует шаблону
+// Функция возвращает:
+//  1 - если шаблон полностью соответствует фразе (при этом шаблон содержит только терминальные элементы)
+//  0 - если шаблон не противоречит фразе
+// (шаблон содержит как терминальные, так и нетерминальные элементы, но голова шаблона с
+//  соответствует голове фразы, нетерминальные элементы можно разворачивать дальше)
+//  -1 - если шаблон противоречит фразе (В начале шаблона терминальные элементы не соответствуют фразе )
+
 function TSyntaxPattern.TestPhrase(Phrase:TPhrase;
-                                   var intMatchedWords, intUnmatchedWords:integer):boolean;
+                                   var intMatchedWords, intUnmatchedWords:integer):integer;
 var i,j:integer;
     PE:TSyntaxPatternElement ;
     WF: TWordForm;
     blnMatched:boolean;
 begin
   intMatchedWords := 0;
+  intUnMatchedWords := 0;
+  Result:=1;
+
+  //если шаблон длиннее фразы, он заведомо не подходит
+  if self.ElementCount>Phrase.Count then
+  begin
+    Result:=-1;
+    exit;
+  end;
 
   //идти в цикле по словам фразы и сверять грамеммы. Если несовпадение - выйти.
-  for i:=0 to min( self.ElementCount-1, Phrase.Count-1)    do
+  for i:=0 to self.ElementCount-1 do
   begin
     PE:=self[i];
+    if not PE.isTerminalElement  then
+    begin
+      // проверять в этом случае особо нечего, фраза не может содержать нетерминальных элементов
+      Result:=0;
+      break;
+    end;
+
     //Теперь перебираем варианты для словоформой с тем же номером
     WF:=TWordForm(Phrase[i]);
     blnMatched:=False;
@@ -345,7 +370,7 @@ begin
       PE.MatchedPartOfSpeach:= WF.PartOfSpeach[j]  ;
       PE.MatchedGrammems:= WF.Grammems[j]  ;
       PE.MatchedLemma:= WF.Lemma[j] ;
-      break;
+      break; //выход из цикла по вариантам словоформы
 
     end;
     if blnMatched then
@@ -353,11 +378,12 @@ begin
     else
     begin
       //Данная словоформа НЕ соответствует шаблону. поиск закончен
+      Result := -1;
       break;
-
     end;
   end;
-  Result := (self.ElementCount = intMatchedWords);
+
+  //Result := -1; //(self.ElementCount = intMatchedWords);
   intUnmatchedWords := Phrase.Count-intMatchedWords;
 end;
 
@@ -718,14 +744,17 @@ begin
   until Not blnNonTerminalElementsExist ;
 end;
 
-function GetPatternList(intMaxElements:integer): TObjectList;
+function GetPatternList(Phrase: TPhrase): TObjectList;
 var
   i,j,k,l:integer;
   AllRules:TObjectList;
   Expansions:TObjectList;
   NewPattern,CurrentPattern: TSyntaxPattern;
   blnNonTerminalElementsExist:boolean;
+  intMaxElements:integer;
+  intMatchedWords, intUnmatchedWords:integer;
 begin
+  intMaxElements:=Phrase.Count;
 
   AllRules:= GetAllRuleList;
   ExpandVariables(AllRules);
@@ -734,7 +763,6 @@ begin
   Result:=GetRuleListSubset(nil,AllRules);
   //Это мы получили список фраз (S->xxx), который содержит в основном,
   //нетерминальные цепочки
-
 
 
   //После этого мы должны развернуть нетерминальные цепочки в терминальные
@@ -778,11 +806,11 @@ begin
           //Формулу саму надо трансформировать. На место j-го элемента нужно поставить формулу
           //Распространенного элемента, а то что справа - сдвинуть.
           NewPattern.TrasformationFormula:=
-          ModifyTransformationFormula(CurrentPattern.TrasformationFormula,
-                                      TSyntaxPattern(Expansions[k]).TrasformationFormula,
-                                      CurrentPattern.ElementCount,
-                                      TSyntaxPattern(Expansions[k]).ElementCount,
-                                      j+1 ) ;
+            ModifyTransformationFormula(CurrentPattern.TrasformationFormula,
+                                        TSyntaxPattern(Expansions[k]).TrasformationFormula,
+                                        CurrentPattern.ElementCount,
+                                        TSyntaxPattern(Expansions[k]).ElementCount,
+                                        j+1 ) ;
           Result.Add(NewPattern);
         end; //кц по вариантам развертывания данного элемента.
 
@@ -802,8 +830,9 @@ begin
     //Удалим слишком длинные цепочки
     // Это можно сделать потому что у нас грамматика не сокращающая
   for i:=Result.Count-1 downto 0  do
-    if TSyntaxPattern(Result[i]).ElementCount>intMaxElements  then
-     Result.Delete(i);
+  //if TSyntaxPattern(Result[i]).ElementCount>intMaxElements  then
+    if TSyntaxPattern(Result[i]).TestPhrase(Phrase, intMatchedWords, intUnmatchedWords)=-1 then
+      Result.Delete(i);
 
 
   Result.Pack;
@@ -828,7 +857,7 @@ begin
   //Cоздаем некий список шаблонов, которые мы будем проверять
   //(сверху вниз)
 
-  PatternList := GetPatternList(Phrase.Count);
+  PatternList := GetPatternList(Phrase);
 
   //Проверка в цикле, начиная от наиболее специфичных
   PatternList.sort(ComparePatternLength);
@@ -836,7 +865,7 @@ begin
   //Я хочу потестировать фразу на соответствие некому синтаксическому шаблону.
   for i:=0 to PatternList.Count-1 do
   begin
-    if TSyntaxPattern(PatternList[i]).TestPhrase(Phrase, intMatchedWords, intUnmatchedWords) then
+    if TSyntaxPattern(PatternList[i]).TestPhrase(Phrase, intMatchedWords, intUnmatchedWords)=1 then
     begin
       //Cоответствие найдено
       Result:= PatternList[i];
