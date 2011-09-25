@@ -909,6 +909,12 @@ begin
   if TWordForm(Phrase[0]).WordForm='а' then
     Phrase.Delete(0);
 
+  if TWordForm(Phrase[0]).WordForm='ну' then
+    Phrase.Delete(0);
+
+  if TWordForm(Phrase[0]).WordForm='и' then
+    Phrase.Delete(0);
+
   //4.
   //Синтаксический разбор. На этом этапе мы должны получить структуру данных, которая
   //отражает синтаксическую структуру предложения и содержит слова с приписанными

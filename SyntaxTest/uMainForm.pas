@@ -82,6 +82,7 @@ begin
       CurrentFile.Add('');
       NewFile.Add(SourcePhrase+' --> '+ResultPhrase);
       ProgressBar1.Position:=i;
+      Application.DoApplicationIdle;
     end;
 
   NewFile.SaveToFile(ResultFileName);
