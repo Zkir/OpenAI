@@ -21,9 +21,21 @@ unit uSyntaxTest;
 interface
 uses Classes,IniFiles;
 
-//Function TransformString(strInput: String; log:TStringList): String;
-function ProcessUserInput(strInput: String; log:TStringList):String;
-function TestAIML(FileName:String):String;
+
+type
+ // Интерфейсный класс
+  TSyntaxTransform = class
+    private
+      GG:TObject;
+      Function TransformString(strInput:String; log:TStringList):String;
+    public
+      constructor Create();
+      destructor Destroy; Override;
+      function ProcessUserInput(strInput: String; log:TStringList):String;
+      function TestAIML(FileName:String):String;
+  end;
+
+
 
 var
   g_WordformCount:integer;
@@ -69,6 +81,7 @@ type
       MatchedGrammems:String; // граммемы, через запятую
       MatchedWordForm:String;//словоформа
       MatchedLemma:String; // лемма
+      blnMatched:boolean;
 
       function isTerminalElement:boolean; //Является ли данный элемент терминальным,
       //или же "фразовой категорией"
@@ -107,6 +120,27 @@ type
       constructor Create();
       constructor CreateCopy(Source:TSyntaxPattern);
       destructor Destroy; override;
+  end;
+
+type
+ //  Синтаксический анализатор, на основе порождающей грамматики
+   TGenerativeGrammar = class
+    private
+        FAllRules:TObjectList;
+        function GetAllRuleList: TObjectList;
+        Procedure ExpandVariables(PatternList: TObjectList);
+        function GetRuleListSubset(RightElement:TSyntaxPatternElement): TObjectList;
+    public
+      //Эта функция собственно и делает ситаксический разбор.
+      // по заданной фразе возвращается список соответствующих ей синтаксических структур.
+      function GetPatternList(Phrase: TPhrase): TObjectList;
+
+      //Обертка вокруг предыдущей фунуции
+      function SyntaxAnalysis(Phrase: TPhrase; var intMatchedWords,
+                              intUnmatchedWords:integer): TSyntaxPattern;
+      constructor Create();
+      destructor Destroy; Override;
+
   end;
 
 var
@@ -148,6 +182,7 @@ begin
       PartOfSpeach:=strPartOfSpeach;
       Grammems:=Split(strGrammems,',') ;
     end;
+  blnMatched:=false;
 end;
 
 destructor TSyntaxPatternElement.Destroy;
@@ -340,6 +375,10 @@ begin
       break;
     end;
 
+    if PE.blnMatched then //Этот элемент уже проверен, проверять его еще раз не надо.
+      blnMatched:=True
+    else
+    begin
     //Теперь перебираем варианты для словоформой с тем же номером
     WF:=TWordForm(Phrase[i]);
     blnMatched:=False;
@@ -372,6 +411,7 @@ begin
       PE.MatchedLemma:= WF.Lemma[j] ;
       break; //выход из цикла по вариантам словоформы
 
+    end;
     end;
     if blnMatched then
       intMatchedWords:=intMatchedWords + 1
@@ -515,6 +555,16 @@ begin
   result:=PartOfSpeach.Count;
 end;
 
+constructor TGenerativeGrammar.Create();
+begin
+  FAllRules:= GetAllRuleList;
+  ExpandVariables(FAllRules);
+end;
+
+destructor TGenerativeGrammar.Destroy;
+begin
+  FAllRules.Free;
+end;
 
 //2. Лемматизация, присваивание граммем  (грамматических признаков)
 // даже если одна словоформа опознается как принадлежащая нескольким исходным словам,
@@ -581,7 +631,7 @@ begin
 end;
 
 //Получаем все правила - фразы и фразовые категории
-function GetAllRuleList: TObjectList;
+function TGenerativeGrammar.GetAllRuleList: TObjectList;
 var
   xml:IXMLDocument;
   PhraseNode,ElementNode,VarNode:IXMLNode;
@@ -644,29 +694,28 @@ begin
 
 //выборка элементов, соответсвующих "правой части" правила (RightElement).
 //для фразы ("S") RightElement - nil
-
-function GetRuleListSubset(RightElement:TSyntaxPatternElement; AllRules:TList): TObjectList;
+function TGenerativeGrammar.GetRuleListSubset(RightElement:TSyntaxPatternElement): TObjectList;
 var i:integer;
     PE:TSyntaxPatternElement;
 begin
   Result:= TObjectList.Create();
   Result.OwnsObjects:=True;
   //Получаем список шаблонов соответствующих заданной фразовой категории
-  for i:=0 to AllRules.Count-1 do
+  for i:=0 to FAllRules.Count-1 do
   begin
-    PE:=TSyntaxPattern(AllRules[i]).FRootElement;
+    PE:=TSyntaxPattern(FAllRules[i]).FRootElement;
     if RightElement<>nil then
       begin
         if PE<>nil then
           if (PE.PartOfSpeach=RightElement.PartOfSpeach) and (RightElement.CompareGrammems( PE.Grammems))  then
             //В список добавляется копия(!) исходного элемента
-            Result.Add(TSyntaxPattern.CreateCopy(AllRules[i]));
+            Result.Add(TSyntaxPattern.CreateCopy(TSyntaxPattern(FAllRules[i])));
       end
     else
       begin
         if PE=nil then
           //В список добавляется копия(!) исходного элемента
-          Result.Add(TSyntaxPattern.CreateCopy(AllRules[i]));
+          Result.Add(TSyntaxPattern.CreateCopy(TSyntaxPattern(FAllRules[i])));
       end;
   end;
 end;
@@ -708,7 +757,7 @@ begin
   //result:=Join(lstFormula,' ');
 end;
 
-Procedure ExpandVariables(PatternList: TObjectList);
+Procedure TGenerativeGrammar.ExpandVariables(PatternList: TObjectList);
 var
   VarName:String;
   VarValue:TStringList;
@@ -744,23 +793,22 @@ begin
   until Not blnNonTerminalElementsExist ;
 end;
 
-function GetPatternList(Phrase: TPhrase): TObjectList;
+//Эта функция собственно и делает ситаксический разбор.
+// по заданной фразе возвращается список соответствующих ей синтаксических структур.
+function TGenerativeGrammar.GetPatternList(Phrase: TPhrase): TObjectList;
 var
   i,j,k,l:integer;
-  AllRules:TObjectList;
+
   Expansions:TObjectList;
   NewPattern,CurrentPattern: TSyntaxPattern;
   blnNonTerminalElementsExist:boolean;
-  intMaxElements:integer;
   intMatchedWords, intUnmatchedWords:integer;
 begin
-  intMaxElements:=Phrase.Count;
 
-  AllRules:= GetAllRuleList;
-  ExpandVariables(AllRules);
+
 
   //Получаем список шаблонов (т.е. цепочек, разворачивающих "фразу": S->xxx)
-  Result:=GetRuleListSubset(nil,AllRules);
+  Result:=GetRuleListSubset(nil);
   //Это мы получили список фраз (S->xxx), который содержит в основном,
   //нетерминальные цепочки
 
@@ -785,7 +833,7 @@ begin
       begin
 
         //Надо получить правила, соответствующие данной фразовой категории.
-        Expansions:=GetRuleListSubset(TSyntaxPattern(Result[i]).Elements[j],AllRules);
+        Expansions:=GetRuleListSubset(TSyntaxPattern(Result[i]).Elements[j]);
         if Expansions.Count>0 then
         begin
         blnNonTerminalElementsExist:=True; //Это составной элемент, в котором возможна замена.
@@ -840,14 +888,12 @@ begin
   //нетерминальные элементы
   until Not blnNonTerminalElementsExist ;
 
-  //Чистка
-  AllRules.Free;
 end;
 
 //Синтаксический разбор.
 // - Функция принимает фразу,
 //   а возвращает заматченный шаблон и число совпавших слов с начала фразы.
-function SyntaxAnalysis(Phrase: TPhrase; var intMatchedWords, intUnmatchedWords:integer): TSyntaxPattern;
+function TGenerativeGrammar.SyntaxAnalysis(Phrase: TPhrase; var intMatchedWords, intUnmatchedWords:integer): TSyntaxPattern;
 var
 //  Pattern,Pattern2,Pattern3: TSyntaxPattern;
   PatternList: TList;
@@ -856,26 +902,21 @@ begin
 
   //Cоздаем некий список шаблонов, которые мы будем проверять
   //(сверху вниз)
-
   PatternList := GetPatternList(Phrase);
-
   //Проверка в цикле, начиная от наиболее специфичных
   PatternList.sort(ComparePatternLength);
-  Result:=nil;
-  //Я хочу потестировать фразу на соответствие некому синтаксическому шаблону.
-  for i:=0 to PatternList.Count-1 do
+  if PatternList.Count>0   then
   begin
-    if TSyntaxPattern(PatternList[i]).TestPhrase(Phrase, intMatchedWords, intUnmatchedWords)=1 then
-    begin
-      //Cоответствие найдено
-      Result:= PatternList[i];
+    Result:= PatternList[0];
+    //Найденный шаблон удаляется из списка
+    PatternList.Extract(Result);
+    //intMatchedWords, intUnmatchedWords - нужны, чтобы определять частичное
+    //совпадение
+    Result.TestPhrase(Phrase, intMatchedWords, intUnmatchedWords);
 
-      //Найденный шаблон удаляется из списка
-      PatternList.Extract(Result);
-      break;
-    end
-  end;
-
+  end
+  else
+    Result:=nil;
   //Чистка памяти
   PatternList.Free;
 end;
@@ -910,8 +951,17 @@ begin
 
 end;
 
+Constructor TSyntaxTransform.Create;
+begin
+   GG:=TGenerativeGrammar.Create;
+end;
 
-Function TransformString(strInput:String; log:TStringList):String;
+Destructor TSyntaxTransform.Destroy;
+begin
+   GG.Free;
+end;
+
+Function TSyntaxTransform.TransformString(strInput:String; log:TStringList):String;
   var SplittedPhrase:TStringList;
       i,j:integer;
       Phrase: TPhrase;
@@ -920,6 +970,7 @@ Function TransformString(strInput:String; log:TStringList):String;
 
       tmp: String;
       intMatchedWords, intUnmatchedWords:integer;
+
 begin
   result:='';
   // 2. разбиение на слова
@@ -951,12 +1002,13 @@ begin
 
   //на текущий момент такой структурой является заматченный шаблон.
 
-   MatchedPattern:=SyntaxAnalysis(Phrase, intMatchedWords, intUnmatchedWords);
+   MatchedPattern:=TGenerativeGrammar(GG).SyntaxAnalysis(Phrase, intMatchedWords, intUnmatchedWords);
 
   //5. Трансформация
-   if MatchedPattern <> nil then
-     result:= MatchedPattern.ProcessTrasformationFormula;
-
+   if (MatchedPattern <> nil) and (intUnmatchedWords=0) then
+     result:= MatchedPattern.ProcessTrasformationFormula
+   else
+     result:='';
   //вывод того что получилось.
    log.Add(result);
    log.Add( IntToStr( intMatchedWords) +'/'+  IntToStr( intUnmatchedWords));
@@ -986,7 +1038,7 @@ End;
 //' Главная функция
 //' strInput - ввод собеседника в сыром виде
 // возращает лог :)
-function ProcessUserInput(strInput: String; log:TStringList):String;
+function TSyntaxTransform.ProcessUserInput(strInput: String; log:TStringList):String;
 //Идеальный алгоритм.
 // 1. Берется ввод пользователя.
 // 2. Делится на предложенися по знакам препинания. '.!?;'
@@ -1020,7 +1072,7 @@ end;
 
 //Проверка существующих Aiml шаблонов
 //В сущности, нас интересует только <pattern>...</pattern>
-function TestAIML(FileName:String):String;
+function TSyntaxTransform.TestAIML(FileName:String):String;
 var
   CurrentFile : TStringList;
   MyXml : TXmlParser;
