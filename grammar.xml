@@ -31,7 +31,7 @@
 
 <!-- 
 =======================================================================================================
-= Фразовые предложения                                                                                         =
+= Фразовые категории                                                                                         =
 =======================================================================================================
 -->
 <!-- Именные Группы -->
@@ -39,14 +39,78 @@
 <PhraseCategory>
   <TestPhrase>карта</TestPhrase>
   <Pattern>
-    <Element><WordForm></WordForm><Category>С</Category><Grammems>$Gender,$Number,$Case</Grammems></Element>
+    <Element><WordForm></WordForm><Category>Иг_прост</Category><Grammems>$Gender,3л,$Number,$Case</Grammems></Element>
   </Pattern>
-  <TrasformationFormula>#1l</TrasformationFormula>
+  <TrasformationFormula>#1</TrasformationFormula>
+  <Def><Category>Иг</Category><Grammems>$Gender,3л,$Number,$Case</Grammems></Def>
+  <Vars>
+    <Var Name="$Number" Values="ед,мн"  />
+    <Var Name="$Gender" Values="мр,ср,жр" />
+    <Var Name="$Case" Values="им,вн,рд,пр" />
+  </Vars>
+</PhraseCategory>
+
+<PhraseCategory>
+  <TestPhrase>карта России</TestPhrase>
+  <Pattern>
+    <Element><WordForm></WordForm><Category>Иг_прост</Category><Grammems>$Gender,3л,$Number,$Case</Grammems></Element>
+    <Element><WordForm></WordForm><Category>Иг</Category><Grammems>рд</Grammems></Element>
+  </Pattern>
+  <TrasformationFormula>#2 [рд] #1</TrasformationFormula>
   <Def><Category>Иг</Category><Grammems>$Gender,3л,$Number,$Case</Grammems></Def>
   <Vars>
     <Var Name="$Number" Values="ед,мн"  />
     <Var Name="$Gender" Values="мр,ср,жр" />
     <Var Name="$Case" Values="им,вн,рд" />
+  </Vars>
+</PhraseCategory>
+
+<PhraseCategory>
+  <TestPhrase>дом в деревне</TestPhrase>
+  <Pattern>
+    <Element><WordForm></WordForm><Category>Иг_прост</Category><Grammems>$Gender,3л,$Number,$Case</Grammems></Element>
+    <Element><WordForm>в</WordForm><Category></Category><Grammems></Grammems></Element>
+    <Element><WordForm></WordForm><Category>Иг</Category><Grammems>пр</Grammems></Element>
+  </Pattern>
+  <TrasformationFormula>#3 [в-пр] #1</TrasformationFormula>
+  <Def><Category>Иг</Category><Grammems>$Gender,3л,$Number,$Case</Grammems></Def>
+  <Vars>
+    <Var Name="$Number" Values="ед,мн"  />
+    <Var Name="$Gender" Values="мр,ср,жр" />
+    <Var Name="$Case" Values="им,вн,рд" />
+  </Vars>
+</PhraseCategory>
+
+<PhraseCategory>
+  <TestPhrase>карта россии для ситигида</TestPhrase>
+  <Pattern>
+    <Element><WordForm></WordForm><Category>Иг_прост</Category><Grammems>$Gender,3л,$Number,$Case</Grammems></Element>
+    <Element><WordForm></WordForm><Category>Иг_прост</Category><Grammems>рд</Grammems></Element>
+    <Element><WordForm>для</WordForm><Category></Category><Grammems></Grammems></Element>
+    <Element><WordForm></WordForm><Category>Иг</Category><Grammems>рд</Grammems></Element>
+  </Pattern>
+  <TrasformationFormula>#4 [для-рд] #2 [рд] #1</TrasformationFormula>
+  <Def><Category>Иг</Category><Grammems>$Gender,3л,$Number,$Case</Grammems></Def>
+  <Vars>
+    <Var Name="$Number" Values="ед,мн"  />
+    <Var Name="$Gender" Values="мр,ср,жр" />
+    <Var Name="$Case" Values="им,вн,рд" />
+  </Vars>
+</PhraseCategory>
+
+<!-- простые группы -->
+
+<PhraseCategory>
+  <TestPhrase>карта</TestPhrase>
+  <Pattern>
+    <Element><WordForm></WordForm><Category>С</Category><Grammems>$Gender,$Number,$Case</Grammems></Element>
+  </Pattern>
+  <TrasformationFormula>#1l</TrasformationFormula>
+  <Def><Category>Иг_прост</Category><Grammems>$Gender,3л,$Number,$Case</Grammems></Def>
+  <Vars>
+    <Var Name="$Number" Values="ед,мн"  />
+    <Var Name="$Gender" Values="мр,ср,жр" />
+    <Var Name="$Case" Values="им,вн,рд,пр" />
   </Vars>
 </PhraseCategory>
 
@@ -57,7 +121,7 @@
     <Element><WordForm></WordForm><Category>С</Category><Grammems>$Gender,$Number,$Case</Grammems></Element>
   </Pattern>
   <TrasformationFormula>#1l #2l</TrasformationFormula>
-  <Def><Category>Иг</Category><Grammems>$Gender,3л,$Number,$Case</Grammems></Def>
+  <Def><Category>Иг_прост</Category><Grammems>$Gender,3л,$Number,$Case</Grammems></Def>
   <Vars>
     <Var Name="$Number" Values="ед,мн"  />
     <Var Name="$Gender" Values="мр,ср,жр" />
@@ -66,38 +130,20 @@
 </PhraseCategory>
 
 <PhraseCategory>
-  <TestPhrase>карта россии</TestPhrase>
+  <TestPhrase>прошлая пробочная карта</TestPhrase>
   <Pattern>
+    <Element><WordForm></WordForm><Category>П</Category><Grammems>$Gender,$Number,$Case</Grammems></Element>
+    <Element><WordForm></WordForm><Category>П</Category><Grammems>$Gender,$Number,$Case</Grammems></Element>
     <Element><WordForm></WordForm><Category>С</Category><Grammems>$Gender,$Number,$Case</Grammems></Element>
-    <Element><WordForm></WordForm><Category>С</Category><Grammems>рд</Grammems></Element>
   </Pattern>
-  <TrasformationFormula>#2l [рд] #1l</TrasformationFormula>
-  <Def><Category>Иг</Category><Grammems>$Gender,3л,$Number,$Case</Grammems></Def>
+  <TrasformationFormula>#1l #2l #3l</TrasformationFormula>
+  <Def><Category>Иг_прост</Category><Grammems>$Gender,3л,$Number,$Case</Grammems></Def>
   <Vars>
     <Var Name="$Number" Values="ед,мн"  />
     <Var Name="$Gender" Values="мр,ср,жр" />
     <Var Name="$Case" Values="им,вн,рд" />
   </Vars>
 </PhraseCategory>
-
-
-
-<PhraseCategory>
-  <TestPhrase>карта северного кавказа</TestPhrase>
-  <Pattern>
-    <Element><WordForm></WordForm><Category>С</Category><Grammems>$Gender,$Number,$Case</Grammems></Element>
-    <Element><WordForm></WordForm><Category>П</Category><Grammems>рд</Grammems></Element>
-    <Element><WordForm></WordForm><Category>С</Category><Grammems>рд</Grammems></Element>
-  </Pattern>
-  <TrasformationFormula>#2l #3l [рд] #1l</TrasformationFormula>
-  <Def><Category>Иг</Category><Grammems>$Gender,3л,$Number,$Case</Grammems></Def>
-  <Vars>
-    <Var Name="$Number" Values="ед,мн"  />
-    <Var Name="$Gender" Values="мр,ср,жр" />
-    <Var Name="$Case" Values="им,вн,рд" />
-  </Vars>
-</PhraseCategory>
-
 
 <PhraseCategory>
   <TestPhrase>мой стол</TestPhrase>
@@ -226,6 +272,39 @@
   </Vars>
 </PhraseCategory>
 
+<PhraseCategory>
+  <TestPhrase>начинает ехать</TestPhrase>
+  <Pattern>
+    <Element><WordForm></WordForm><Category>Г</Category><Grammems>$Tense,$Number,$Gender,$Person</Grammems></Element>
+    <Element><WordForm></WordForm><Category>ИНФИНИТИВ</Category><Grammems></Grammems></Element>
+  </Pattern>
+  <Def><WordForm></WordForm><Category>Гг</Category><Grammems>$Tense,$Number,$Gender,$Person</Grammems></Def>
+  <TrasformationFormula>#2 #1</TrasformationFormula>
+  <Vars>
+    <Var Name="$Tense" Values="прш,нст,буд"  />
+    <Var Name="$Number" Values="ед,мн"  />
+    <Var Name="$Gender" Values="мр,ср,жр"  />
+    <Var Name="$Person" Values="1л,2л,3л"  />
+  </Vars>
+</PhraseCategory>
+
+<PhraseCategory>
+  <TestPhrase>едет ли</TestPhrase>
+  <Pattern>
+    <Element><WordForm></WordForm><Category>Г</Category><Grammems>$Tense,$Number,$Gender,$Person</Grammems></Element>
+    <Element><WordForm>ли</WordForm><Category></Category><Grammems></Grammems></Element>
+  </Pattern>
+  <Def><WordForm></WordForm><Category>Гг</Category><Grammems>$Tense,$Number,$Gender,$Person</Grammems></Def>
+  <TrasformationFormula>#1</TrasformationFormula>
+  <Vars>
+    <Var Name="$Tense" Values="прш,нст,буд"  />
+    <Var Name="$Number" Values="ед,мн"  />
+    <Var Name="$Gender" Values="мр,ср,жр"  />
+    <Var Name="$Person" Values="1л,2л,3л"  />
+  </Vars>
+</PhraseCategory>
+
+
 <!-- Повелительное наклонение -->
 <PhraseCategory>
   <TestPhrase>езжай</TestPhrase>
@@ -284,6 +363,73 @@
 </Phrase>
 
 <Phrase>
+  <TestPhrase>здесь идет заседание</TestPhrase>
+  <Pattern>
+    <Element><WordForm></WordForm><Category>Н</Category><Grammems></Grammems></Element>
+    <Element><WordForm></WordForm><Category>Гг</Category><Grammems>$Tense,$Number,$Gender,$Person</Grammems></Element>
+    <Element><WordForm></WordForm><Category>Иг</Category><Grammems>$Gender,$Person,$Number,им</Grammems></Element>
+  </Pattern>
+  <TrasformationFormula>#3 [кто] #1 #2 [.]</TrasformationFormula>
+  <Vars>
+    <Var Name="$Tense" Values="прш,нст,буд"  />
+    <Var Name="$Number" Values="ед,мн"  />
+    <Var Name="$Gender" Values="мр,ср,жр"  />
+    <Var Name="$Person" Values="1л,2л,3л"  />
+  </Vars>
+</Phrase>
+
+<Phrase>
+  <TestPhrase>с момента революции здесь идет заседание</TestPhrase>
+  <Pattern>
+    <Element><WordForm>с</WordForm><Category></Category><Grammems></Grammems></Element>
+    <Element><WordForm>момента</WordForm><Category></Category><Grammems></Grammems></Element>
+    <Element><WordForm></WordForm><Category>Иг</Category><Grammems>рд</Grammems></Element>
+    <Element><WordForm></WordForm><Category>Н</Category><Grammems></Grammems></Element>
+    <Element><WordForm></WordForm><Category>Гг</Category><Grammems>$Tense,$Number,$Gender,$Person</Grammems></Element>
+    <Element><WordForm></WordForm><Category>Иг</Category><Grammems>$Gender,$Person,$Number,им</Grammems></Element>
+  </Pattern>
+  <TrasformationFormula>#6 [кто] #3 [рд] МОМЕНТ [когда] #4 #5 [.]</TrasformationFormula>
+  <Vars>
+    <Var Name="$Tense" Values="прш,нст,буд"  />
+    <Var Name="$Number" Values="ед,мн"  />
+    <Var Name="$Gender" Values="мр,ср,жр"  />
+    <Var Name="$Person" Values="1л,2л,3л"  />
+  </Vars>
+</Phrase>
+
+<Phrase>
+  <TestPhrase>здесь заседание идет</TestPhrase>
+  <Pattern>
+    <Element><WordForm></WordForm><Category>Н</Category><Grammems></Grammems></Element>
+    <Element><WordForm></WordForm><Category>Иг</Category><Grammems>$Gender,$Person,$Number,им</Grammems></Element>
+    <Element><WordForm></WordForm><Category>Гг</Category><Grammems>$Tense,$Number,$Gender,$Person</Grammems></Element>
+  </Pattern>
+  <TrasformationFormula>#2 [кто] #1 #3 [.]</TrasformationFormula>
+  <Vars>
+    <Var Name="$Tense" Values="прш,нст,буд"  />
+    <Var Name="$Number" Values="ед,мн"  />
+    <Var Name="$Gender" Values="мр,ср,жр"  />
+    <Var Name="$Person" Values="1л,2л,3л"  />
+  </Vars>
+</Phrase>
+
+<Phrase>
+  <TestPhrase>машина быстро едет</TestPhrase>
+  <Pattern>
+    <Element><WordForm></WordForm><Category>Иг</Category><Grammems>$Gender,$Person,$Number,им</Grammems></Element>
+    <Element><WordForm></WordForm><Category>Н</Category><Grammems></Grammems></Element>
+    <Element><WordForm></WordForm><Category>Гг</Category><Grammems>$Tense,$Number,$Gender,$Person</Grammems></Element>
+  </Pattern>
+  <TrasformationFormula>#1 [кто] #2 #3 [.]</TrasformationFormula>
+  <Vars>
+    <Var Name="$Tense" Values="прш,нст,буд"  />
+    <Var Name="$Number" Values="ед,мн"  />
+    <Var Name="$Gender" Values="мр,ср,жр"  />
+    <Var Name="$Person" Values="1л,2л,3л"  />
+  </Vars>
+</Phrase>
+
+<Phrase>
   <TestPhrase>Мама моет раму</TestPhrase>
   <Pattern>
     <Element><WordForm></WordForm><Category>Иг</Category><Grammems>$Gender,$Person,$Number,им</Grammems></Element>
@@ -315,6 +461,21 @@
   <TrasformationFormula>#1 [кто] #2 [что] #3 [.]</TrasformationFormula>
 </Phrase>
 
+<Phrase>
+  <TestPhrase>Раму мама моет</TestPhrase>
+  <Pattern>
+    <Element><WordForm></WordForm><Category>Иг</Category><Grammems>вн</Grammems></Element>
+    <Element><WordForm></WordForm><Category>Иг</Category><Grammems>$Gender,$Person,$Number,им</Grammems></Element>
+    <Element><WordForm></WordForm><Category>Гг</Category><Grammems>$Tense,$Number,$Gender,$Person</Grammems></Element>
+  </Pattern>
+  <Vars>
+    <Var Name="$Tense" Values="прш,нст,буд"  />
+    <Var Name="$Number" Values="ед,мн"  />
+    <Var Name="$Gender" Values="мр,ср,жр"  />
+    <Var Name="$Person" Values="1л,2л,3л"  />
+  </Vars> 
+  <TrasformationFormula>#2 [кто] #1 [что] #3 [.]</TrasformationFormula>
+</Phrase>
 <!-- прилагательное в роли сказуемого -->
 <Phrase>
   <TestPhrase>еж колючий</TestPhrase>
@@ -394,6 +555,9 @@
   </Vars>
 </Phrase>
 
+
+
+
 <!-- наречие в роли сказуемого -->
 <Phrase>
   <TestPhrase>я дома</TestPhrase>
@@ -404,7 +568,16 @@
   <TrasformationFormula>#1 [кто] #2l [.]</TrasformationFormula>
 </Phrase>
 
-
+<!-- предложная группа в роли сказуемого -->
+<Phrase>
+  <TestPhrase>я в курсе</TestPhrase>
+  <Pattern>  
+    <Element><WordForm></WordForm><Category>Иг</Category><Grammems>им</Grammems></Element>
+    <Element><WordForm>в</WordForm><Category></Category><Grammems></Grammems></Element>
+    <Element><WordForm></WordForm><Category>С</Category><Grammems>пр</Grammems></Element>
+  </Pattern>
+  <TrasformationFormula>#1 [кто] #3l [в-пр] [.]</TrasformationFormula>
+</Phrase>
 
 <!-- неполные предложения -->
 <Phrase>
@@ -502,6 +675,36 @@
 </Phrase>
 
 <Phrase>
+  <TestPhrase>кто такой Медведев</TestPhrase>
+  <Pattern>
+    <Element><WordForm>кто</WordForm><Category></Category><Grammems></Grammems></Element>
+    <Element><WordForm>такой</WordForm><Category></Category><Grammems></Grammems></Element>
+    <Element><WordForm></WordForm><Category>Иг</Category><Grammems>им</Grammems></Element>
+  </Pattern>
+  <TrasformationFormula>#3 [кто] кто-такой [.]</TrasformationFormula>
+</Phrase>
+
+<Phrase>
+  <TestPhrase>кто такая Матвиенко</TestPhrase>
+  <Pattern>
+    <Element><WordForm>кто</WordForm><Category></Category><Grammems></Grammems></Element>
+    <Element><WordForm>такая</WordForm><Category></Category><Grammems></Grammems></Element>
+    <Element><WordForm></WordForm><Category>Иг</Category><Grammems>им</Grammems></Element>
+  </Pattern>
+  <TrasformationFormula>#3 [кто] кто-такой [.]</TrasformationFormula>
+</Phrase>
+
+<Phrase>
+  <TestPhrase>кто такие инфы</TestPhrase>
+  <Pattern>
+    <Element><WordForm>кто</WordForm><Category></Category><Grammems></Grammems></Element>
+    <Element><WordForm>такие</WordForm><Category></Category><Grammems></Grammems></Element>
+    <Element><WordForm></WordForm><Category>Иг</Category><Grammems>им</Grammems></Element>
+  </Pattern>
+  <TrasformationFormula>#3 [кто] кто-такой [.]</TrasformationFormula>
+</Phrase>
+
+<Phrase>
   <TestPhrase>что за дела</TestPhrase>
   <Pattern>
     <Element><WordForm>что</WordForm><Category></Category><Grammems></Grammems></Element>
@@ -530,6 +733,16 @@
 </Phrase>
 
 <Phrase>
+  <TestPhrase>что ты делаешь</TestPhrase>
+  <Pattern>
+    <Element><WordForm></WordForm><Category>Н</Category><Grammems>вопр</Grammems></Element>
+    <Element><WordForm>ты</WordForm><Category></Category><Grammems></Grammems></Element>
+    <Element><WordForm></WordForm><Category>Гг</Category><Grammems>2л</Grammems></Element>
+  </Pattern>
+  <TrasformationFormula>ТЫ [кто] #1 #3 [.]</TrasformationFormula>
+</Phrase>
+
+<Phrase>
   <TestPhrase>Как устанавливать новые карты</TestPhrase>
   <Pattern>
     <Element><WordForm></WordForm><Category>Н</Category><Grammems>вопр</Grammems></Element>
@@ -539,7 +752,46 @@
   <TrasformationFormula>#3 [что] #1 #2 [.]</TrasformationFormula>
 </Phrase>
 
+<Phrase>
+  <TestPhrase>Сколько тебе лет </TestPhrase>
+  <Pattern>
+    <Element><WordForm>Сколько</WordForm><Category></Category><Grammems></Grammems></Element>
+    <Element><WordForm></WordForm><Category>МС</Category><Grammems>дт</Grammems></Element>
+    <Element><WordForm>лет</WordForm><Category></Category><Grammems></Grammems></Element>
+  </Pattern>
+  <TrasformationFormula>#2l [кто] #1 #3 [.]</TrasformationFormula>
+</Phrase>
 
+<Phrase>
+  <TestPhrase>Сколько лет тебе</TestPhrase>
+  <Pattern>
+    <Element><WordForm>Сколько</WordForm><Category></Category><Grammems></Grammems></Element>
+    <Element><WordForm>лет</WordForm><Category></Category><Grammems></Grammems></Element>
+    <Element><WordForm></WordForm><Category>МС</Category><Grammems>дт</Grammems></Element>
+  </Pattern>
+  <TrasformationFormula>#3l [кто] #1 #2 [.]</TrasformationFormula>
+</Phrase>
+
+<Phrase>
+  <TestPhrase>Тебе сколько лет</TestPhrase>
+  <Pattern>
+    <Element><WordForm></WordForm><Category>МС</Category><Grammems>дт</Grammems></Element>
+    <Element><WordForm>Сколько</WordForm><Category></Category><Grammems></Grammems></Element>
+    <Element><WordForm>лет</WordForm><Category></Category><Grammems></Grammems></Element>
+  </Pattern>
+  <TrasformationFormula>#1l [кто] #2 #3 [.]</TrasformationFormula>
+</Phrase>
+
+<Phrase>
+  <TestPhrase>как насчет секса</TestPhrase>
+  <Pattern>
+    <Element><WordForm>как</WordForm><Category></Category><Grammems></Grammems></Element>
+    <Element><WordForm>насчет</WordForm><Category></Category><Grammems></Grammems></Element>
+    <Element><WordForm></WordForm><Category>Иг</Category><Grammems>рд</Grammems></Element>
+  </Pattern>
+  <TrasformationFormula>#3 [кто] КАК-НАСЧЕТ [.]</TrasformationFormula>
+</Phrase>
+<!-- ************************************************************************* -->
 <Phrase>
   <TestPhrase>ты дурак</TestPhrase>
   <Pattern>
@@ -547,6 +799,16 @@
     <Element><WordForm></WordForm><Category>Иг</Category><Grammems>им</Grammems></Element>
   </Pattern>
   <TrasformationFormula>ТЫ [кто] #2 [.]</TrasformationFormula>
+</Phrase>
+
+<Phrase>
+  <TestPhrase>сам ты дурак</TestPhrase>
+  <Pattern>
+    <Element><WordForm>сам</WordForm><Category></Category><Grammems></Grammems></Element>
+    <Element><WordForm>ты</WordForm><Category></Category><Grammems></Grammems></Element>
+    <Element><WordForm></WordForm><Category>Иг</Category><Grammems>им</Grammems></Element>
+  </Pattern>
+  <TrasformationFormula>ТЫ [кто] САМ #3 [.]</TrasformationFormula>
 </Phrase>
 
 <!-- допускается перестановка одного слова -->
@@ -559,6 +821,26 @@
   <TrasformationFormula>ТЫ [кто] #1l [.]</TrasformationFormula>
 </Phrase>
 
+<Phrase>
+  <TestPhrase>ты дурак что ли</TestPhrase>
+  <Pattern>
+    <Element><WordForm>ты</WordForm><Category></Category><Grammems></Grammems></Element>
+    <Element><WordForm></WordForm><Category>Иг</Category><Grammems>им</Grammems></Element>
+    <Element><WordForm>что</WordForm><Category></Category><Grammems></Grammems></Element>
+    <Element><WordForm>ли</WordForm><Category></Category><Grammems></Grammems></Element>
+  </Pattern>
+  <TrasformationFormula>ТЫ [кто] ЧТО-ЛИ #2 [.]</TrasformationFormula>
+</Phrase>
+
+<Phrase>
+  <TestPhrase>ты дурак да</TestPhrase>
+  <Pattern>
+    <Element><WordForm>ты</WordForm><Category></Category><Grammems></Grammems></Element>
+    <Element><WordForm></WordForm><Category>Иг</Category><Grammems>им</Grammems></Element>
+    <Element><WordForm>да</WordForm><Category></Category><Grammems></Grammems></Element>
+  </Pattern>
+  <TrasformationFormula>ТЫ [кто] #2 [.]</TrasformationFormula>
+</Phrase>
 
 <Phrase>
   <TestPhrase>ты умный</TestPhrase>
@@ -611,6 +893,45 @@
 </Phrase>
 
 <Phrase>
+  <TestPhrase>Меня зовут вася</TestPhrase>
+  <Pattern>
+    <Element><WordForm>меня</WordForm><Category></Category><Grammems></Grammems></Element>
+    <Element><WordForm>зовут</WordForm><Category></Category><Grammems></Grammems></Element>
+    <Element><WordForm></WordForm><Category>Иг</Category><Grammems>им</Grammems></Element>
+  </Pattern>
+  <TrasformationFormula>Я [кто] #3 [.]</TrasformationFormula>
+</Phrase>
+
+<Phrase>
+  <TestPhrase>Меня вася</TestPhrase>
+  <Pattern>
+    <Element><WordForm>меня</WordForm><Category></Category><Grammems></Grammems></Element>
+    <Element><WordForm></WordForm><Category>Иг</Category><Grammems>им</Grammems></Element>
+  </Pattern>
+  <TrasformationFormula>Я [кто] #2 [.]</TrasformationFormula>
+</Phrase>
+
+<Phrase>
+  <TestPhrase>Я хочу пива</TestPhrase>
+  <Pattern>
+    <Element><WordForm>Я</WordForm><Category></Category><Grammems></Grammems></Element>
+    <Element><WordForm>хочу</WordForm><Category></Category><Grammems></Grammems></Element>
+    <Element><WordForm></WordForm><Category>Иг</Category><Grammems>рд</Grammems></Element>
+  </Pattern>
+  <TrasformationFormula>Я [кто] #3 [что] ХОЧУ [.]</TrasformationFormula>
+</Phrase>
+
+<Phrase>
+  <TestPhrase>Я пива хочу</TestPhrase>
+  <Pattern>
+    <Element><WordForm>Я</WordForm><Category></Category><Grammems></Grammems></Element>
+    <Element><WordForm></WordForm><Category>Иг</Category><Grammems>рд</Grammems></Element>
+    <Element><WordForm>хочу</WordForm><Category></Category><Grammems></Grammems></Element>
+  </Pattern>
+  <TrasformationFormula>Я [кто] #2 [что] ХОЧУ [.]</TrasformationFormula>
+</Phrase>
+
+<Phrase>
   <TestPhrase>это бред</TestPhrase>
   <Pattern>
     <Element><WordForm>это</WordForm><Category></Category><Grammems></Grammems></Element>
@@ -656,6 +977,36 @@
   <TrasformationFormula>Я [кто] #1l [.]</TrasformationFormula>
 </Phrase>
 
+<Phrase>
+  <TestPhrase>Спасибо за карту Австрии</TestPhrase>
+  <Pattern>
+    <Element><WordForm>спасибо</WordForm><Category></Category><Grammems></Grammems></Element>
+    <Element><WordForm>за</WordForm><Category></Category><Grammems></Grammems></Element>
+    <Element><WordForm></WordForm><Category>Иг</Category><Grammems>вн</Grammems></Element>
+  </Pattern>
+  <TrasformationFormula>#3 [кто] СПАСИБО [.]</TrasformationFormula>
+</Phrase>
+
+<Phrase>
+  <TestPhrase>Спасибо огромное за карту Австрии</TestPhrase>
+  <Pattern>
+    <Element><WordForm>спасибо</WordForm><Category></Category><Grammems></Grammems></Element>
+    <Element><WordForm></WordForm><Category>П</Category><Grammems>ср,им,ед</Grammems></Element>
+    <Element><WordForm>за</WordForm><Category></Category><Grammems></Grammems></Element>
+    <Element><WordForm></WordForm><Category>Иг</Category><Grammems>вн</Grammems></Element>
+  </Pattern>
+  <TrasformationFormula>#4 [кто] #2 #1 [.]</TrasformationFormula>
+</Phrase>
+<Phrase>
+  <TestPhrase>Спасибо огромное за карту Австрии</TestPhrase>
+  <Pattern>
+    <Element><WordForm></WordForm><Category>П</Category><Grammems>ср,им,ед</Grammems></Element>
+    <Element><WordForm>спасибо</WordForm><Category></Category><Grammems></Grammems></Element>
+    <Element><WordForm>за</WordForm><Category></Category><Grammems></Grammems></Element>
+    <Element><WordForm></WordForm><Category>Иг</Category><Grammems>вн</Grammems></Element>
+  </Pattern>
+  <TrasformationFormula>#4 [кто] #1 #2 [.]</TrasformationFormula>
+</Phrase>
 <!--
 <Phrase>
   <TestPhrase>я туп</TestPhrase>
@@ -755,7 +1106,7 @@
     <Element><WordForm>нет</WordForm><Category></Category><Grammems></Grammems></Element>
     <Element><WordForm></WordForm><Category>Иг</Category><Grammems>рд</Grammems></Element>
   </Pattern>
-  <TrasformationFormula>#2 [рд] НЕТ [.]</TrasformationFormula>
+  <TrasformationFormula>#2 [что] НЕТ [.]</TrasformationFormula>
 </Phrase>
 
 <Phrase>
@@ -764,7 +1115,27 @@
     <Element><WordForm></WordForm><Category>Иг</Category><Grammems>рд</Grammems></Element>
     <Element><WordForm>нет</WordForm><Category></Category><Grammems></Grammems></Element>
   </Pattern>
-  <TrasformationFormula>#1 [рд] НЕТ [.]</TrasformationFormula>
+  <TrasformationFormula>#1 [что] НЕТ [.]</TrasformationFormula>
+</Phrase>
+
+<Phrase>
+  <TestPhrase>почему нет обновления</TestPhrase>
+  <Pattern>
+    <Element><WordForm></WordForm><Category>Н</Category><Grammems></Grammems></Element>
+    <Element><WordForm>нет</WordForm><Category></Category><Grammems></Grammems></Element>
+    <Element><WordForm></WordForm><Category>Иг</Category><Grammems>рд</Grammems></Element>
+  </Pattern>
+  <TrasformationFormula>#3 [что] #1 НЕТ [.]</TrasformationFormula>
+</Phrase>
+
+<Phrase>
+  <TestPhrase>почему обновления нет</TestPhrase>
+  <Pattern>
+    <Element><WordForm></WordForm><Category>Н</Category><Grammems></Grammems></Element>
+    <Element><WordForm></WordForm><Category>Иг</Category><Grammems>рд</Grammems></Element>
+    <Element><WordForm>нет</WordForm><Category></Category><Grammems></Grammems></Element>
+  </Pattern>
+  <TrasformationFormula>#2 [что] #1 НЕТ [.]</TrasformationFormula>
 </Phrase>
 
 <Phrase>
@@ -811,6 +1182,36 @@
     <Element><WordForm>ты</WordForm><Category></Category><Grammems></Grammems></Element>
   </Pattern>
   <TrasformationFormula>ТЫ [кто] КТО [.]</TrasformationFormula>
+</Phrase>
+
+<Phrase>
+  <TestPhrase>Как тебя зовут</TestPhrase>
+  <Pattern>
+    <Element><WordForm>Как</WordForm><Category></Category><Grammems></Grammems></Element>
+    <Element><WordForm>Тебя</WordForm><Category></Category><Grammems></Grammems></Element>
+    <Element><WordForm>зовут</WordForm><Category></Category><Grammems></Grammems></Element>
+  </Pattern>
+  <TrasformationFormula>ТЫ [что] КАК ЗОВУТ [.]</TrasformationFormula>
+</Phrase>
+
+<Phrase>
+  <TestPhrase>Как вас зовут</TestPhrase>
+  <Pattern>
+    <Element><WordForm>Как</WordForm><Category></Category><Grammems></Grammems></Element>
+    <Element><WordForm>вас</WordForm><Category></Category><Grammems></Grammems></Element>
+    <Element><WordForm>зовут</WordForm><Category></Category><Grammems></Grammems></Element>
+  </Pattern>
+  <TrasformationFormula>ВЫ [что] КАК ЗОВУТ [.]</TrasformationFormula>
+</Phrase>
+
+<Phrase>
+  <TestPhrase>Как меня зовут</TestPhrase>
+  <Pattern>
+    <Element><WordForm>Как</WordForm><Category></Category><Grammems></Grammems></Element>
+    <Element><WordForm>меня</WordForm><Category></Category><Grammems></Grammems></Element>
+    <Element><WordForm>зовут</WordForm><Category></Category><Grammems></Grammems></Element>
+  </Pattern>
+  <TrasformationFormula>Я [что] КАК ЗОВУТ [.]</TrasformationFormula>
 </Phrase>
 
 <!--Повелительные предложения -->
@@ -869,6 +1270,16 @@
   <TrasformationFormula>ПОЖАЛУЙСТА, #3 [что] #1 [.]</TrasformationFormula>
 </Phrase>
 
+<Phrase>
+  <TestPhrase>Дайте карту пожалуйста</TestPhrase>
+  <Pattern>
+    <Element><WordForm></WordForm><Category>Гг</Category><Grammems>пвл</Grammems></Element>
+    <Element><WordForm></WordForm><Category>Иг</Category><Grammems>вн</Grammems></Element>
+    <Element><WordForm>пожалуйста</WordForm><Category></Category><Grammems></Grammems></Element>
+  </Pattern>
+  <TrasformationFormula>ПОЖАЛУЙСТА, #2 [что] #1 [.]</TrasformationFormula>
+</Phrase>
+
 <!--Повелительные фразы -->
 <Phrase>
   <TestPhrase>Давай спать</TestPhrase>
@@ -877,6 +1288,26 @@
     <Element><WordForm></WordForm><Category>ИНФИНИТИВ</Category><Grammems></Grammems></Element>
   </Pattern>
   <TrasformationFormula>#2 ДАВАЙ [.]</TrasformationFormula>
+</Phrase>
+
+<Phrase>
+  <TestPhrase>иди на хуй </TestPhrase>
+  <Pattern>
+    <Element><WordForm></WordForm><Category>Гг</Category><Grammems>пвл</Grammems></Element>
+    <Element><WordForm>на</WordForm><Category></Category><Grammems></Grammems></Element>
+    <Element><WordForm></WordForm><Category>Иг</Category><Grammems>вн</Grammems></Element>
+  </Pattern>
+  <TrasformationFormula>#3 [на-вн] #1 [.]</TrasformationFormula>
+</Phrase>
+
+<Phrase>
+  <TestPhrase>иди в жопу </TestPhrase>
+  <Pattern>
+    <Element><WordForm></WordForm><Category>Гг</Category><Grammems>пвл</Grammems></Element>
+    <Element><WordForm>в</WordForm><Category></Category><Grammems></Grammems></Element>
+    <Element><WordForm></WordForm><Category>Иг</Category><Grammems>вн</Grammems></Element>
+  </Pattern>
+  <TrasformationFormula>#3 [в-вн] #1 [.]</TrasformationFormula>
 </Phrase>
 
 </Grammar>  
