@@ -120,6 +120,7 @@ type
       constructor Create();
       constructor CreateCopy(Source:TSyntaxPattern);
       destructor Destroy; override;
+      function AsString():String;
   end;
 
 type
@@ -284,6 +285,19 @@ begin
   Result:=FPatternElements.Count;
 end;
 
+function TSyntaxPattern.AsString():String;
+var
+  i: Integer;
+begin
+  Result:='';
+  for i := 0 to ElementCount -1 do
+  begin
+    Result:=Result+' ['+Self[i].WordForm;
+    Result:=Result+' '+Self[i].PartOfSpeach ;
+    Result:=Result+' '+Self[i].Grammems.Text+']' ;
+  end;
+end;
+
 function TSyntaxPattern.ExplicitWordformCount:integer;
 var i:integer;
 begin
@@ -412,13 +426,15 @@ begin
     PE:=self[i];
     if not PE.isTerminalElement  then
     begin
-      //провер€ть в этом случае особо нечего, фраза не может
-      //содержать нетерминальных элементов
       Result:=0;
-      //Ќужно проверить оставшиес€ нетерминальные элементы
-      //нетерминальные элементы из хвоста цепочки должны хот€ бы присутствовать во фразе
-      //причем в строгой последовательности
-      {min_k:= i+1;
+      //Ќетерминальные элементы разворачиваютс€ в терминальные
+      //слева на право. “ем не менее, хвост цепочки может содержать
+      //“ерминальные элементы, если они присутствовали почему-то в исходном правиле.
+      //“акое может быть, если правило содержало конкретную словоформу.
+      //
+      //нетерминальные элементы из хвоста цепочки должны хот€ бы присутствовать
+      // во фразе, причем в строгой последовательности
+      min_k:= i+1;
       for j := i+1 to self.ElementCount-1 do
         if TSyntaxPatternElement(self[j]).isTerminalElement then
         //Ётот элемент должен присутствовать во фразе.
@@ -426,9 +442,10 @@ begin
           blnFound:=false;
 
           for k := min_k to Phrase.Count-1 do
-          if TestPatternElement(TSyntaxPatternElement(self[j]),
+          if TestPatternElement( TSyntaxPatternElement(self[j]),
                                     TWordForm(Phrase[k])) then
             begin
+              blnFound:=True;
               min_k:=k+1;
               break;
             end;
@@ -438,9 +455,9 @@ begin
           else
             begin
               Result:=-1;
-              goto l1;
+              break;
             end;
-        end;}
+        end;
       l1: break;
     end;
 
