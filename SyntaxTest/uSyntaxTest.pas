@@ -83,6 +83,7 @@ type
       MatchedLemma:String; // лемма
       blnMatched:boolean;
 
+      fblnTerminalElement:boolean;
       function isTerminalElement:boolean; //Является ли данный элемент терминальным,
       //или же "фразовой категорией"
       function CompareGrammems(strGrammems:String): boolean;overload;//сравнение шаблона граммем с данными
@@ -107,7 +108,9 @@ type
       property Elements[Index : Integer]:TSyntaxPatternElement  read GetElement;  default;
       function ExplicitWordformCount:integer;
       //Добавление элемента в шаблон
-      function AddElement(const strWordForm,strPartOfSpeach,strGrammems: String):integer;
+      function AddElement(const strWordForm,strPartOfSpeach,strGrammems: String;
+                          blnTerminalElement:boolean):integer;
+      function AddElementCopy(Element:TSyntaxPatternElement):integer;
       //Задание корневого элемента
       function SetRootElement(const strPartOfSpeach,strGrammems: String):integer;
 
@@ -127,11 +130,14 @@ type
  //  Синтаксический анализатор, на основе порождающей грамматики
    TGenerativeGrammar = class
     private
-        FAllRules:TObjectList;
+        FAllRules:TObjectList;//Список правил, используемых для 'порождения'
         //FNonRootRules:TObjectList;
+        FNonTerminalCategoriesList:TStringList;
+        FTerminalCategoriesList:TStringList;
         function GetAllRuleList: TObjectList;
         Procedure ExpandVariables(PatternList: TObjectList);
         function GetRuleListSubset(RightElement:TSyntaxPatternElement): TObjectList;
+        function ModifyTransformationFormula(strFormula, strElFormula:String;N,M,j:integer):String;
     public
       //Эта функция собственно и делает ситаксический разбор.
       // по заданной фразе возвращается список соответствующих ей синтаксических структур.
@@ -157,6 +163,19 @@ begin
   t.text:=stringReplace(str,strSeparator,#13#10,[rfReplaceAll]);//мы заменяем все разделители на символы конца строки
   result:= t;
 end;
+function Join (objLst:TStringList; strSeparator:String ):String;
+  var i:integer;
+begin
+  if objLst.Count >0  then
+  begin
+    Result:=objLst[0];
+    for i:=1 to objLst.Count-1 do
+      Result:=Result+','+objLst[i];
+  end
+  else
+    result:= '';
+end;
+
 function min(a,b:integer):integer;
 begin
   if a< b then
@@ -235,10 +254,7 @@ end;
 
 function TSyntaxPatternElement.isTerminalElement:boolean;
 begin
-  Result:=not(
-                (PartOfSpeach='Иг')or
-                (PartOfSpeach='Иг_прост')or
-                (PartOfSpeach='Гг') );
+  Result:=fblnTerminalElement;
 end;
 
 //TSyntaxPattern  - синтаксический шаблон
@@ -262,7 +278,7 @@ begin
     SetRootElement(Source.FRootElement.PartOfSpeach, Source.FRootElement.Grammems.Text);
 
   for i:= 0 to Source.ElementCount-1 do
-    AddElement(Source[i].WordForm, Source[i].PartOfSpeach, Source[i].Grammems.text);
+    AddElementCopy(Source[i]);
 
   FVariables.Text:=Source.FVariables.Text;
 end;
@@ -294,7 +310,7 @@ begin
   begin
     Result:=Result+' ['+Self[i].WordForm;
     Result:=Result+' '+Self[i].PartOfSpeach ;
-    Result:=Result+' '+Self[i].Grammems.Text+']' ;
+    Result:=Result+' '+Join(Self[i].Grammems,',')+']' ;
   end;
 end;
 
@@ -314,14 +330,24 @@ begin
   Result:=FPatternElements[index];
 end ;
 
-function TSyntaxPattern.AddElement(const strWordForm,strPartOfSpeach,strGrammems: String):integer;
+function TSyntaxPattern.AddElement(const strWordForm,strPartOfSpeach,
+                                         strGrammems:String;
+                                         blnTerminalElement:boolean):integer;
 var
   aSyntaxPatternElement:TSyntaxPatternElement;
 begin
   aSyntaxPatternElement := TSyntaxPatternElement.Create(strWordForm,strPartOfSpeach,strGrammems);
+  aSyntaxPatternElement.fblnTerminalElement:=blnTerminalElement;
   Result:=FPatternElements.Add(aSyntaxPatternElement);
 end;
 
+function TSyntaxPattern.AddElementCopy(Element:TSyntaxPatternElement):integer;
+begin
+  Result:=AddElement(Element.WordForm,
+                     Element.PartOfSpeach,
+                     Element.Grammems.Text,
+                     Element.fblnTerminalElement);
+end;
 function TSyntaxPattern.SetRootElement(const strPartOfSpeach,strGrammems: String):integer;
 begin
   FRootElement:=TSyntaxPatternElement.Create('',strPartOfSpeach,strGrammems);
@@ -616,6 +642,9 @@ end;
 constructor TGenerativeGrammar.Create();
 var i:integer;
 begin
+  FNonTerminalCategoriesList:=TStringList.Create;
+  FTerminalCategoriesList:=TStringList.Create;
+
   FAllRules:= GetAllRuleList;
   ExpandVariables(FAllRules);
 
@@ -634,6 +663,8 @@ destructor TGenerativeGrammar.Destroy;
 begin
   FAllRules.Free;
   //FNonRootRules.Free;
+  FNonTerminalCategoriesList.Free;
+  FTerminalCategoriesList.Free;
 end;
 
 //2. Лемматизация, присваивание граммем  (грамматических признаков)
@@ -717,7 +748,14 @@ begin
   xml:=LoadXMLDocument('d:\OpenAI\_SRC\grammar.xml');//
  // xml.LoadFromFile();
   xml.Active:=True;
+ //Определения символов ('категорий')
+  for i := 0 to  xml.DocumentElement.ChildNodes['TerminalSymbols'].ChildNodes.Count-1 do
+    FTerminalCategoriesList.Add(xml.DocumentElement.ChildNodes['TerminalSymbols'].ChildNodes[i].ChildNodes['Name'].Text);
 
+  for i := 0 to  xml.DocumentElement.ChildNodes['NonTerminalSymbols'].ChildNodes.Count-1 do
+    FNonTerminalCategoriesList.Add(xml.DocumentElement.ChildNodes['NonTerminalSymbols'].ChildNodes[i].ChildNodes['Name'].Text);
+
+  //Правила
   for i := 0 to xml.DocumentElement.ChildNodes.Count-1 do
   if (xml.DocumentElement.ChildNodes[i].NodeName='Phrase') or
      (xml.DocumentElement.ChildNodes[i].NodeName='PhraseCategory') then
@@ -730,8 +768,15 @@ begin
       ElementNode:=PhraseNode.ChildNodes['Pattern'].ChildNodes[j];
       strWord:= ElementNode.ChildNodes['WordForm'].Text ;
       strPartOfSpeach:= ElementNode.ChildNodes['Category'].Text ;
+      if (strPartOfSpeach<>'') and (FTerminalCategoriesList.IndexOf(strPartOfSpeach)=-1)and
+         (FNonTerminalCategoriesList.IndexOf(strPartOfSpeach)=-1) then
+         raise Exception.Create('Unknown Category symbol: '+strPartOfSpeach);
+
       strGrammems:=ElementNode.ChildNodes['Grammems'].Text ;
-      Pattern.AddElement( strWord,strPartOfSpeach,strGrammems );
+      Pattern.AddElement(strWord,
+                         strPartOfSpeach,strGrammems,
+                         (FNonTerminalCategoriesList.IndexOf(strPartOfSpeach)=-1)
+                         );
     end;
 
     Pattern.TrasformationFormula:=PhraseNode.ChildNodes['TrasformationFormula'].Text;
@@ -796,7 +841,7 @@ end;
 // strFormula  - формула фразы
 // strElFormula - формула замененного элемента
 // j - номер замененного элемента
-function ModifyTransformationFormula(strFormula, strElFormula:String;N,M,j:integer):String;
+function TGenerativeGrammar.ModifyTransformationFormula(strFormula, strElFormula:String;N,M,j:integer):String;
 var //lstFormula:TStringList;
     i:integer;
 begin
@@ -906,7 +951,7 @@ begin
 
 
   blnNonTerminalElementsExist:=False;
-  for i:=0 to Result.Count-1 do
+  for i:=Result.Count-1  downto 0  do
   begin
     CurrentPattern:=TSyntaxPattern(Result[i]);
     for j:=0 to CurrentPattern.ElementCount-1  do
@@ -924,16 +969,14 @@ begin
           begin
             NewPattern:=TSyntaxPattern.Create;
             for l := 0 to j-1 do
-              NewPattern.AddElement(CurrentPattern[l].WordForm, CurrentPattern[l].PartOfSpeach, CurrentPattern[l].Grammems.text);
+              NewPattern.AddElementCopy(CurrentPattern[l]);
 
             for l := 0 to TSyntaxPattern(Expansions[k]).ElementCount-1  do
-              NewPattern.AddElement(TSyntaxPattern(Expansions[k])[l].WordForm, TSyntaxPattern(Expansions[k])[l].PartOfSpeach, TSyntaxPattern(Expansions[k])[l].Grammems.text);
-
+              NewPattern.AddElementCopy(TSyntaxPattern(Expansions[k])[l]);
 
             for l := j+1 to CurrentPattern.ElementCount-1 do
-              NewPattern.AddElement(CurrentPattern[l].WordForm,
-                                  CurrentPattern[l].PartOfSpeach,
-                                  CurrentPattern[l].Grammems.text);
+              NewPattern.AddElementCopy(CurrentPattern[l]);
+
             //Формулу саму надо трансформировать. На место j-го элемента нужно поставить формулу
             //Распространенного элемента, а то что справа - сдвинуть.
             NewPattern.TrasformationFormula:=
@@ -949,7 +992,9 @@ begin
           Result.Delete(i);
         end
         else
-          raise Exception.Create('No match for non-terminal element!')  ;
+          raise Exception.Create('No match for non-terminal element "'
+                                 + CurrentPattern.Elements[j].PartOfSpeach + ' '
+                                 + CurrentPattern.Elements[j].Grammems.Text  + '" !' )  ;
         //варианты тоже больше не нужны
         Expansions.Free;
         //надо перейти к следующей цепочке
