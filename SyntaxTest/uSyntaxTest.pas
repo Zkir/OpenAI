@@ -100,6 +100,7 @@ type
       FPatternElements:TList;
       FRootElement:TSyntaxPatternElement;
       FVariables:THashedStringList;
+      FPermutations:THashedStringList;
       function GetElementCount:integer;
       function GetElement(Index : Integer):TSyntaxPatternElement;
     public
@@ -122,6 +123,7 @@ type
       function ProcessTrasformationFormula():string;
       constructor Create();
       constructor CreateCopy(Source:TSyntaxPattern);
+      constructor CreateCopyPerm(Source:TSyntaxPattern;strPermutations:string);
       destructor Destroy; override;
       function AsString():String;
   end;
@@ -131,11 +133,15 @@ type
    TGenerativeGrammar = class
     private
         FAllRules:TObjectList;//Список правил, используемых для 'порождения'
+        FWorkingRuleSet:TObjectList;// Рабочий набор правил, подмножетство FAllRules
         //FNonRootRules:TObjectList;
         FNonTerminalCategoriesList:TStringList;
         FTerminalCategoriesList:TStringList;
         function GetAllRuleList: TObjectList;
         Procedure ExpandVariables(PatternList: TObjectList);
+        Procedure ProcessPermutations(PatternList: TObjectList);
+        procedure CleanUpRules(Phrase: TPhrase);
+
         function GetRuleListSubset(RightElement:TSyntaxPatternElement): TObjectList;
         function ModifyTransformationFormula(strFormula, strElFormula:String;N,M,j:integer):String;
     public
@@ -263,13 +269,16 @@ begin
   FPatternElements:=TList.Create;
   FRootElement:=nil;
   FVariables:=THashedStringList.Create;
+  FPermutations:=THashedStringList.Create;
   inc(g_PatternCount);
 end;
+
 constructor TSyntaxPattern.CreateCopy(Source:TSyntaxPattern);
 var i:integer;
 begin
   FPatternElements:=TList.Create;
   FVariables:=THashedStringList.Create;
+  FPermutations:=THashedStringList.Create;
   FRootElement:=nil;
   inc(g_PatternCount);
   //Копируем содержимое
@@ -281,7 +290,58 @@ begin
     AddElementCopy(Source[i]);
 
   FVariables.Text:=Source.FVariables.Text;
+  FPermutations.Text:=Source.FPermutations.Text;
 end;
+
+//Данная функция создает копию исходного шаблона, но переставляет элементы в указанном порядке
+constructor TSyntaxPattern.CreateCopyPerm(Source:TSyntaxPattern;strPermutations:string);
+var i:integer;
+    lstPerm:TStringList;
+
+  function TTF(strTransformationFormula:string):string;
+  var i:integer;
+      tmp:string;
+  begin
+    if lstPerm.Count>9 then
+      raise Exception.Create('Too many elements for permutations');
+
+    tmp:=strTransformationFormula;
+    for i := 0 to lstPerm.Count-1 do
+    begin
+      tmp:=StringReplace (tmp,'#'+lstPerm[i], '$'+IntToStr(i+1), [rfReplaceAll]) ;
+    end;
+    tmp:=StringReplace(tmp,'$', '#', [rfReplaceAll]) ;
+    result:=tmp;
+
+  end;
+begin
+  FPatternElements:=TList.Create;
+  FVariables:=THashedStringList.Create;
+  FPermutations:=THashedStringList.Create;
+  FRootElement:=nil;
+  inc(g_PatternCount);
+  lstPerm:=Split(strPermutations,',');
+ //Копируем содержимое
+
+  //Левая часть правила, она не меняется.
+  if Source.FRootElement<>nil then
+    SetRootElement(Source.FRootElement.PartOfSpeach, Source.FRootElement.Grammems.Text);
+
+  //Копируем элементы в укзанном порядке
+  for i:= 0 to lstPerm.Count-1 do
+    AddElementCopy(Source[StrToInt(lstPerm[i])-1]);
+
+  FVariables.Text:=Source.FVariables.Text;
+  //Перестановки при этом не копируются
+  //FPermutations.Text:=Source.FPermutations.Text;
+
+  //Формулу саму нужно трасформировать, поскольку порядок элементов изменился.
+  TrasformationFormula:= TTF(Source.TrasformationFormula);
+
+  lstPerm.Free;
+end;
+
+
 
 destructor TSyntaxPattern.Destroy();
 var i:integer;
@@ -293,6 +353,7 @@ begin
     TSyntaxPatternElement(FPatternElements[i]).Free;
   FPatternElements.free;
   FVariables.Free;
+  FPermutations.Free;
   dec(g_PatternCount);
 end;
 
@@ -579,6 +640,13 @@ begin
 
 end;
 
+function ProcessLemmExceptions(const strGrammems,strWordForm,strLemma: String):string;
+begin
+  Result:=strGrammems;
+  if (strLemma='НАВИГАТОР') and (strWordForm='навигатор')  then
+    Result:=Result+'вн,';
+end;
+
 //Лемматизация
 constructor TWordForm.Create(const aWordForm: String);
 var
@@ -616,10 +684,18 @@ begin
       begin
         Lemma.Add(strLemma);
         PartOfSpeach.Add(strPartOfSpeach);
-        Grammems.Add(RusGramTab.GrammemsToStr( RusGramTab.GetGrammems(OneAncode) ));
+        Grammems.Add(
+           ProcessLemmExceptions(
+               RusGramTab.GrammemsToStr( RusGramTab.GetGrammems(OneAncode) ),
+               aWordForm,
+               strLemma)
+
+           );
       end;
       inc (i, 2);
     end;
+
+
   end;
   ParadigmCollection:=nil;
   Paradigm:=nil;
@@ -645,8 +721,17 @@ begin
   FNonTerminalCategoriesList:=TStringList.Create;
   FTerminalCategoriesList:=TStringList.Create;
 
+  FWorkingRuleSet:= TObjectList.Create;
+  FWorkingRuleSet.OwnsObjects:=False;
+  //Зачитаем грамматику из файла
   FAllRules:= GetAllRuleList;
+
+  //Подставим конкретные значения переменных
   ExpandVariables(FAllRules);
+
+  //Некоторые правила разрешают разный порядок элементов
+  //совершим эти перестановки
+  ProcessPermutations(FAllRules);
 
     //Закэшируем нестартовые элементы
   (*FNonRootRules:=TObjectList.Create();
@@ -662,6 +747,7 @@ end;
 destructor TGenerativeGrammar.Destroy;
 begin
   FAllRules.Free;
+  FWorkingRuleSet.Free;
   //FNonRootRules.Free;
   FNonTerminalCategoriesList.Free;
   FTerminalCategoriesList.Free;
@@ -757,8 +843,8 @@ begin
 
   //Правила
   for i := 0 to xml.DocumentElement.ChildNodes.Count-1 do
-  if (xml.DocumentElement.ChildNodes[i].NodeName='Phrase') or
-     (xml.DocumentElement.ChildNodes[i].NodeName='PhraseCategory') then
+  if (xml.DocumentElement.ChildNodes[i].NodeName='StartingRule') or
+     (xml.DocumentElement.ChildNodes[i].NodeName='Rule') then
   begin
     Pattern:= TSyntaxPattern.Create;
     PhraseNode:=xml.DocumentElement.ChildNodes[i];
@@ -780,13 +866,19 @@ begin
     end;
 
     Pattern.TrasformationFormula:=PhraseNode.ChildNodes['TrasformationFormula'].Text;
-    if (PhraseNode.NodeName='PhraseCategory') then
+    if (PhraseNode.NodeName='Rule') then
     begin
       ElementNode:=PhraseNode.ChildNodes['Def'];
       strPartOfSpeach:= ElementNode.ChildNodes['Category'].Text ;
+      if (strPartOfSpeach<>'') and (FTerminalCategoriesList.IndexOf(strPartOfSpeach)=-1)and
+         (FNonTerminalCategoriesList.IndexOf(strPartOfSpeach)=-1) then
+         raise Exception.Create('Unknown Category symbol: '+strPartOfSpeach);
+
+
       strGrammems:=ElementNode.ChildNodes['Grammems'].Text ;
       Pattern.SetRootElement (strPartOfSpeach,strGrammems );
     end;
+
     //Разбор переменных
     for j := 0 to PhraseNode.ChildNodes['Vars'].ChildNodes.Count-1 do
     begin
@@ -796,6 +888,13 @@ begin
       Pattern.FVariables.Add(varName +'='+varValue  );
     end;
 
+    //Разбор перестановок Permutations
+    for j := 0 to PhraseNode.ChildNodes['Permutations'].ChildNodes.Count-1 do
+    begin
+      varValue:=PhraseNode.ChildNodes['Permutations'].ChildNodes[j].Text;
+
+      Pattern.FPermutations.Add(varValue);
+    end;
 
     PatternList.Add(Pattern);
   end;
@@ -817,21 +916,21 @@ begin
   Result.OwnsObjects:=True;
 
   //Получаем список шаблонов соответствующих заданной фразовой категории
-  for i:=0 to FAllRules.Count-1 do
+  for i:=0 to FWorkingRuleSet.Count-1 do
   begin
-    PE:=TSyntaxPattern(FAllRules[i]).FRootElement;
+    PE:=TSyntaxPattern(FWorkingRuleSet[i]).FRootElement;
     if RightElement<>nil then
       begin
         if PE<>nil then
           if (PE.PartOfSpeach=RightElement.PartOfSpeach) and (RightElement.CompareGrammems( PE.Grammems))  then
             //В список добавляется копия(!) исходного элемента
-            Result.Add(TSyntaxPattern.CreateCopy(TSyntaxPattern(FAllRules[i])));
+            Result.Add(TSyntaxPattern.CreateCopy(TSyntaxPattern(FWorkingRuleSet[i])));
       end
     else
       begin
         if PE=nil then
           //В список добавляется копия(!) исходного элемента
-          Result.Add(TSyntaxPattern.CreateCopy(TSyntaxPattern(FAllRules[i])));
+          Result.Add(TSyntaxPattern.CreateCopy(TSyntaxPattern(FWorkingRuleSet[i])));
       end;
   end;
 end;
@@ -912,6 +1011,117 @@ begin
   until Not blnNonTerminalElementsExist ;
 end;
 
+Procedure TGenerativeGrammar.ProcessPermutations(PatternList: TObjectList);
+var
+  strPerm:String;
+  blnNonTerminalElementsExist:boolean;
+  NewPattern,CurrentPattern: TSyntaxPattern;
+  i,j:integer;
+begin
+  //Нужно обработать перестановки, создав из оригинального шаблона
+  //новые, для каждой перестановки.
+  repeat
+  blnNonTerminalElementsExist:=False;
+  for i:=0 to PatternList.Count-1 do
+  begin
+    CurrentPattern:=TSyntaxPattern(PatternList[i]);
+    if CurrentPattern.FPermutations.Count<>0   then
+    begin
+      blnNonTerminalElementsExist:=True;
+      //Для каждой перестановки создаем новый шаблон.
+       for j := 0 to CurrentPattern.FPermutations.Count-1 do
+       begin
+         NewPattern:=TSyntaxPattern.CreateCopyPerm(CurrentPattern, CurrentPattern.FPermutations[j]);
+         PatternList.Add(NewPattern);
+       end;
+       //себя же удаляем из списка
+       PatternList.Delete(i);
+
+    end;
+  end;
+  until Not blnNonTerminalElementsExist ; //До тех пор пока все шаблоны с перестановками не будут обработаны.
+end;
+
+//Исключим правила, заведомо не соответствующие фразе
+procedure TGenerativeGrammar.CleanUpRules(Phrase: TPhrase);
+var k:integer;
+    CurrentPattern:TSyntaxPattern;
+    intMatchedWords, intUnmatchedWords:integer;
+
+    function TestPatternElement(PE:TSyntaxPatternElement;WF: TWordForm):boolean;
+    var j:integer;
+    begin
+      Result:=False;
+      for j:=0 to WF.NumberOfVariants-1  do
+      begin
+        if PE.WordForm<>'*' then
+        begin
+          //конкретное слово
+          if AnsiUpperCase(PE.WordForm)<>AnsiUpperCase(WF.WordForm) then
+            continue;//соответствия не найдено, нужно перейти к следующему варианту
+        end
+        else
+        begin
+          //Часть речи
+          if (PE.PartOfSpeach<>'*') and (PE.PartOfSpeach <> WF.PartOfSpeach[j])  then
+            continue;//соответствия не найдено, нужно перейти к следующему варианту словоформы.
+
+          //граммемы
+          if not PE.CompareGrammems(WF.Grammems[j]) then
+            continue;//соответствия не найдено, нужно перейти к следующему варианту словоформы.
+        end;
+        Result:=True;
+        //соответствие найдено, нужно перейти к следующему слову
+        //(омонимией пренебрегаем. Если фраза соответствует шаблону, берем первый вариант)
+
+        break; //выход из цикла по вариантам словоформы
+      end;
+    end;
+
+    function Test1():boolean;
+    var i,j:integer;
+        blnPresent:boolean;
+    begin
+      result:=true;
+      for i := 0 to CurrentPattern.ElementCount-1 do
+        if CurrentPattern.Elements[i].isTerminalElement   then
+        begin
+          //Требуется наличие данного элемента во фразе.
+          blnPresent:=false;
+          for j := 0 to Phrase.Count-1 do
+            begin
+              if TestPatternElement(CurrentPattern[i],TWordForm(Phrase[j])) then
+                begin
+                  blnPresent:=True;
+                  break;//cответствие  найдено
+                end;
+            end;
+          if not blnPresent then
+          begin
+            result:=False;
+            break; //Такого элемента фраза не содержит: кранты.
+          end;
+
+
+        end;
+
+    end;
+begin
+
+  FWorkingRuleSet.Clear;
+  for k:=FAllRules.Count-1 downto 0 do
+  begin
+    CurrentPattern:=TSyntaxPattern(FAllRules[k]);
+    if  Test1 then
+    begin
+      //себя же удаляем из списка
+      //FAllRules.Delete(k);
+      FWorkingRuleSet.Add(CurrentPattern);
+    end;
+  end;
+
+end;
+
 //Эта функция собственно и делает ситаксический разбор.
 // по заданной фразе возвращается список соответствующих ей синтаксических структур.
 function TGenerativeGrammar.GetPatternList(Phrase: TPhrase): TObjectList;
@@ -924,8 +1134,13 @@ var
   intMatchedWords, intUnmatchedWords:integer;
 begin
 
+
+  CleanUpRules(Phrase);
+
   //Получаем список шаблонов (т.е. цепочек, разворачивающих "фразу": S->xxx)
   Result:=GetRuleListSubset(nil);
+  if Result.Count=0  then
+   raise Exception.Create('Starting rule is not found');
   //Это мы получили список фраз (S->xxx), который содержит в основном,
   //нетерминальные цепочки
 
@@ -937,7 +1152,6 @@ begin
   //  N вариантов замены данного элемента, вместе с неизменным концом цепочки.
   //  Процесс повторяется, пока все нетерминальные элементы не будут заменены
   //  на терминальные
-  repeat
 
   //Первым делом следует удалить из списка те цепочки, которые
   //(начальные терминальные элементы которых) не соответствуют заданной фразе.
@@ -949,6 +1163,7 @@ begin
     if TSyntaxPattern(Result[i]).TestPhrase(Phrase, intMatchedWords, intUnmatchedWords)=-1 then
       Result.Delete(i);
 
+  repeat
 
   blnNonTerminalElementsExist:=False;
   for i:=Result.Count-1  downto 0  do
@@ -977,24 +1192,34 @@ begin
             for l := j+1 to CurrentPattern.ElementCount-1 do
               NewPattern.AddElementCopy(CurrentPattern[l]);
 
-            //Формулу саму надо трансформировать. На место j-го элемента нужно поставить формулу
-            //Распространенного элемента, а то что справа - сдвинуть.
-            NewPattern.TrasformationFormula:=
-              ModifyTransformationFormula(CurrentPattern.TrasformationFormula,
+            if NewPattern.TestPhrase(Phrase, intMatchedWords, intUnmatchedWords)<>-1 then
+            begin
+              //Формулу саму надо трансформировать. На место j-го элемента нужно поставить формулу
+              //Распространенного элемента, а то что справа - сдвинуть.
+              NewPattern.TrasformationFormula:=
+                ModifyTransformationFormula(CurrentPattern.TrasformationFormula,
                                         TSyntaxPattern(Expansions[k]).TrasformationFormula,
                                         CurrentPattern.ElementCount,
                                         TSyntaxPattern(Expansions[k]).ElementCount,
                                         j+1 ) ;
-            Result.Add(NewPattern);
+              Result.Add(NewPattern);
+            end
+            else
+              //шоблон, не соответствующий фразе в части построенных терминальных
+              //элементов, сразу идет нах.
+              NewPattern.Free;
           end; //кц по вариантам развертывания данного элемента.
 
           //После развертывания элемента цепочка удаляется.
           Result.Delete(i);
         end
         else
-          raise Exception.Create('No match for non-terminal element "'
+          //Этот элемент не является терминальным, но для него нет годных правил.
+          //Делать с такой цепочкой нечего.
+          Result.Delete(i)
+          {raise Exception.Create('No match for non-terminal element "'
                                  + CurrentPattern.Elements[j].PartOfSpeach + ' '
-                                 + CurrentPattern.Elements[j].Grammems.Text  + '" !' )  ;
+                                 + CurrentPattern.Elements[j].Grammems.Text  + '" !' )  };
         //варианты тоже больше не нужны
         Expansions.Free;
         //надо перейти к следующей цепочке
